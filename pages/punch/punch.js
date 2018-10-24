@@ -123,6 +123,11 @@ Page({
           wx.getStorage({
             key: 'loginData',
             success: function (res) {
+              if (res.data.leadPrjMapList.length!=0){
+                for (var i = 0; i < res.data.leadPrjMapList.length;i++){
+                  res.data.prjMapList[res.data.prjMapList.length] = res.data.leadPrjMapList[i];
+                }
+              }
               console.log(res);
               that.setData({
                 prjMapList: res.data.prjMapList
@@ -289,7 +294,6 @@ Page({
     s = s / 1000;
     s = s.toFixed(2);//指定小数点后的位数。 
     var location = that.data.location;
-    // console.log(location);
     location.latitude = lat1;
     location.longitude = lng1;
     var addressMapList = that.data.prjMapList[idi].addressMapList;
