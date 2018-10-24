@@ -1,0 +1,72 @@
+@import "../../../common/todoAudit.wxss";
+page{background-color: whitesmoke} 
+.viewCard{
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  background-color: #ffffff; 
+  box-shadow: 4px 1px 1px #cccccc;
+  margin: 10px;
+  padding-left:5px;
+} 
+.perview{
+  padding-top: 5px;
+  display: flex;
+  font-size: 15px
+}
+.titleView{
+  width:28%
+}
+.inputView{
+  width:72%
+}
+.buttonview{
+  display:flex;
+  flex-direction: row;
+  text-align: center;
+  font-size:10px;
+  padding-top:10px;
+  padding-bottom:5px
+} 
+/* .okbutton{
+  font-size:10px;
+  margin-left:65%;
+  margin-bottom:10px;
+  background-color:#0000FF;
+  color:#ffffff;
+} */
+/* .refusebutton{
+  font-size:10px;
+  margin-bottom:10px;
+} */
+
+/* .modifybutton{
+  font-size:10px;
+  margin-bottom:10px;
+  background-color:#0000FF;
+  color:#ffffff;
+} */
+.wx-cell {
+  margin: 0px;
+  border: solid #ffffff;
+  background-color: #ffffff; 
+  text-align: right;
+  color: #0000FF;
+  padding:10px;
+}
+.input-view{
+  text-align:left;
+  width:30%;
+}
+.aadabs-view{
+  text-align:left;
+  width:50%;
+}
+.notask{
+  text-align: center;
+  font-size: 15px;
+  margin-top: 20px;
+} 
+
+
+
+

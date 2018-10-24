@@ -1,0 +1,127 @@
+<view class='containter'>
+  <view style='display:flex;text-align:center;margin-left:30%;padding-top:10px'>
+    <view style='margin-left:10px;margin-right:10px'>{{curtime}}</view>
+    <view style='width:20px' data-route="../myattendance/myattendance" bindtap="navToPage">
+      <image class='leftImg' src='../../../images/right.png'></image>
+    </view>
+  </view> 
+
+  <view class="table"> 
+    <view class="tr bg-w">
+      <view class="th" style='width:25%'>打卡日期</view>
+      <view class="th" style='width:30%'>请假</view>
+      <view class="th" style='width:15%'>事由</view>
+      <view class="th" style='width:15%'>状态</view>
+      <view class="th" style='width:15%'>操作</view>
+    </view>
+
+    <form style='height:100%' bindsubmit="formSubmit">
+      <view wx:if="{{dataInfo.length!=0}}">
+        <view wx:for="{{dataInfo}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+          <view wx:if="{{item.processStatus==0||item.processStatus==3}}">
+            <view class="tr">
+              <!-- 打卡日期 -->
+              <view class="newtd" style='width:25%;' wx:if='{{dataInfo[idx+1].punchDate==item.punchDate&&dataInfo[idx-1].punchDate!=item.punchDate}}'>
+                <input name='date' disabled='true' value='{{item.punchDate}}'></input>
+                <input name='duration' disabled='true' value='{{item.beginTime}}-{{item.endTime}}'></input>
+              </view>
+
+              <view class="newtd" style='width:25%;' wx:elif='{{dataInfo[idx-1].punchDate==item.punchDate&&dataInfo[idx+1].punchDate==item.punchDate}}'></view>
+              <view class="td" style='width:25%;' wx:elif='{{dataInfo[idx-1].punchDate==item.punchDate&&dataInfo[idx+1].punchDate!=item.punchDate}}'></view>
+
+              <view class="td" style='width:25%;' wx:else>
+                <input name='date' disabled='true' value='{{item.punchDate}}'></input>
+                <input name='duration' disabled='true' value='{{item.beginTime}}-{{item.endTime}}'></input>
+              </view>
+
+              <!-- 请假 -->
+              <view class="td" style='width:30%;padding-top:5px;justify-content:center'>
+                <view wx:if="{{addFlag[idx]}}">
+                  <picker name='leavetype' value='{{leavetypeIndex}}' range='{{leavetype}}' bindchange="leavetypechange" data-current="{{idx}}">
+                    <view class='attendencepicker'>{{leavetype[leavetypeIndex[idx]]}}</view>
+                  </picker> 
+                  <view style='display:flex'>
+                    <view style='padding-top:5px' name='absBeginTime'>{{selectAbsBeginTime[idx]}}</view>
+                    <view style='justify-content:center;padding-top:5px'>-</view> 
+                    <picker name='absEndTime' mode="time" value='{{selectAbsEndTime[idx]}}' start="{{item.absBeginTime}}" end="{{item.absEndTime}}" bindchange="absEndTimechange" data-current="{{idx}}">
+                      <view class='attendencetimepicker'>{{selectAbsEndTime[idx]}}</view>
+                    </picker>       
+                  </view>
+                </view>
+                <view wx:else>                  
+                  <view name='leaveType'>{{leavetype[leavetypeIndex[idx]]}}</view>
+                  <view style='display:flex;justify-content:center'>
+                    <view name='absBeginTime'>{{selectAbsBeginTime[idx]}}</view>
+                    <view>-</view>
+                    <view name='absEndTime'>{{selectAbsEndTime[idx]}}</view>
+                  </view>
+                </view>
+              </view>
+              <!-- 事由 -->
+              <view class="td" style='width:15%'>
+                <textarea style='width:90%;background-color:#EBEBEB;height:30px' maxlength='15' value='{{leavereason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea>
+              </view>
+              <!-- 状态 -->
+              <view class="td" style='width:15%'>
+                <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+              </view>
+              <!-- 操作 -->
+              <view class="td" style='width:15%'>
+                <input wx:if="{{addFlag[idx]}}" style='color:blue' disabled='true' data-current="{{idx}}" value='新增' bindtap='addInfotap'></input>
+
+                <input wx:if="{{cancleFlag[idx]}}" style='color:blue' disabled='true' data-current="{{idx}}" value='取消' bindtap='cancleInfoTap'></input> 
+              </view>
+
+            </view>
+          </view>
+
+          <view wx:else>
+            <view class="tr">
+            <!-- 打卡日期 -->
+              <view class="newtd" style='width:25%;' wx:if='{{dataInfo[idx+1].punchDate==item.punchDate&&dataInfo[idx-1].punchDate!=item.punchDate}}'>
+                <input name='date' disabled='true' value='{{item.punchDate}}'></input>
+                <input name='duration' disabled='true' value='{{item.beginTime}}-{{item.endTime}}'></input>
+              </view>
+
+              <view class="newtd" style='width:25%;' wx:elif='{{dataInfo[idx-1].punchDate==item.punchDate&&dataInfo[idx+1].punchDate==item.punchDate}}'></view>
+              <view class="td" style='width:25%;' wx:elif='{{dataInfo[idx-1].punchDate==item.punchDate&&dataInfo[idx+1].punchDate!=item.punchDate}}'></view>
+
+              <view class="td" style='width:25%;' wx:else>
+                <input name='date' disabled='true' value='{{item.punchDate}}'></input>
+                <input name='duration' disabled='true' value='{{item.beginTime}}-{{item.endTime}}'></input>
+              </view>
+              <!-- <view class="td" style='width:25%;'>
+                <input name='date' disabled='true' value='{{item.punchDate}}'></input>
+                <input name='duration' disabled='true' value='{{item.beginTime}}-{{item.endTime}}'></input>
+              </view> -->
+              <!-- 请假 -->
+              <view class="td" style='width:30%;padding-top:5px;'>                
+                <view name='leaveType'>{{leaveType[item.leaveType]}}</view>
+                <view style='display:flex;justify-content:center'>
+                  <view name='absBeginTime'>{{item.absBeginTime}}</view>
+                  <view>-</view>
+                  <view name='absEndTime'>{{item.absEndTime}}</view>
+                </view>
+              </view>
+              <!-- 原因 -->
+              <view class="td" style='width:15%'>
+                <view name='reason'>{{item.reason}}</view>
+              </view>
+              <!-- 状态 -->
+              <view class="td" style='width:15%'>
+                <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+              </view>
+              <!-- 操作 -->
+              <view class="td" style='width:15%'></view>
+
+            </view>
+          </view>         
+        </view>
+         <button class='button1' style='margin-bottom:10px' form-type="submit" wx:if="{{submitflag==false}}">提交</button> 
+      </view>
+      <view class='norecord' wx:else>
+        <view>无缺勤记录</view>
+      </view>
+    </form>
+  </view>
+</view>

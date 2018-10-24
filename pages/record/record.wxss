@@ -1,0 +1,59 @@
+.box1 .dateBox{
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  margin-top: 0px;
+  font-size: 40rpx;
+}
+
+.box1{
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+}
+
+.box1>view{
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 34rpx;
+}
+
+.dateOn{
+   border-radius: 50%; 
+  background-color: #436EEE;
+  color: #fff;
+}
+
+.wx-lists {
+  display: flex;
+  width: 90%;
+  border-bottom: 1rpx solid #d9d9d9;
+  padding-left: 5%;
+  padding-top: 6px;
+  padding-bottom: 6px
+}
+.wx-list{
+  font-size: 13px;
+  line-height:82rpx;
+  font-weight: bold
+}
+.wx-view{
+  margin-left: 10px
+}
+.wx-location{
+  font-size: 12px;
+  line-height:82rpx; /* 新加 */
+  padding-left: 10px
+}
+.norecord{
+  text-align:center;
+  margin-top:50px;
+  font-size: 13px
+}
+.pot{
+  margin-top:-10px;
+  line-height:0px;
+  height:1px;
+}

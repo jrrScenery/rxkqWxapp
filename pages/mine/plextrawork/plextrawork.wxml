@@ -1,0 +1,85 @@
+<view class='plcontainter'>
+  <view style='display:flex'>
+    <view class='dateView'>
+      <view style='20px' bindtap="navToPage" wx:if='{{curFlag&&abled}}'>
+        <image class='leftImg' src='../../../images/left.png'></image>
+      </view> 
+      <view class='curtime'>{{curtime}}</view>
+      <view style='20px' bindtap="navToPage" wx:if='{{!curFlag&&abled}}'>
+        <image class='rightImg' src='../../../images/right.png'></image>
+      </view> 
+    </view>
+    <view id='applyUser' class='perextra' data-route="../overtime/overtime" bindtap="getperextra">
+      补提加班
+    </view> 
+  </view>
+
+  <view class="table">
+    <view class="tr">
+      <view class="th" style='width:25%'>日期</view>
+      <view class="th" style='width:25%'>时间</view>
+      <view class="th" style='width:35%'>事由</view>
+      <view class="th" style='width:15%'>状态</view>
+    </view>
+
+    <form style='height:100%' bindsubmit="formSubmit">
+      <view wx:if="{{askInfo.length!=0&&askInfo}}">
+        <view wx:for="{{askInfo}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+          <view wx:if="{{item.processStatus==0||item.processStatus==3}}">
+            <view class="tr">
+              <!-- 日期 -->
+              <view class="td" style='width:25%;'>
+                <input name='date' disabled='true' value='{{item.askLeaveDate}}'></input>
+              </view>
+              <!-- 时间 -->
+              <view class="td" style='width:25%;padding-top:5px;'>
+                <view style='display:flex;justify-content:center'>
+                  <view name='beginTime'>{{item.beginTime}}</view>
+                  <view>-</view>
+                  <view name='endTime'>{{item.endTime}}</view>
+                </view>             
+              </view>
+              <!-- 事由 -->
+              <view class="td" style='width:35%;'>
+                <textarea class='textarea' auto-height='true' value='{{reason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea>
+              </view>
+              <!-- 状态 -->
+              <view class="td" style='width:15%'>
+                <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+              </view>           
+            </view>
+          </view> 
+
+          <view wx:else>
+            <view class="tr">
+            <!-- 日期 -->
+              <view class="td" style='width:25%;'>
+                <input name='date' disabled='true' value='{{item.askLeaveDate}}'></input>
+              </view>
+              <!-- 时间 -->
+              <view class="td" style='width:25%;padding-top:5px;'>
+                <view style='display:flex;justify-content:center'>
+                  <view name='beginTime'>{{item.beginTime}}</view>
+                  <view>-</view>
+                  <view name='endTime'>{{item.endTime}}</view>
+                </view>             
+              </view>
+              <!-- 原因 -->
+              <view class="td" style='width:35%'>
+                <view name='reason'>{{reason[idx]}}</view>
+              </view>
+              <!-- 状态 -->
+              <view class="td" style='width:15%'>
+                <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <button class='button1' style='margin-bottom:10px' form-type="submit" wx:if="{{submitflag==false}}">提交</button> 
+      </view>
+      <view class='norecord' wx:else>
+        <view>无加班记录</view>
+      </view>
+    </form>
+  </view>
+</view>

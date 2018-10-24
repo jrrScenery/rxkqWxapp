@@ -1,0 +1,19 @@
+/* pages/mine/attachment/attachment.wxss */
+page{background-color:whitesmoke}
+
+.conView{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center;
+}
+.previewimg{
+	width:65%; 
+	height:200px; 
+  margin-top:20px;
+}
+.previewimg image{
+	width:100%;
+	height:100%;
+}

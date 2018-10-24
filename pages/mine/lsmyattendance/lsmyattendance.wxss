@@ -1,0 +1,2 @@
+@import "../myattendance/myattendance.wxss"; 
+@import "../../../common/common.wxss"; 

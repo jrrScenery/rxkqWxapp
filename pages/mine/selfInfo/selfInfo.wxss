@@ -1,0 +1,35 @@
+@import "../../../common/common.wxss";
+page{
+  background-color:whitesmoke;
+}
+.cell-text{
+  flex: 1;
+  text-align: center;
+  margin-right: 10rpx;
+  font-size: 13px
+}
+.wx-cells-next{
+  width: 100%;
+  margin-top: 0rpx;
+  font-size: 34rpx;
+  border-bottom: 0rpx solid #d9d9d9;
+}
+.selfviewTitle{
+  margin-left:10px;
+  margin-top:15px;
+  font-size:14px
+}
+.leftview{
+  width: 30%;
+  font-size: 13px
+}
+.rightview{
+  width: 70%;
+  font-size: 13px
+}
+.removeButton{
+  width:50%;
+  height:8%;
+  font-size:15px;
+  margin-bottom: 5px
+}

@@ -1,0 +1,27 @@
+ @import "../../../common/common.wxss";
+ page{
+  background-color:whitesmoke;
+}
+ .appcontainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.userAvatarUrl{
+  width: 20%;
+}
+
+.wx-cells-next{
+  width: 100%;
+  margin-top: 0rpx;
+  font-size: 34rpx;
+  border-bottom: 0rpx solid #d9d9d9;
+}
+
+/* 头像样式 */
+/* .userinfo-avatar {
+  width: 100rpx;
+  height: 100rpx;
+} */

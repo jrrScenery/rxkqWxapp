@@ -1,0 +1,6 @@
+<view wx:if='{{attachmentUrl.length!=0}}' class='conView'>
+  <view class='previewimg' wx:for='{{attachmentUrl}}' wx:key="idx" wx:for-item="item" wx:for-index="idx">
+    <image src='{{item}}' data-src="{{item}}" bindtap='previewImage'></image>
+  </view> 
+</view>
+<view wx:else> 未上传请假图片</view>

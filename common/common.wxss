@@ -1,0 +1,97 @@
+
+/* 提交按钮样式 */
+.button1{
+  margin-top: 5%; 
+  background-color:blue;
+  color:#ffffff
+} 
+/* 补提考勤页面选择框样式 */
+.attendencepicker{
+  border: solid 1px #ddd;
+  background-color: #fafafa;
+  width:80%;
+  text-align: center
+}
+
+.attendencetimepicker{
+  border: solid 1px #ddd;
+  background-color: #fafafa;
+  width:100%;
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+  text-align: center
+}
+
+/* 请假加班样式 */
+.wx-cells { 
+  width: 100%;
+  margin-top: 15rpx;
+  font-size: 34rpx;
+  border-top: 0rpx solid #d9d9d9;
+  border-bottom: 0rpx solid #d9d9d9
+}
+
+.wx-reason {
+  width: 100%;
+  margin-top: 0rpx;
+  font-size: 34rpx;
+}
+
+.wx-cells-addr .wx-cells-time{
+  width: 100%;
+  margin-top: 0rpx;
+  font-size: 34rpx;
+  border-bottom: 0rpx solid #d9d9d9;
+}
+
+.wx-cell {
+  padding: 20rpx 15rpx;
+  display: flex;
+  align-items: center;
+  background-color: white;
+}
+.wx-cell-bottom{
+    border-bottom: 1rpx solid #DCDCDC
+}
+.wx-cell-icon{
+  width: 56rpx;
+  height: 56rpx;
+}
+
+.wx-cell-text{
+  flex: 1;
+  margin-left: 30rpx;
+}
+
+.wx-cell-arrow{
+  width: 30rpx;
+  height: 30rpx;
+  margin-left: 10rpx;
+}  
+
+.required{
+  color: #FF0000;
+}
+
+.input{
+  text-align: center;
+  width:10px  /* 40px */
+}
+.picker{
+  width: 100%;
+  margin-right: 10px;    
+  text-align: left;
+}
+ .absencebutton{
+  margin-top: 10%;
+  background-color:blue;
+  color:#ffffff
+} 
+/* 补提考勤 */
+.norecord{
+  text-align: center;
+  font-size: 15px;
+  margin-top: 20px
+}
+
+

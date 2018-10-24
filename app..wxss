@@ -1,0 +1,14 @@
+ .containter{
+  height: 100%;
+  width: 100%;
+} 
+.view{
+  float: left;
+  text-align: center;
+  font-size: 15px;
+  width: 25%;
+  padding-top: 20px
+}  
+ .padding{
+  padding-top:10px
+}

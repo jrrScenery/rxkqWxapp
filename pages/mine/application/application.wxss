@@ -1,0 +1,31 @@
+/* pages/mine/application/application.wxss */
+@import "../../../common/common.wxss"; 
+.radio-group{
+  margin: 10px;
+}
+.display{
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px
+}
+.radio{
+  display: flex;
+  padding: 10px
+}
+.norecord{
+  text-align: center;
+  font-size: 15px;
+  margin-top: 20px;
+}
+
+.searchView{
+  display:flex;
+  text-align:center;
+  margin:10px;
+}
+.searchInputView{
+  width:75%;
+  height:30px;
+  border-radius: 40px;
+  border:  2px solid whitesmoke;
+}

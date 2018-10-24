@@ -1,0 +1,125 @@
+<view>
+  <view wx:if="{{auditInfo.length!=0}}"> 
+    <form bindsubmit="formSubmit" bindreset='formReset'>   
+      <view class='viewCard' wx:for="{{auditInfo}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+        <view wx:if="{{item.loaType==2}}">
+          <view class='perview'>
+            <view style='margin-top:10px;margin-bottom:10px;width:60%'>{{item.submitor}}的{{loaType[item.loaType]}}申请</view> 
+          </view>
+          <view class='perview'>
+            <view style='width:30%'>审批类型：</view> 
+            <view class='input-view'>
+              <input data-current="{{idx}}" name='loaType' disabled='true' value='{{loaType[item.loaType]}}'></input>
+            </view>
+          </view>
+          <view class='perview'>
+            <view class='titleView'>考勤月份：</view>
+            <input class='inputView' name='attenMonth' data-current="{{idx}}" disabled='true' value='{{item.attnMonth}}'></input>
+          </view>
+        </view> 
+
+        <view wx:else>
+          <view class='perview'>
+            <view style='margin-top:10px;margin-bottom:10px;width:80%'>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
+          </view>
+          <view class='perview'>
+            <view style='width:30%'>审批类型：</view> 
+            <view wx:if="{{item.loaType==0}}" class='aadabs-view'>
+              <input name='loaType' data-current="{{idx}}" disabled='true' value='{{loaType[item.loaType]}}'></input>
+            </view>
+            <view wx:else class='aadabs-view'>
+              <input name='loaType' data-current="{{idx}}" disabled='true' value='{{loaType[item.loaType]}}'></input>
+            </view>
+          </view>
+          <view class='perview' wx:if='{{item.loaType == 4}}'>
+            <view class='titleView'>加班月份：</view>
+            <input class='inputView' name='extraMonth' data-current="{{idx}}" disabled='true' value='{{item.askLeaveDate}}'></input>
+          </view>
+        </view> 
+
+        <view class='perview'>
+          <view class='titleView'>项目编号：</view> 
+          <input class='inputView' name='prjCode' data-current="{{idx}}" disabled='true' value='{{item.prjCode}}'></input>
+        </view>
+
+        <view class='perview'>
+          <view class='titleView'>项目名称：</view> 
+          <input class='inputView' name='prjName' data-current="{{idx}}" disabled='true' value='{{item.prjName}}'></input>
+        </view>
+
+        <view class='perview' wx:if='{{item.loaType==4}}'>
+          <view class='titleView'>加班时长：</view> 
+          <input class='inputView' name='prjName' data-current="{{idx}}" disabled='true' value='{{item.leavehour}}'></input>
+        </view>
+
+          <view class='perview' >
+            <view class='titleView'>提交人：</view>
+            <input class='inputView' name='submitor' data-current="{{idx}}" disabled='true' value='{{item.submitor}}'></input>
+          </view>
+          <view class='perview' wx:if="{{item.loaType==0}}">
+            <view class='titleView'>请假类型：</view>
+            <input class='inputView' name='leavetype' data-current="{{idx}}" disabled='true' value='{{leaveType[item.leaveType]}}'></input>
+          </view> 
+          <view class='perview' wx:if="{{item.loaType==1}}">
+            <view class='titleView'>加班补偿：</view>
+            <input class='inputView' name='leavetype' data-current="{{idx}}" disabled='true' value='{{relaxation[item.leaveType]}}'></input>
+          </view> 
+          <view class='perview' wx:if="{{item.beginDate}}">
+            <view class='titleView'>开始时间：</view> 
+            <input class='inputView' name='startTime' data-current="{{idx}}" disabled='true' value='{{item.beginDate}} {{item.beginTime}}'></input>
+          </view>
+          <view class='perview' wx:if="{{item.endDate}}">
+            <view class='titleView'>结束时间：</view> 
+            <input class='inputView' name='endTime' data-current="{{idx}}" disabled='true' value='{{item.endDate}} {{item.endTime}}'></input>
+          </view>    
+
+          <view class='perview' wx:if="{{item.loaType==2}}">
+            <view class='titleView'>缺勤时长：</view> 
+            <input class='inputView' name='time' data-current="{{idx}}" disabled='true' value='{{item.leavedays}}天{{item.leavehours}}小时'></input>
+          </view>     
+
+          <view class='perview' wx:if="{{item.loaType==0}}">
+            <view class='titleView'>请假事由：</view> 
+            <input class='inputView' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></input>
+          </view> 
+
+          <view class='perview' wx:elif="{{item.loaType==1}}">
+            <view class='titleView'>加班事由：</view> 
+            <input class='inputView' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></input>
+          </view> 
+          <view class='perview' wx:if="{{item.loaType==3}}">
+            <view class='titleView'>派工事由：</view> 
+            <input class='inputView' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></input>
+          </view> 
+          <view class='perview'>
+            <view class='titleView'>提交时间：</view> 
+            <input class='inputView' name='submittime' data-current="{{idx}}" disabled='true' value='{{item.submitTime}}'></input>
+          </view>
+          <view class='perview'>
+            <view class='titleView'>审批状态：</view> 
+            <input class='inputView' name='processStatus' data-current="{{idx}}" disabled='true' value='{{processStatus[item.processStatus]}}'></input>
+          </view>
+
+          <view class='buttonview'>
+            <view name='detail' class='buttonInput' style='margin-top:10px' data-route="../attendancedetail/attendancedetail" data-id="{{item.id}}" bindtap='checkaudit'  wx:if="{{item.loaType==2}}">查看详情</view>
+            <view name='detail' class='buttonInput' style='margin-top:10px' data-route="../plextraworkdetail/plextraworkdetail" data-id="{{item.id}}" bindtap='checkaudit'  wx:if="{{item.loaType==4}}">查看详情</view>
+            <view name='procedure' class='buttonInput' style='margin-top:10px' data-route="../procedure/procedure" data-id="{{item.id}}" bindtap='checkaudit'>查看流程</view>
+            <view name='attachment' class='buttonInput' style='margin-top:10px' data-route="../attachment/attachment" data-id="{{item.id}}" data-current="{{item.loaType}}" bindtap='checkaudit'  wx:if='{{item.loaType==0}}'>查看附件</view>
+          </view>
+
+          <view class="weui-form-preview__ft" wx:if="{{item.processStatus==1}}">
+            <button id='ok' class="weui-form-preview__btn weui-form-preview__btn_default" form-type='submit' data-current="{{idx}}">同意</button>
+            <button id='refuse' class="weui-form-preview__btn weui-form-preview__btn_primary" form-type='submit' data-current="{{idx}}">拒绝</button>
+          </view>
+
+          <view class="weui-form-preview__ft" wx:else>
+            <button id='modify' class="weui-form-preview__btn weui-form-preview__btn_primary" data-current="{{idx}}" data-route="../myabsence/myabsence" bindtap='modifyaudit' wx:if="{{item.loaType==0}}">修改</button>
+            <button id='modify' class="weui-form-preview__btn weui-form-preview__btn_primary" data-current="{{idx}}" data-route="../overtime/overtime" bindtap='modifyaudit' wx:elif="{{item.loaType==1||item.loaType==3}}">修改</button>
+            <button id='modify' class="weui-form-preview__btn weui-form-preview__btn_primary" data-current="{{idx}}" data-route="../plextrawork/plextrawork" bindtap='modifyaudit' wx:elif="{{item.loaType==4}}">修改</button>
+            <button id='modify' class="weui-form-preview__btn weui-form-preview__btn_primary" data-current="{{idx}}" data-route="../myattendance/myattendance" bindtap='modifyaudit' wx:elif='item.loaType==2'>修改</button>
+          </view>
+      </view>
+    </form> 
+  </view>
+  <view class='notask' wx:else>暂无待办任务</view>
+</view>

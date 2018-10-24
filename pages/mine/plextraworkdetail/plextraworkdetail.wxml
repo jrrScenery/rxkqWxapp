@@ -1,0 +1,11 @@
+<view style='height:5px;width:100%'></view>
+<view wx:if='{{askInfoDetail.length!=0}}'>
+  <view class='viewCard' wx:for="{{askInfoDetail}}" wx:key="index" wx:for-item="item">
+    <view class='perview'>加班日期:{{item.askLeaveDate}}</view>
+    <view class='perview'>开始时间：{{item.beginTime}}</view>
+    <view class='perview'>结束时间：{{item.endTime}}</view>
+    <view class='perview'>加班原因：{{item.reason}}</view>
+    <view class='perview'>审批状态：{{processStatus[item.processStatus]}}</view>
+  </view>
+</view>
+<view class='noContent' wx:else>暂无批量加班详情</view>

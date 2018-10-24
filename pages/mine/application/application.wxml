@@ -1,0 +1,22 @@
+<view class='searchView'>
+  <view class='searchInputView' wx:if="{{selectInfo.sortId=='applyUser'}}">
+    <input name='search' style='height:30px;' placeholder='输入姓名' bindinput='searchBindInput'></input>
+  </view>
+  <view class='searchInputView' wx:else>
+    <input name='search' style='height:30px;font-size:12px' placeholder='输入姓名/项目号/项目名称' bindinput='searchBindInput'></input>
+  </view>
+  <button size='mini' bindtap='searchBindTap'>搜索</button>
+</view>  
+<view wx:if="{{applyInfos.length!=0}}" style='font-size:15px'>
+    <radio-group class="radio-group" bindchange="radioChange">
+      <view wx:for="{{applyInfos}}" wx:key='index' wx:for-index="index" wx:for-item="items" wx:if="{{applyInfos[index].applyInfo.length!=0}}">
+        <view style='margin-top:20px;'>{{index+1}}.{{items.prjCode}} {{items.prjName}}</view>
+        <view class='display'>
+          <label class="radio" wx:for="{{items.applyInfo}}" wx:key='idx' wx:for-index="idx" wx:for-item="item">
+            <radio color='#0000FF' value="{{item.userName}}" checked="{{item.checked}}"/>{{item.staffName}}
+          </label>
+        </view>
+      </view>
+    </radio-group>
+</view>
+<view class='norecord' wx:else>{{norecord}}</view>

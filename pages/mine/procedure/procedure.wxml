@@ -1,0 +1,17 @@
+<view style='margin-top:10px'> 
+  <view wx:if="{{processInfo.length!=0}}">
+    <block wx:for="{{processInfo}}" wx:key="index">  
+      <view class='order'>  
+        <view class='icon {{0==index?"in":"no_in"}}'></view>  
+        <view class='logistics_centent page_clu'>  
+          <text wx:if="{{item.taskEndTime}}">【{{item.taskActorName}}】处理了【{{item.taskName}}】任务,<text wx:if='{{item.reason}}'>处理意见【{{item.reason}}】</text><text wx:else>处理意见【无】</text></text> 
+          <text wx:else>【{{item.taskActorName}}】正在处理【{{item.taskName}}】任务,<text wx:if='{{item.reason}}'>处理意见【{{item.reason}}】</text><text wx:else>处理意见【无】</text></text>  
+          <text>{{item.taskBeginTime}}</text>  
+        </view>  
+        <view class='on'></view>  
+      </view>  
+    </block>   
+    <view class='icon no_in'></view>
+  </view>
+  <view class='notask' wx:else>暂无对应流程信息</view>
+</view>

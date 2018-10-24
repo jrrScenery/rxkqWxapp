@@ -1,0 +1,19 @@
+ page{background-color: #efeff4;} 
+.viewCard{
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  background-color: #ffffff; 
+  box-shadow: 4px 1px 1px #cccccc;
+  margin: 8px;
+  padding:5px;
+} 
+.perview{
+  padding-top: 5px;
+  display: flex;
+  font-size: 15px
+}
+.noContent{
+  text-align: center;
+  font-size: 15px;
+  margin-top: 20px;
+} 

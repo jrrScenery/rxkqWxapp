@@ -1,0 +1,94 @@
+<view class="appcontainer">
+
+  <view class="wx-cells">
+    <view class="wx-cell"  data-route="../selfInfo/selfInfo" bindtap="navToPage">
+      <view class='userAvatarUrl'>
+        <open-data type="userAvatarUrl"></open-data>
+      </view>
+      <view class="wx-cell-text">
+        <view>{{staffName}}</view>
+        <view>{{topUser}}</view>
+      </view>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view>
+
+  <view class="wx-cells">
+    <view class="wx-cell wx-cell-bottom" data-route="../myattendance/myattendance" bindtap="navToPage">
+      <text class="wx-cell-text">补提考勤</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view>
+
+  <view class="wx-cells-next">
+    <view class="wx-cell wx-cell-bottom"  data-route="../myabsence/myabsence" bindtap="navToPage">
+      <text class="wx-cell-text">请假申请</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view>
+
+  <!-- <view wx:if="{{roleMapList.length!=0}}">
+    <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+      <view class="wx-cells-next" wx:if="{{item.roleName=='pm'}}">   
+        <view id='applyUser' class="wx-cell wx-cell-bottom"  data-route="../overtime/overtime" bindtap="navToPage">
+          <text class="wx-cell-text">加班申请</text>
+          <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+        </view> 
+      </view>
+    </view>
+  </view>  -->
+
+  <view class="wx-cells-next">   
+    <view class="wx-cell wx-cell-bottom"  data-route="../plextrawork/plextrawork" bindtap="navToPage">
+      <text class="wx-cell-text">加班申请</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view>
+
+  <view wx:if="{{roleMapList.length!=0}}">
+    <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+      <view class="wx-cells-next" wx:if="{{item.roleName=='pm'}}">   
+        <view id='bpg' class="wx-cell wx-cell-bottom"  data-route="../overtime/overtime" bindtap="navToPage">
+          <text class="wx-cell-text">报工申请</text>
+          <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+        </view> 
+      </view>
+    </view>
+  </view> 
+
+  <!-- <view class="wx-cells-next">
+    <view class="wx-cell wx-cell-bottom"  data-route="../myaudit/myaudit" bindtap="navToPage">
+      <text class="wx-cell-text">我的待办</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view> -->
+
+  <view class="wx-cells-next">
+    <view class="wx-cell wx-cell-bottom"  data-route="../mybatchaudit/mybatchaudit" bindtap="navToPage">
+      <text class="wx-cell-text">我的待办</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view>
+
+  <view class="wx-cells-next">
+    <view class="wx-cell"  data-route="../submitaudit/submitaudit" bindtap="navToPage">
+      <text class="wx-cell-text">审批记录</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view>
+
+  <!-- <view class="wx-cells">
+    <view class="wx-cell">
+      <text class="wx-cell-text">在线客服</text>
+      <view class="wx-cell-arrow">
+        <contact-button 
+          type="default-dark" 
+          size="20"
+          session-from="weapp"
+        >
+        </contact-button>
+      </view>
+    </view>
+  </view> -->
+
+</view>

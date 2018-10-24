@@ -1,0 +1,59 @@
+{
+  "pages": [
+    "pages/punch/punch",
+    "pages/record/record",
+    "pages/mine/attendance/attendance",
+    "pages/mine/myattendance/myattendance",
+    "pages/mine/lsmyattendance/lsmyattendance",
+    "pages/mine/myabsence/myabsence",
+    "pages/mine/myaudit/myaudit",
+    "pages/mine/mybatchaudit/mybatchaudit",
+    "pages/mine/submitaudit/submitaudit",
+    "pages/mine/overtime/overtime",
+    "pages/mine/attendancedetail/attendancedetail",
+    "pages/mine/procedure/procedure",
+    "pages/mine/selfInfo/selfInfo",
+    "pages/mine/application/application",
+    "pages/mine/attachment/attachment",
+    "pages/mine/plextrawork/plextrawork",
+    "pages/mine/lsplextrawork/lsplextrawork",
+    "pages/mine/plextraworkdetail/plextraworkdetail",
+    "pages/login/login"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#2828FF",
+    "navigationBarTitleText": "考勤登录",
+    "navigationBarTextStyle": "white",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "list": [
+      {
+        "iconPath": "images/punch.png",
+        "selectedIconPath": "images/punch.png",
+        "pagePath": "pages/punch/punch",
+        "text": "考勤打卡",
+        "padding-top": "2px"
+      },
+      {
+        "iconPath": "images/record.png",
+        "selectedIconPath": "images/record.png",
+        "pagePath": "pages/record/record",
+        "text": "打卡记录",
+        "padding-top": "2px"
+      },
+      {
+        "iconPath": "images/mine.png",
+        "selectedIconPath": "images/mine.png",
+        "pagePath": "pages/mine/attendance/attendance",
+        "text": "个人中心",
+        "padding-top": "2px"
+      }],
+    "selectedColor": "#4876FF"
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000
+  },
+  "debug": true
+}

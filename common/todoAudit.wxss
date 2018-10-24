@@ -1,0 +1,83 @@
+/* 查看流程或附件按钮样式 */
+.weui-form-preview__ft{
+  position:relative;
+  line-height:50px;
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:flex;
+  margin-top: 10px
+}
+.weui-form-preview__ft:before{
+  content:" ";
+  position:absolute;
+  left:0;
+  top:0;
+  right:0;
+  height:1px;
+  border-top:1px solid #D5D5D6;
+  color:#D5D5D6;
+  -webkit-transform-origin:0 0;
+          transform-origin:0 0;
+  -webkit-transform:scaleY(0.5);
+          transform:scaleY(0.5);
+}
+.weui-form-preview__item{
+  overflow:hidden;
+}
+.weui-form-preview__label{
+  float:left;
+  margin-right:1em;
+  min-width:4em;
+  color:#808080;
+  text-align:justify;
+  text-align-last:justify;
+}
+.weui-form-preview__value{
+  display:block;
+  overflow:hidden;
+  word-break:normal;
+  word-wrap:break-word;
+}
+.weui-form-preview__btn{
+  position:relative;
+  display:block;
+  -webkit-box-flex:1;
+  -webkit-flex:1;
+          flex:1;
+  color:#09BB07;
+  text-align:center;
+  -webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+}
+button.weui-form-preview__btn{
+  background-color:transparent;
+  border:0;
+  outline:0;
+  line-height:inherit;
+  font-size:inherit;
+}
+.weui-form-preview__btn:active{
+  background-color:#EEEEEE;
+}
+.weui-form-preview__btn:after{
+  content:" ";
+  position:absolute;
+  left:0;
+  top:0;
+  width:1px;
+  bottom:0;
+  border-left:1px solid #D5D5D6;
+  color:#D5D5D6;
+  -webkit-transform-origin:0 0;
+          transform-origin:0 0;
+  -webkit-transform:scaleX(0.5);
+          transform:scaleX(0.5);
+}
+.weui-form-preview__btn:first-child:after{
+  display:none;
+}
+.weui-form-preview__btn_default{
+  color:#09BB07;
+}
+.weui-form-preview__btn_primary{
+  color:#09BB07;
+}
