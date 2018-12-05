@@ -31,14 +31,15 @@ page{
 } 
   
 .inputView { 
- width:90%;
- margin-left: 5%;
+ width:96%;
+ margin-left: 2%;
  background-color: #fff; 
  line-height: 44px; 
+ display: flex
 } 
 /*输入框*/
 .nameImage, .keyImage { 
- margin-left: 22px; 
+ margin-left: 10px; 
  width: 16px; 
  height: 14px
 } 
@@ -46,16 +47,16 @@ page{
 .loginLab { 
  margin: 15px 15px 15px 10px; 
  color: #545454; 
- font-size: 14px
+ font-size: 14px;
 } 
 .inputText { 
- flex: block; 
- float: right; 
+ /* flex: block; 
+ float: right;  */
  text-align: left; 
  margin-top: 11px; 
  color: #cccccc; 
  font-size: 14px;
- width:65%
+ /* width:65% */
 } 
   
 .line { 
@@ -75,7 +76,18 @@ page{
  padding-bottom: 0px; 
  margin-left: 5%
 } 
-  
+
+.getPhoneView{
+  margin-right:2%;
+  text-align:center;
+  height: 30px;
+  margin-top: 3%
+}
+.getPhoneBtn{
+  background-color:blue;
+  color: #ffffff;
+  text-align: center
+}
 .loginBtn { 
  background-color:blue;
  color:#ffffff;

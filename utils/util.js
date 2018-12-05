@@ -106,6 +106,87 @@ function getPostRequest(url, data, success) {
   });
 }
 
+function sendUniformMessage(data,success){
+  var accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxa8405bb1ac18d4b5&secret=99f4bc81bd325c4cc40215c8ece52adb";
+  wx.request({
+    url: accessTokenUrl,
+    success: function (res) {
+      console.log(res);       
+        var access_token = res.data.access_token;
+        var sendTemplateUrl = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=" + access_token;
+        getPostRequest(sendTemplateUrl, data, success);
+    }
+  })
+}
+//流程待办提醒
+function getSendTemplateData(touser, processId, template_id,leaveName,leaveType,staffName){
+  var sendTemplateData = {
+    touser: touser,
+    mp_template_msg: {
+      appid: 'wxb75346adcf2d7a64',
+      template_id: template_id,
+      url: "pages/mine/mybatchaudit/mybatchaudit",
+      miniprogram: {
+        appid: "wxa8405bb1ac18d4b5",
+        pagepath: "pages/mine/myaudit/myaudit" + "?id=" + processId
+      },
+      data: {
+        first: {
+          "value": leaveName+"审批提醒",
+          "color": "#173177"
+        },
+        keyword1: {
+          value: leaveType + "-" + staffName
+        },
+        keyword2: {
+          value: formatTime(new Date())
+        },
+      }
+    }
+  }
+  function success(res) {
+    console.log(res)
+  }
+  sendUniformMessage(sendTemplateData, success);
+}
+//流程审核提醒
+function getSendTemplateResult(touser, processId,template_id, leaveName, leaveType,auditType) {
+  var firstName='';
+  if (auditType=='ok'){
+    firstName = "您的" + leaveName + "流程已审核通过"
+  }else{
+    firstName = "您的" + leaveName + "流程已驳回"
+  }
+  var sendTemplateResult = {
+    touser: touser,
+    mp_template_msg: {
+      appid: 'wxb75346adcf2d7a64',
+      template_id: template_id,
+      url: "pages/mine/mybatchaudit/mybatchaudit",
+      miniprogram: {
+        appid: "wxa8405bb1ac18d4b5",
+        pagepath: "pages/mine/mybatchaudit/mybatchaudit" + "?id=" + processId
+      },
+      data: {
+        first: {
+          "value": firstName,
+          "color": "#173177"
+        },
+        keyword1: {
+          value: leaveType+"申请"
+        },
+        keyword2: {
+          value: formatTime(new Date())
+        },
+      }
+    }
+  }
+  function success(res) {
+    console.log(res)
+  }
+  sendUniformMessage(sendTemplateResult, success);
+}
+
 function upload(url,page, path,data,success) {
   wx.uploadFile({
     url: url,
@@ -115,7 +196,6 @@ function upload(url,page, path,data,success) {
     header: { "Content-Type": "multipart/form-data/application/json" },
     success: success,
     fail: function (e) {
-      console.log(e);
       wx.showModal({
         title: '提示',
         content: '提交失败',
@@ -149,7 +229,8 @@ function getType(){
       9: "丧假",
       10: "迟到",
       11: "早退",
-      12: "旷工"
+      12: "旷工",
+      13: "产检假"
     },
     relaxation:{
       0:"调休",
@@ -182,6 +263,9 @@ module.exports = {
   getPostRequest: getPostRequest,
   getType: getType,
   navigateTo: navigateTo,
-  upload:upload
+  upload:upload,
+  sendUniformMessage: sendUniformMessage,
+  getSendTemplateData: getSendTemplateData,
+  getSendTemplateResult: getSendTemplateResult
 }
 

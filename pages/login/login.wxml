@@ -6,23 +6,39 @@
   
     <!--账号-->
     <view class="inputView"> 
-      <image class="nameImage" src="../../images/user.png"></image> 
-      <label class="loginLab">账号</label> 
-      <input class="inputText" placeholder="请输入交付宝账号" bindinput="phoneInput" /> 
+      <view style='width:10%'>
+        <image class="nameImage" src="../../images/user.png"></image> 
+      </view>
+      <view style='width:20%'>
+        <label class="loginLab">账号</label> 
+      </view>
+      <view style='width:45%;'>
+        <input class="inputText" placeholder="请输入交付宝账号" value='{{account}}' bindinput="phoneInput"/> 
+      </view>
+      <!-- <view class='getPhoneView'>
+        <button class='getPhoneBtn' size='mini' open-type='getPhoneNumber' bindgetphonenumber='getPhoneNumber'>获取</button>
+      </view> -->
     </view> 
     <view class="line"></view> 
   
     <!--密码-->
     <view class="inputView"> 
-      <image class="keyImage" src="../../images/password.png"></image> 
-      <label class="loginLab">密码</label> 
-      <input class="inputText" password="true" placeholder="请输入交付宝密码" bindinput="passwordInput" /> 
+      <view style='width:10%'>
+        <image class="keyImage" src="../../images/password.png"></image> 
+      </view>
+      <view  style='width:20%'>
+        <label class="loginLab">密码</label> 
+      </view>
+      <view style='width:70%'>
+        <input class="inputText" password="true" placeholder="请输入交付宝密码" bindinput="passwordInput"/> 
+      </view>
     </view> 
   
     <!--按钮-->
     <view class="loginBtnView"> 
       <button class="loginBtn" size="{{primarySize}}" loading="{{loading}}" plain="{{plain}}" disabled="{{disabled}}" bindtap="login">登录</button> 
     </view> 
+
   </view> 
 </view>
 

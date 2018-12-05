@@ -24,13 +24,20 @@
 
       <view class="wx-cell wx-cell-bottom">
         <view class='required'>*</view>
-        <view class="wx-cell-text">项目编号:</view>
+        <view class="wx-cell-text" style='width:30%'>项目地址:</view>
+        <picker name='prjCode' style='width:65%' value='{{selectedAddrIndex}}' range='{{prjCode}}' range-key="address" bindchange="addrChange">
+          <view class='picker'>
+            <view>{{prjCode[selectedAddrIndex].address}}</view>
+          </view>
+        </picker>    
+        <image class="wx-cell-arrow" style='width:5%' src="../../../images/right.png"></image>
+        <!-- <view class="wx-cell-text">项目编号:</view>
         <picker name='prjCode' value='{{selectedCodeIndex}}' range='{{prjCode}}' range-key="prjCode" bindchange="prjCodeChange">
           <view class='picker'>
             <view>{{prjCode[selectedCodeIndex].prjCode}}</view>
           </view>
         </picker>    
-        <image class="wx-cell-arrow" style='width:5%' src="../../../images/right.png"></image>
+        <image class="wx-cell-arrow" style='width:5%' src="../../../images/right.png"></image> -->
       </view> 
     </view>
     <view class="wx-cells-time">
@@ -63,12 +70,12 @@
       </view> 
     </view>
     
-    <view id='applyUser' wx:if='{{sortId == "applyUser"}}' class="wx-cells-time" data-route="../application/application">
+    <view id='applyUser' wx:if='{{sortId == "applyUser"}}' class="wx-cells-time" data-route="../application/application" bindtap="navToPage">
       <view class="wx-cell wx-cell-bottom">
         <view class='required'>*</view>
         <text class="wx-cell-text">申请人:</text>
         <input name='applyUser' class='applyView' disabled='true' value='{{applyUser}}'></input>
-        <!-- <image class="wx-cell-arrow" src="../../../images/right.png"></image> -->
+        <image class="wx-cell-arrow" src="../../../images/right.png"></image>
       </view>
     </view>
 

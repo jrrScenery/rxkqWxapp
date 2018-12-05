@@ -9,9 +9,9 @@
         <image class='rightImg' src='../../../images/right.png'></image>
       </view> 
     </view>
-    <view id='applyUser' class='perextra' data-route="../overtime/overtime" bindtap="getperextra">
+    <!-- <view id='applyUser' class='perextra' data-route="../overtime/overtime" bindtap="getperextra">
       补提加班
-    </view> 
+    </view>  -->
   </view>
 
   <view class="table">

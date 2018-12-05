@@ -1,8 +1,10 @@
 var util = require('../../../utils/util.js');
 var date = new Date();
-var start = new Date(date.getFullYear()+ "-" + date.getMonth() + "-1");
-var beginDate = util.formatTime(start).substring(0, 10);
-var a = new Date(new Date().getFullYear() + "-12-31");
+// var newDate = date.getFullYear() +"-" + date.getMonth() +"-"+date.getDate();
+var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
+var beginDate = util.formatTime(date).substring(0, 10);
+var a = new Date((new Date().getFullYear()+1) + "-12-31");
+var oribeginDate = util.formatTime(start).substring(0, 10);
 var enddate = util.formatTime(a).substring(0, 10);
 var bpgStart = new Date();
 var bpgBeginDate = util.formatTime(date).substring(0, 10);
@@ -17,8 +19,8 @@ Page({
     endDate: "",
     selectBeginDate: "",
     selectEndDate: "",
-    beginTime: "09:00",
-    endTime: "18:00",
+    beginTime: "00:00",
+    endTime: "23:59",
     selectBeginTime: "09:00",
     selectEndTime: "23:59",
     reason: "",
@@ -38,30 +40,67 @@ Page({
     selectInfo.sortId = id;
     if (id == 'applyUser'){
       selectInfo.selectedIndex = that.data.selectedIndex;
+      if (that.data.prjCode.length != 0){
+        var selectedAddrIndex = that.data.selectedAddrIndex;
+        selectInfo.selectedAddrIndex = selectedAddrIndex;
+        selectInfo.prjCode = that.data.prjCode[selectedAddrIndex].prjCode;
+        selectInfo.prjId = that.data.prjCode[selectedAddrIndex].prjId;
+      }
     }else{
       if (that.data.address.length!=0){
-        console.log(that.data.address);
         var selectedAddrIndex = that.data.selectedAddrIndex;
         selectInfo.selectedAddrIndex = selectedAddrIndex;
         selectInfo.prjCode = that.data.address[selectedAddrIndex].prjCode;
         selectInfo.prjId = that.data.address[selectedAddrIndex].prjId;
       }
     }
+    console.log(that.data)
     selectInfo.selectBeginDate = that.data.selectBeginDate;
     selectInfo.selectEndDate = that.data.selectEndDate;
     selectInfo.selectBeginTime = that.data.selectBeginTime;
     selectInfo.selectEndTime = that.data.selectEndTime;
     selectInfo.reason = that.data.reason;
-    if (that.data.address.length != 0){
-      wx.navigateTo({
-        url: route + "?selectInfo=" + JSON.stringify(selectInfo)
-      })
+    console.log(selectInfo)
+    if (id == 'applyUser'){
+      if (that.data.prjCode.length!=0){
+        wx.navigateTo({
+          url: route + "?selectInfo=" + JSON.stringify(selectInfo)
+        })
+      }else{
+        wx.showToast({
+          title: '没有对应项目地址，不能选择申请人',
+          icon: "none"
+        }, 2000)
+      }
     }else{
-      wx.showToast({
-        title: '没有对应项目地址，不能选择报工人',
-        icon:"none"
-      },2000)
+      if (that.data.address.length != 0) {
+        wx.navigateTo({
+          url: route + "?selectInfo=" + JSON.stringify(selectInfo)
+        })
+      }else{
+        wx.showToast({
+          title: '没有对应项目地址，不能选择报工人',
+          icon: "none"
+        }, 2000)
+      }
     }
+    // if (that.data.address.length != 0){
+    //   wx.navigateTo({
+    //     url: route + "?selectInfo=" + JSON.stringify(selectInfo)
+    //   })
+    // }else{
+    //   if (id == 'applyUser'){
+    //     // wx.showToast({
+    //     //   title: '没有对应项目地址，不能选择申请人',
+    //     //   icon: "none"
+    //     // }, 2000)
+    //   }else{
+    //     wx.showToast({
+    //       title: '没有对应项目地址，不能选择报工人',
+    //       icon:"none"
+    //     },2000)
+    //   }
+    // }
   },
 
   beginDateChange: function (e) {
@@ -132,17 +171,16 @@ Page({
     })
   },
   
-  prjCodeChange: function(e) {
-    this.setData({
-      selectedCodeIndex: parseInt(e.detail.value)
-    })
-  },
+  // prjCodeChange: function(e) {
+  //   this.setData({
+  //     selectedCodeIndex: parseInt(e.detail.value)
+  //   })
+  // },
   formSubmit: function (e) {
     console.log(e);
     var that = this;
     var value = e.detail.value;
-    console.log(value);
-    console.log(that.data.address);
+
     if (that.data.address.length == 0 && that.data.sortId=='bpg'){
       wx.showToast({
         title: '没有领导项目，不能提交报工申请',
@@ -190,6 +228,7 @@ Page({
       }
       console.log(postdata);
       function success(res) {
+        console.log(res)
         if(res.data.code == 200){
           wx.showToast({
             title: '提交成功',
@@ -208,10 +247,13 @@ Page({
               reason: "",
               selectedIndex: 0
             })
-          }else{
+            var opMap = res.data.opMap;
+            var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
+            util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "报工", "报工", that.data.staffName);
+          }else{                        
             that.setData({
               id: null,
-              beginDate: beginDate,
+              beginDate: oribeginDate,
               endDate: enddate,
               selectBeginDate: beginDate,
               selectEndDate: beginDate,
@@ -220,6 +262,9 @@ Page({
               reason: "",
               selectedIndex: 0
             })
+            var opMap = res.data.opMap;
+            var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
+            util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "加班", that.data.abstype[e.detail.value.leaveType], that.data.staffName);
           }
         } else if (res.data.code == 99) {
           util.mineRedirect(res.data.message);
@@ -257,28 +302,31 @@ Page({
     var m = 0;
     var n=0;
     var prjMapList = wx.getStorageSync("loginData").prjMapList;
-    
+    console.log(prjMapList);
     for (var i = 0; i < prjMapList.length; i++) {
-      var prjCodeObj = {};
       var addressList = prjMapList[i].addressMapList;
       for (var j = 0; j < addressList.length; j++) {
+        var prjCodeObj = {};
         if (options.transdata && options.transdata.sortId=='bpg'){
-          if (JSON.parse(options.transdata).addrId == addressList[i].addrId){
+          if (JSON.parse(options.transdata).addrId == addressList[j].addrId){
             m = k;
           }
         }
+        console.log(addressList[j].address)
+        prjCodeObj.prjId = prjMapList[i].prjId;
+        prjCodeObj.addrId = addressList[j].addrId;
+        prjCodeObj.address = prjMapList[i].prjCode + "-" + addressList[j].address;
+        prjCodeObj.prjType = prjMapList[i].prjType;
+        prjCodeObj.prjCode = prjMapList[i].prjCode;
+        prjCode[i] = prjCodeObj;
       }
-      prjCodeObj.prjId = prjMapList[i].prjId;
-      prjCodeObj.prjCode = prjMapList[i].prjCode;
-      prjCode[i] = prjCodeObj;
     }
     var leadPrjMapList = wx.getStorageSync("loginData").leadPrjMapList;
-    console.log(leadPrjMapList);
     for (var i = 0; i < leadPrjMapList.length; i++) {
       var addressList = leadPrjMapList[i].addressMapList;
       for (var j = 0; j < addressList.length; j++) {
         if (options.transdata) {
-          if (JSON.parse(options.transdata).addrId == addressList[i].addrId) {
+          if (JSON.parse(options.transdata).addrId == addressList[j].addrId) {
             n = k;
           }
         }
@@ -295,15 +343,16 @@ Page({
       address: address,
       selectedAddrIndex: m,
       selectedCodeIndex:n,
-      prjCode: prjCode
+      prjCode: prjCode,
+      staffName: wx.getStorageSync("loginData").staffName
     })
     console.log(that.data.address);
     if (options.sortId == 'applyUser'){
       wx.setNavigationBarTitle({
-        title: '补提加班申请',
+        title: '加班申请',
       })
       that.setData({
-        beginDate: beginDate,
+        beginDate: oribeginDate,
         selectBeginDate: beginDate,
         selectEndDate: beginDate,
       })
@@ -324,7 +373,7 @@ Page({
       var transdata = JSON.parse(options.transdata);
       if (transdata.sortId == 'applyUser'){
         wx.setNavigationBarTitle({
-          title: '补提加班申请',
+          title: '加班申请',
         })
       }else{
         wx.setNavigationBarTitle({
@@ -334,8 +383,8 @@ Page({
     }
     if (options.transdata){
       var transdata = JSON.parse(options.transdata);
-      var optionsBeginDate = new Date(transdata.selectBeginDate);
-      var optionsEndDate = new Date(transdata.selectEndDate)
+      var optionsBeginDate = new Date(transdata.selectBeginDate.replace(/\-/g, '/'));
+      var optionsEndDate = new Date(transdata.selectEndDate.replace(/\-/g, '/'))
       that.setData({
         sortId: transdata.sortId,
         id: transdata.id,

@@ -7,6 +7,17 @@
   display:flex;
   margin-top: 10px
 }
+
+.weui-form-preview__solau{
+  position:relative;
+  line-height:50px;
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:flex;
+  margin-top: 10px;
+  border-bottom:1px solid #D5D5D6;
+}
+
 .weui-form-preview__ft:before{
   content:" ";
   position:absolute;

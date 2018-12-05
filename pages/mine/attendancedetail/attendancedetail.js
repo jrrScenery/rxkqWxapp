@@ -13,6 +13,9 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
+    wx.showLoading({
+      title: '加载中',
+    })
     var processStatus = util.getType().processStatus;
     var leaveType = util.getType().leaveType;
     var id = options.id;
@@ -23,7 +26,11 @@ Page({
       encryption: wx.getStorageSync("encryption"),     
     }
     function success(res){
+      wx.hideLoading();
       if(res.data.code == 200){
+        wx.setNavigationBarTitle({
+          title: '考勤详情-' + res.data.submitor,
+        })
         that.setData({
           attendancedetail: res.data,
           processStatus: processStatus,

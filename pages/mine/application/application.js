@@ -1,4 +1,3 @@
-// pages/mine/application/application.js
 var util = require('../../../utils/util.js');
 Page({
   /**
@@ -17,62 +16,63 @@ Page({
       this.setData({
         searchInfo: ''
       })
-      this.application(this.data.selectInfo);
+      // this.application(this.data.selectInfo);
     }
   },
 //监听搜索按钮点击事件
   searchBindTap:function(e){
     var that = this;
-    if (that.data.searchInfo!=null){ 
-      if (that.data.selectInfo.sortId == 'applyUser'){
-        var flag = true;
-        var queryApplyInfos = [];
-        console.log(that.data.applyInfos);
-        var k = 0;
-        var m = 0;
-        for (var i = 0; i < that.data.applyInfos.length;i++){
-          var applyInfo = that.data.applyInfos[i].applyInfo;
-          var apply = {};
-              apply.prjId = that.data.applyInfos[i].prjId;
-              apply.prjCode = that.data.applyInfos[i].prjCode;
-              apply.prjName = that.data.applyInfos[i].prjName;
-              apply.applyInfo = [];
-              queryApplyInfos[m] = apply;
-              console.log(k);
-          for (var j = 0; j < applyInfo.length;j++){
-            if (applyInfo[j].staffName.indexOf(that.data.searchInfo)>-1){  
-              console.log(applyInfo[j].staffName);            
-                  apply.applyInfo[k] = that.data.applyInfos[i].applyInfo[j];
-                  flag = false;
-                  k++;
-            }
-          }
-          m++;
-        }
-        that.setData({
-          applyInfos: queryApplyInfos
-        })
-        console.log(queryApplyInfos);
-        if (flag){
-          wx.showToast({
-            title: '申请人输入错误！',
-            icon:'none',
-            duration:2000
-          })
-        }
-      } else{
-        that.application(that.data.selectInfo);
-      }   
-    }else{
-      that.application(that.data.selectInfo);
-    }
+    that.application(that.data.selectInfo);
+    // if (that.data.searchInfo!=null){ 
+    //   if (that.data.selectInfo.sortId == 'applyUser'){
+    //     var flag = true;
+    //     var queryApplyInfos = [];
+    //     var k = 0;
+    //     var m = 0;
+    //     for (var i = 0; i < that.data.applyInfos.length;i++){
+    //       var applyInfo = that.data.applyInfos[i].applyInfo;
+    //       var apply = {};
+    //           apply.prjId = that.data.applyInfos[i].prjId;
+    //           apply.prjCode = that.data.applyInfos[i].prjCode;
+    //           apply.prjName = that.data.applyInfos[i].prjName;
+    //           apply.applyInfo = [];
+    //           queryApplyInfos[m] = apply;
+    //       for (var j = 0; j < applyInfo.length;j++){
+    //         if (applyInfo[j].staffName.indexOf(that.data.searchInfo)>-1){         
+    //               apply.applyInfo[k] = that.data.applyInfos[i].applyInfo[j];
+    //               flag = false;
+    //               k++;
+    //         }
+    //       }
+    //       m++;
+    //     }
+    //     that.setData({
+    //       applyInfos: queryApplyInfos
+    //     })
+    //     console.log(that.data)
+    //     if (flag){
+    //       wx.showToast({
+    //         title: '申请人输入错误！',
+    //         icon:'none',
+    //         duration:2000
+    //       })
+    //     }
+    //     // that.application(that.data.selectInfo);
+    //   } else{
+    //     that.application(that.data.selectInfo);
+    //   }   
+    // }else{
+    //   that.application(that.data.selectInfo);
+    // }
   },
 //监听单选按钮值的改变
   radioChange: function (e) {
+    console.log(e)
     this.selectApply(e.detail.value);
   },
 //选择单选框事件
   selectApply: function (e) {
+    console.log(e)
     var that = this;
         that.data.selectInfo.applyUser = e;
     var pages = getCurrentPages();
@@ -81,20 +81,41 @@ Page({
 
     //直接调用上一个页面的setData()方法，把数据存到上一个页面中去
     var selectInfo = that.data.selectInfo;
-    prevPage.setData({
-        selectedAddrIndex: parseInt(selectInfo.selectedAddrIndex),
-        selectedIndex: parseInt(selectInfo.selectedIndex),
-        selectBeginDate: selectInfo.selectBeginDate,
-        selectEndDate: selectInfo.selectEndDate,
-        selectBeginTime: selectInfo.selectBeginTime,
-        selectEndTime: selectInfo.selectEndTime,
-        applyUser: selectInfo.applyUser,
-        reason: selectInfo.reason
-    })
-    wx.navigateBack();
+    console.log(selectInfo)
+    if (that.data.sortId =='kqHistory'){
+      for (var i = 0; i < that.data.applyInfos.length; i++) {
+        var applyInfo = that.data.applyInfos[i].applyInfo;
+        for (var j = 0; j < applyInfo.length; j++) {
+          if (applyInfo[j].userName == selectInfo.applyUser) {
+            prevPage.setData({
+              applyUser: applyInfo[j].staffName,
+              userName: selectInfo.applyUser
+            })
+          }
+        }
+      }
+      wx.navigateBack({
+        success: function () {
+          prevPage.getQueryAttn(prevPage.data.selectDate, prevPage.data.wholeMonth); // 执行前一个页面的getQueryAttn方法
+        }
+      });
+    }else{
+      prevPage.setData({
+          selectedAddrIndex: parseInt(selectInfo.selectedAddrIndex),
+          selectedIndex: parseInt(selectInfo.selectedIndex),
+          selectBeginDate: selectInfo.selectBeginDate,
+          selectEndDate: selectInfo.selectEndDate,
+          selectBeginTime: selectInfo.selectBeginTime,
+          selectEndTime: selectInfo.selectEndTime,
+          applyUser: selectInfo.applyUser,
+          reason: selectInfo.reason
+      })
+      wx.navigateBack();
+    }
   },
 //请求服务器获取相关权限下申请人信息
   application: function (options){
+    console.log(options)
     var that = this;
     wx.showLoading({
       title: '加载中',
@@ -105,19 +126,26 @@ Page({
       encryption: wx.getStorageSync("encryption"),           
     }
     var conditions = {};
-    console.log(that.data);
-    conditions.page = that.data.page;
+    // conditions.page = that.data.page;
     if (options.sortId =='applyUser'){
       postdata.applyType = 0;
-      postdata.conditions = conditions;
-    }else{
+      postdata.applyPrjId = options.prjId;
+      // if (that.data.searchInfo) {
+      //   conditions.name = that.data.searchInfo;
+      // }   
+    } else if (options.sortId == 'bpg'){
       postdata.applyType = 1;
       postdata.applyPrjId = options.prjId;
-      if (that.data.searchInfo){
-        conditions.name = that.data.searchInfo;
-      }     
-      postdata.conditions = conditions;
+      // if (that.data.searchInfo){
+      //   conditions.name = that.data.searchInfo;
+      // }     
+    }else{
+      postdata.applyType = 0;
     }
+    if (that.data.searchInfo) {
+      conditions.name = that.data.searchInfo;
+    }   
+    postdata.conditions = conditions;
     console.log(postdata)
     function success(res) {
       console.log(res);
@@ -145,8 +173,10 @@ Page({
   onLoad: function (options) {
     var that = this;
     var selectInfo = JSON.parse(options.selectInfo);
+    console.log(selectInfo)
     that.setData({
       selectInfo: selectInfo,
+      sortId: selectInfo.sortId,
       // page: 1
     })
     that.application(selectInfo);
@@ -157,12 +187,19 @@ Page({
       wx.setNavigationBarTitle({
         title: '选择申请人',
       })
-    }else{
+    } else if (selectInfo.sortId =='bpg'){
       that.setData({
         norecord: '无对应的报工人'
       })
       wx.setNavigationBarTitle({
         title: '选择报工人',
+      })
+    }else{
+      that.setData({
+        norecord: '无对应的员工考勤记录'
+      })
+      wx.setNavigationBarTitle({
+        title: '选择员工姓名',
       })
     }
     

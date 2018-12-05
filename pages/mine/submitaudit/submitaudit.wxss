@@ -29,6 +29,20 @@ page{background-color: #efeff4;}
   width:70%;
   text-align:right
 }
+/* 
+.submitTime{
+  display: flex;
+  width:70%;
+}
+.submitday{
+  width:65%;
+  text-align:right;
+}
+.submithour{
+  width:35%;
+  text-align:right;
+} */
+
 .notask{
   text-align: center;
   font-size: 15px;

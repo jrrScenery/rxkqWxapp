@@ -14,7 +14,6 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
-    var addressMapList = null;
     var prjMapList = null;
     wx.getStorage({
       key: 'loginData',
@@ -34,6 +33,7 @@ Page({
   },
 
   updateInfo:function(){
+    var that = this;
     var updateUrl = util.requestService("/api/hrkq/update");
     var update = {
       encryption: wx.getStorageSync("encryption"),
@@ -51,6 +51,20 @@ Page({
         wx.setStorage({
           key: 'loginData',
           data: res.data,
+        })
+        var prjMapList = null;
+        wx.getStorage({
+          key: 'loginData',
+          success: function (res) {
+            that.setData({
+              staffName: res.data.staffName,
+              topUser: res.data.topUser,
+              leadPrjMapList: res.data.leadPrjMapList,
+              prjMapList: res.data.prjMapList,
+              residueDay: res.data.residueDay,
+              restDay: res.data.restDay
+            })
+          },
         })
       } else {
         wx.showToast({

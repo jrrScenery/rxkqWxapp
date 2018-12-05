@@ -6,10 +6,6 @@
         <view>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
         <view style='font-size:13px;color:grey;padding-top:5px'>{{item.attnMonth}}</view>
       </view>
-      <view class='perview'>
-        <view class='view-title'>审批类型：</view>
-        <view class='view-value'>{{loaType[item.loaType]}}</view>
-      </view>
 
       <view class='perview'>
         <view class='view-title'>项目编号：</view> 
@@ -22,11 +18,7 @@
       </view>
 
       <view class='perview'>
-        <view class='view-title'>提交人：</view>
-        <view class='view-value'>{{item.submitor}}</view>
-      </view>
-      <view class='perview'>
-        <view class='view-title'>请假时长：</view>
+        <view class='view-title'>缺勤时长：</view>
         <view class='view-value'>{{item.leavedays}}天{{item.leavehours}}小时</view>
       </view>
       <view class='perview'>
@@ -42,7 +34,6 @@
           <button type="submit" class="weui-form-preview__btn weui-form-preview__btn_primary" data-route="../attendancedetail/attendancedetail" data-id="{{item.id}}" data-current="{{item.loaType}}" bindtap='checkaudit'>查看详情</button>
           <button type="submit" class="weui-form-preview__btn weui-form-preview__btn_default" data-route="../procedure/procedure" data-id="{{item.id}}" bindtap='checkaudit'>查看流程</button>
       </view>
-
       <!-- <view class="weui-form-preview__ft" data-route="../procedure/procedure" data-id="{{item.id}}" bindtap='checkaudit'>
           <button type="submit" class="weui-form-preview__btn weui-form-preview__btn_primary">查看流程</button>
       </view> -->
@@ -51,11 +42,7 @@
     <view wx:else>
       <view class='titleView'>
         <view>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
-        <view style='font-size:13px;color:grey;padding-top:5px'>{{item.attnMonth}}</view>
-      </view>
-      <view class='perview'>
-        <view class='view-title'>审批类型：</view>
-        <view class='view-value'>{{loaType[item.loaType]}}</view>
+        <view style='font-size:13px;color:grey;padding-top:5px'>{{item.leaveMonth}}</view>
       </view>
 
       <view class='perview'>
@@ -70,13 +57,13 @@
 
       <view class='perview' wx:if='{{item.loaType==4}}'>
         <view class='view-title'>加班时长：</view>
-        <view class='view-value'>{{item.leavehour}}</view>
+        <view class='view-value'>{{item.leavedays}}天{{item.leavehours}}小时</view>
       </view>
 
-      <view class='perview'>
+      <!-- <view class='perview'>
         <view class='view-title'>提交人：</view>
         <view class='view-value'>{{item.submitor}}</view>
-      </view>
+      </view> -->
 
       <view class='perview' wx:if="{{item.loaType==0}}">
         <view class='view-title'>请假类型：</view>

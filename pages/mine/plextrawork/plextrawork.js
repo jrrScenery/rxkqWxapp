@@ -26,13 +26,13 @@ Page({
       that.queryLeaveMonth();
     }
   },
-  getperextra:function(event){
-    let route = event.currentTarget.dataset.route;
-    let sortId = event.currentTarget.id;
-    wx.navigateTo({
-      url: route + "?sortId=" + sortId
-    })
-  },
+  // getperextra:function(event){
+  //   let route = event.currentTarget.dataset.route;
+  //   let sortId = event.currentTarget.id;
+  //   wx.navigateTo({
+  //     url: route + "?sortId=" + sortId
+  //   })
+  // },
 
   //加班原因多行文本框事件
   textareabindblur: function (e) {
@@ -84,6 +84,12 @@ Page({
           askInfo: that.data.askInfo,
           submitflag: true
         })
+        var opMapList = res.data.opMapList;
+        var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
+        //流程待办提醒
+        for (var i = 0; i < opMapList.length; i++) {
+          util.getSendTemplateData(opMapList[i].openId, opMapList[i].processId, templateId, "批量加班", "批量加班", that.data.staffName);
+        }
       } else if (res.data.code == 99){
         util.mineRedirect(res.data.message);
       } else {
@@ -220,6 +226,9 @@ Page({
     var that = this;
     wx.showLoading({
       title: '加载中'
+    })
+    that.setData({
+      staffName: wx.getStorageSync("loginData").staffName
     })
     if (options.transdata) {//处理考勤页面点击驳回修改按钮传递过来的驳回数据
       that.modifyLeaveDetail(options.transdata);

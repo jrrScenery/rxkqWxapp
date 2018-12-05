@@ -18,9 +18,24 @@ Page({
     date: "",
     norecord:"",
     dayrecordInfo:"",
-    slidFlag:true
+    slidFlag:true,
+    color: [{ month: 'current'}, { day: '2018-11-06' }, { color: '#ffffff'}, { background:"#436EEE"}]
   },
 
+  // next:function(e){
+  //   console.log(e);
+  // },
+
+  // prev:function(e){
+  //   console.log(e);
+  // },
+
+  // dayClick:function(e){
+  //   console.log(e);
+  //   this.setData({
+  //     color: ["#436EEE"]
+  //   })
+  // },
   mytouchstart:function(e){
     var that = this;
     this.setData({
@@ -129,34 +144,19 @@ Page({
       })
       //获取点击日期的打卡记录
       that.getdayrecordInfo(year, months, currentnum);
-      if (that.data.dayrecordInfo.punchDateNum == currentnum && that.data.dayrecordInfo.punchDateMonth == months){
-        this.setData({
+      if (that.data.dayrecordInfo.punchDateNum == currentnum && that.data.month == months){
+        var recordInfo = that.data.dayrecordInfo;
+        that.setData({
           dayrecordInfo: recordInfo
         })
+        console.log(that.data)
       }else{
-        this.setData({
+        that.setData({
           dayrecordInfo: ""
         })
       }
     }
   },
-
-  // checkEncryption: function (url, postdata, success) {
-  //   if (wx.getStorageSync("encryption")) {
-  //     wx.checkSession({
-  //       success: function (res) {
-  //         util.getPostRequest(url, postdata, success);
-  //       },
-  //       fail: function () {
-  //         wx.hideLoading();
-  //         util.redirect("登录失效，请重新登录");
-  //       }
-  //     })
-  //   } else {
-  //     wx.hideLoading();
-  //     util.redirect("您未登录，请先登录");
-  //   }
-  // },
 
   getdayrecordInfo:function(year,months,date){
     var that = this;
@@ -168,6 +168,7 @@ Page({
       encryption: wx.getStorageSync("encryption")
     }
     function success(res){
+      console.log(res)
       if(res.data.code == 200){
         that.setData({
             dayrecordInfo: res.data
@@ -183,8 +184,6 @@ Page({
       }
     }
     util.checkEncryption(url, postdata, success);
-    // that.checkEncryption(url, postdata, success);
-    // util.getPostRequest(url, postdata,success);
   },
 
   getrecords: function (year, months,date){
@@ -196,6 +195,7 @@ Page({
       encryption: wx.getStorageSync("encryption")
     }
     function success(res){
+      console.log(res)
       wx.hideLoading();
       if(res.data.code == 200){
         that.setData({
@@ -258,6 +258,7 @@ Page({
       this.data.arr.push(i);
     }
     var res = wx.getSystemInfoSync();   //获取系统信息同步接口
+    console.log(res);
     var date = new Date();
     var sysW = null;
     //根据手机类型获取相应屏幕宽度
@@ -265,6 +266,7 @@ Page({
       sysW = res.windowHeight;
     }else{
       sysW = res.screenHeight;
+      // sysW = res.windowHeight
     }
     this.setData({
       sysW: sysW / 12,  //根据屏幕宽度变化自动设置宽度

@@ -16,6 +16,7 @@ Page({
     console.log(options);
     var that = this;
     var processStatus = util.getType().processStatus;
+    var relaxation = util.getType().relaxation;
     var processId = options.id;
     var url = util.requestService("/api/hrkq/queryLeaveDetail");
     var postdata = {
@@ -29,7 +30,8 @@ Page({
       if(res.data.code == 200){
         that.setData({
           askInfoDetail: res.data.askInfoDetail,
-          processStatus: processStatus
+          processStatus: processStatus,
+          relaxation: relaxation
         })
       } else if (res.data.code == 99){
         util.mineRedirect(res.data.message);

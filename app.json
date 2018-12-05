@@ -18,6 +18,7 @@
     "pages/mine/plextrawork/plextrawork",
     "pages/mine/lsplextrawork/lsplextrawork",
     "pages/mine/plextraworkdetail/plextraworkdetail",
+    "pages/mine/attendancehistory/attendancehistory",
     "pages/login/login"
   ],
   "window": {
@@ -55,5 +56,11 @@
     "request": 10000,
     "connectSocket": 10000
   },
-  "debug": true
+  "debug": true,
+  "plugins": {
+    "calendar": {
+      "version": "1.1.3",
+      "provider": "wx92c68dae5a8bb046"
+    }
+  }
 }

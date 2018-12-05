@@ -6,10 +6,6 @@ App({
     if (wx.getStorageSync("encryption")) {
       wx.checkSession({
         success: function (res) {
-          // wx.showToast({
-          //   title: "encryptionSuccess:'" + JSON.stringify(res)+"'",
-          //   icon: 'none'
-          // })
           var updateUrl = util.requestService("/api/hrkq/update");
           var update = {
             encryption: wx.getStorageSync("encryption"),
@@ -41,9 +37,6 @@ App({
           util.getPostRequest(updateUrl, update, success);
         },
         fail: function () {
-          // wx.showToast({
-          //   title: "encryptionFail:'" + JSON.stringify(res) + "'",
-          // })
           //跳转到登录页面
           wx.redirectTo({
             url: "/pages/login/login",
@@ -51,10 +44,6 @@ App({
         }
       })
     } else {
-      // wx.showToast({
-      //   title: "fail:'" + JSON.stringify(res) + "'",
-      //   icon: 'none'
-      // })
       wx.hideLoading();
       //跳转到登录页面
       wx.redirectTo({
@@ -67,15 +56,9 @@ App({
    * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
    */
   onLaunch: function () {
-    // wx.showToast({
-    //   title: 'app.js',
-    // })
     if (wx.canIUse('getUpdateManager')){
       const updateManager = wx.getUpdateManager()
       updateManager.onCheckForUpdate(function (res) {
-        // wx.showToast({
-        //   title: "'" + JSON.stringify(res) +"'"
-        // })
         // 请求完新版本信息的回调
         //console.log(res)
         console.log("res.hasUpdate:" + res.hasUpdate)
@@ -92,7 +75,6 @@ App({
             }
           }
         })
-
       })
 
       updateManager.onUpdateFailed(function () {

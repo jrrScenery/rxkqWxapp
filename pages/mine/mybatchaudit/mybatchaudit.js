@@ -18,6 +18,7 @@ Page({
     let route = event.currentTarget.dataset.route;
     var idx = event.currentTarget.dataset.current;
     var value = this.data.singleInfos[idx];
+    console.log(value);
     var attnMonth = value.attnMonth;
     var year = new Date().getFullYear();
     var month = new Date().getMonth() + 1;
@@ -34,6 +35,7 @@ Page({
         transdata.addrId = value.addrId;
       }
       if (value.loaType == 1) {
+        transdata.addrId = value.addrId;
         transdata.applyUser = value.applyUser;
         transdata.sortId = 'applyUser'
       }
@@ -68,53 +70,7 @@ Page({
       }
     }
   },
-  // attnSubmit:function(e){
-  //   console.log(e);
-  //   var that = this;
-  //   var idx = e.target.dataset.current;
-  //   var url = util.requestService("/api/hrkq/auditCombine");
-  //   var postdata = {};
-  //   console.log(that.data.singleInfos);
-  //   postdata.ids = that.data.singleInfos[idx].id;
-  //   postdata.loaType = that.data.singleInfos[idx].loaType;
-  //   postdata.topEmpId = wx.getStorageSync("topEmpId");
-  //   postdata.encryption = wx.getStorageSync("encryption");
-  //   if (e.target.id == 'ok') {
-  //     postdata.auditType = 0;
-  //   } else {
-  //     postdata.auditType = 1;
-  //   }
-  //   console.log(postdata);
-  //   function success(res) {
-  //     if (res.data.code == 200) {
-  //       wx.showToast({
-  //         title: '审批完成',
-  //         icon: 'success',
-  //         duration: 2000
-  //       })
-  //       that.todoAuditInfo();
-  //     } else if (res.data.code == 99) {
-  //       util.mineRedirect(res.data.message);
-  //     } else {
-  //       wx.showToast({
-  //         title: res.data.message,
-  //         icon: "none",
-  //         duration: 2000
-  //       })
-  //     }
-  //   }
-  //   wx.showModal({
-  //     title: '提示',
-  //     content: '确认提交吗？',
-  //     success: function (res) {
-  //       if (res.confirm) {
-  //         util.checkEncryption(url, postdata, success);
-  //       } else if (res.cancel) {
-  //         console.log('用户点击取消')
-  //       }
-  //     }
-  //   })
-  // },
+
   formSubmit: function (e) {
     console.log(e)
     var that = this;
@@ -139,6 +95,21 @@ Page({
           duration: 2000
         })
         that.todoAuditInfo();
+        //通知提醒
+        var auditType = e.detail.target.id;
+        var loaType = util.getType().loaType[that.data.combineInfos[idx].loaType];
+        var opMapList = res.data.opMapList;
+        var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
+        if (auditType == 'ok') {//审核通过
+          //流程待办提醒
+          for (var i = 0; i < opMapList.length; i++) {
+            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
+          }
+        }else{
+          for (var i = 0; i < opMapList.length; i++) {
+            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
+          }
+        }
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       } else {
@@ -163,9 +134,9 @@ Page({
   },
 
   todoAuditInfo: function () {
-    // wx.showLoading({
-    //   title: '加载中',
-    // })
+    wx.showLoading({
+      title: '加载中',
+    })
     var that = this;
     var loaType = util.getType().loaType;
     var leaveType = util.getType().leaveType;
@@ -238,10 +209,19 @@ Page({
   },
 
   /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+    wx.showNavigationBarLoading();
+    this.todoAuditInfo();
+    wx.hideNavigationBarLoading() //完成停止加载
+    wx.stopPullDownRefresh() //停止下拉刷新
+  },
+
+  /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
   },
 
   /**

@@ -25,18 +25,19 @@ Page({
   punchCard: function () {
     var that = this;
     var date = new Date();
+    console.log(flag);
     if(flag){
       that.getLocationInfo();
       flag=false;
     }
     var meter = that.data.distantMeter;
-    if (!flag && meter!=null && meter < 0.3){  
-        wx.showLoading({
-          title: '正在打卡',
-        });
-        that.setData({
-          disable:true
-        })
+    if (!flag && meter != null && meter <= that.data.prjDistance){  
+      wx.showLoading({
+        title: '正在打卡',
+      });
+      that.setData({
+        disable:true
+      })
       //对打卡范围进行设定，满足请求服务器，不满足返回失败
       var url = util.requestService("/api/hrkq/punchCard");
       var punchtime = util.formatTime(new Date).substring(10, 20);
@@ -93,24 +94,30 @@ Page({
 
   getPunchInfo(){
     var that = this;
-    if (app.globalData.isLogin){
-      that.setData({
-        isLogin: app.globalData.isLogin
-      })
-    }else{
-      wx.login({
-        success: function (res) {
-          console.log(res);
-          if (res.code) {
-            //发起网络请求
-            that.setData({
-              isLogin:true
-            })
-          }
-        }
-      })
-    }
-    
+    // if (app.globalData.isLogin){
+    //   that.setData({
+    //     isLogin: app.globalData.isLogin
+    //   })
+    // }else{
+    //   wx.login({
+    //     success: function (res) {
+    //       console.log(res);
+    //       if (res.code) {
+    //         //发起网络请求
+    //         that.setData({
+    //           isLogin:true
+    //         })
+    //       }
+    //     },
+    //     fail:function(){
+    //       wx.showToast({
+    //         title: 'login接口调用失败',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //     }
+    //   })
+    // }
     wx.showLoading({
       title: '加载中',
     })
@@ -118,7 +125,6 @@ Page({
     if (encryption) {
       wx.checkSession({
         success: function () {
-          console.log("aaaaaaaaaaaa");
           //获取本地保存的上下班时间
           wx.getStorage({
             key: 'loginData',
@@ -130,7 +136,7 @@ Page({
               }
               console.log(res);
               that.setData({
-                prjMapList: res.data.prjMapList
+                prjMapList: res.data.prjMapList,
               })
             },
           })
@@ -151,6 +157,7 @@ Page({
               that.getTime();  
               that.setData({
                 punchNum: res.data.punchNum,
+                isLogin:true
               })
             } else if (res.data.code == 99) {
               util.redirect(res.data.message);
@@ -167,6 +174,7 @@ Page({
         },
         fail: function (res) {
           wx.hideLoading();
+          console.log("failfailfailfailfail");
           //跳转到登录页面
           util.redirect("登录失效，请重新登录");
         }
@@ -183,29 +191,24 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getPunchInfo();  
+    this.getPunchInfo(); 
+    setInterval(this.getTime,1000)
   },
 
   //获取当前时间
-  getTime: function () {
+  getTime() {
     var that = this;
-    var nowTime = new Date;
     this.setData({
       punch: util.formatTime(new Date).substring(10, 20)
     })
-    that.setTime();
-    // setTimeout(function () {
-    //   that.getTime();
-    // }, 1000);   
-    // setTimeout(that.getTime, 1000);
   },
 
-  setTime:function(){
-    var that = this;
-    setTimeout(function () {
-      that.getTime();
-    }, 1000);
-  },
+  // setTime(){
+  //   var that = this;
+  //   setTimeout(function () {
+  //     that.getTime();
+  //   }, 1000);
+  // },
   //获取经纬度信息 
   getLocationInfo: function () {
     var that = this;
@@ -237,7 +240,6 @@ Page({
 
 //获取具体的位置信息
   getSpecificLocation: function (latitude, longitude) {
-    console.log("000000000");
     var that = this;
     var apiURL = "https://apis.map.qq.com/ws/geocoder/v1/?output=json&location=" + latitude + "," + longitude + "&key=QS4BZ-2O5HU-AMXVO-4VLQH-QRR6K-F6BT3";
     wx.request({//根据经纬度获取具体位置信息
@@ -252,6 +254,7 @@ Page({
         that.setData({
           location: location,
         })
+        console.log(that.data.location);
       }
     })
   },
@@ -303,6 +306,7 @@ Page({
           targetLatitude: lat2,
           targetLongitude: lng2,
           distantMeter: s,
+          prjDistance: that.data.prjMapList[idi].prjDistance/1000,
           prjId: that.data.prjMapList[idi].prjId,
           amworktime: addressMapList[idj].ambegintime + "-" + addressMapList[idj].amendtime,
           pmworktime: addressMapList[idj].pmbegintime + "-" + addressMapList[idj].pmendtime,
@@ -318,6 +322,7 @@ Page({
           targetLatitude: lat2,
           targetLongitude: lng2,
           distantMeter: s,
+          prjDistance: that.data.prjMapList[idi].prjDistance/1000,
           prjId: that.data.prjMapList[idi].prjId,
           amworktime: addressMapList[idj].ambegintime + "-" + addressMapList[idj].amendtime,
           pmworktime: addressMapList[idj].pmbegintime + "-" + addressMapList[idj].pmendtime,
@@ -328,7 +333,7 @@ Page({
         wx.setStorageSync("pmbegintime", addressMapList[idj].pmbegintime);
         wx.setStorageSync("pmendtime", addressMapList[idj].pmendtime);
       }
-      // console.log(that.data);
+      console.log(that.data);
   },
 
   /**

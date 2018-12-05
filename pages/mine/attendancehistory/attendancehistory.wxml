@@ -1,0 +1,70 @@
+<view class='containter'>
+  <view class='dateView'>
+    <view class='staffNameView' wx:if="{{roleMapList.length!=0}}" >
+      <view wx:for='{{roleMapList}}' wx:key="idx" wx:for-item="item" wx:for-index="idx">
+        <view id='kqHistory' wx:if="{{item.roleName=='pm'}}" data-route="../application/application"  bindtap="navToPage">{{applyUser}}</view>
+      </view>
+    </view>
+    <view class='staffNameView' wx:else></view>
+    <view class='curtime'>
+      <picker value='selectDate' mode='date' fields="month" start='{{beginDate}}' end='{{endDate}}' bindchange="dateChange">
+        <view class='datepicker'>{{selectDate}}</view>
+      </picker>
+    </view>
+    <view class='wholeMonth' bindtap='iswholeMonthBindtap' wx:if="{{isShow}}">
+      <view id='absMonth' wx:if='{{iswholeMonth}}'>查看缺勤</view>
+      <view id='wholeMonth' wx:else>查看全月</view>
+    </view>
+  </view>
+  <view class='totalAbs'>
+    <view wx:for='{{collectInfo}}' wx:key="idx" wx:for-index="idx" style='margin-left:5px;'>{{leaveType[idx]}}:{{collectInfo[idx]}}天</view>
+  </view>
+ 
+  <view class="table">
+    <view class="tr bg-w">
+      <view class="th" style='width:30%'>打卡时间</view>
+      <view class="th" style='width:30%'>请假</view>
+      <view class="th" style='width:20%'>事由</view>
+      <view class="th" style='width:20%'>状态</view>
+    </view>
+
+    <form style='height:100%' bindsubmit="formSubmit">
+      <view wx:if="{{dataInfo.length!=0}}" style='margin-bottom:5px'>
+        <view wx:for="{{dataInfo}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+          <view class="tr">
+          <!-- 打卡日期 -->
+            <view class="td" style='width:30%;'>
+              <input name='date' disabled='true' value='{{item.punchDate}}'></input>
+              <input name='duration' disabled='true' value='{{item.beginTime}}-{{item.endTime}}'></input>
+            </view>
+
+            <!-- 请假 -->
+            <view class="td" style='width:30%;padding-top:5px;'>                
+              <view name='leaveType'>{{leaveType[item.leaveType]}}</view>
+              <view style='display:flex;justify-content:center'>
+                <view name='absBeginTime'>{{item.absBeginTime}}</view>
+                <view>-</view>
+                <view name='absEndTime'>{{item.absEndTime}}</view>
+              </view>
+            </view>
+            <!-- 原因 -->
+            <view class="td" style='width:20%'>
+            <input class='textarea' style='height:35px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' bindtap="modalinput" value='{{leavereason[idx]}}' data-current="{{idx}}" disabled='true'></input>
+              <modal hidden="{{hiddenmodalput[idx]}}" title="原因" confirm-text="确定" no-cancel='true' bindconfirm="confirm" data-current="{{idx}}">
+              <textarea class='textarea' fixed="true" style='width:100%' value='{{leavereason[idx]}}' disabled='true'></textarea>
+</modal>
+            </view>
+            <!-- 状态 -->
+            <view class="td" style='width:20%'>
+              <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+            </view>
+          </view>        
+        </view>
+      </view>
+
+      <view class='norecord' wx:else>
+        <view>无缺勤记录</view>
+      </view>
+    </form>
+  </view>
+</view>

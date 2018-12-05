@@ -1,20 +1,28 @@
 <view class='punchContainter'>
   <view class='name'> 
     <open-data wx:if="{{isLogin}}" type="userAvatarUrl"></open-data>
+    <!-- <open-data type="getUserInfo"></open-data> -->
   </view>
   <view class='adressView'>
     <view>{{location.addressName}}</view>
   </view>
   <view class='locationView'>{{location.address}}</view>
-  <view class='locationView' wx:if="{{distantMeter!=null}}">  
-    <view wx:if="{{distantMeter<=1}}">
-      <view class='inrage' wx:if="{{distantMeter<=0.3}}">在打卡范围内（距最近打卡地{{distantMeter*1000}}米）</view>
+  <view class='locationView' wx:if="{{distantMeter!=null}}"> 
+    <view class='inrage' wx:if="{{distantMeter<=prjDistance}}">
+      <view wx:if="{{distantMeter<1}}">在打卡范围内（距最近打卡地{{distantMeter*1000}}米）</view>
+      <view wx:else>在打卡范围内（距最近打卡地{{distantMeter}}千米）</view>     
+      <!-- <view class='inrage' wx:if="{{distantMeter<=prjDistance}}">在打卡范围内（距最近打卡地{{distantMeter*1000}}米）</view>
       <view class='outrage' wx:else>
         <view>不在打卡范围(距最近打卡地{{distantMeter*1000}}米)</view>
         <view>请尝试打开WIFI辅助精确定位</view>
-      </view>
+      </view> -->
     </view>
-    <view class='outrage' wx:else>不在打卡范围(距最近打卡地{{distantMeter}}千米)</view>
+    <view class='outrage' wx:else>
+      <view wx:if="{{distantMeter<1}}">不在打卡范围(距最近打卡地{{distantMeter*1000}}米)</view>
+      <view wx:else>不在打卡范围(距最近打卡地{{distantMeter}}千米)</view>
+      <view>请尝试打开WIFI辅助精确定位</view>
+    <!-- 不在打卡范围(距最近打卡地{{distantMeter}}千米) -->
+    </view>
   </view> 
   <view class='locationView' wx:else>正在获取当前位置...</view>  
 </view>
