@@ -187,11 +187,8 @@ Page({
       loaType:''
     };
     options.loaType = that.data.auditInfo[0].loaType;
-    for (var i = 0; i < that.data.auditInfo.length;i++){
-      if (i != idx){
-        options.id += that.data.auditInfo[i].id+","
-      }
-    }
+    
+    console.log(options)
     function success(res){
       console.log(res)
       if (res.data.code == 200){
@@ -200,27 +197,47 @@ Page({
           icon:'success',
           duration:2000
         })
+        //待办通知提醒
+        var auditType = e.detail.target.id;
+        console.log(that.data.auditInfo[idx].loaType)
+        var loaType = util.getType().loaType[that.data.auditInfo[idx].loaType];
+        var opMapList = res.data.opMapList;
+        var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
+        if (auditType == 'ok') {
+          for (var i = 0; i < opMapList.length; i++) {
+            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
+          }
+        } else {
+          for (var i = 0; i < opMapList.length; i++) {
+            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
+          }
+        }
+
+        for (var i = 0; i < that.data.auditInfo.length; i++) {
+          if (i != idx) {
+            options.id += that.data.auditInfo[i].id + ","
+          }
+        }
         if (options.id==""){
           wx.navigateBack({
             url: "../mybatchaudit/mybatchaudit"
           })
         }else{
-          that.todoAuditInfo(options);
+          that.setData({
+            index: 0,
+            page: 1,
+            num: 10,
+            auditInfo: null,
+            total: 0,
+            hasmoreData: true,//更多数据
+            hiddenloading: true,//加载中
+          })
+          // console.log(options)
+          that.onLoad(options)
+          // that.todoAuditInfo(options);
         }
 
-        var auditType = e.detail.target.id;
-        var loaType = util.getType().loaType[that.data.auditInfo[idx].loaType];
-        var opMapList = res.data.opMapList;
-        var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
-        if (auditType == 'ok'){
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        }else{
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        }
+        
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       }else{
@@ -299,7 +316,6 @@ Page({
           processStatus: processStatus,
           page:that.data.page+1
         })
-        console.log(that.data.page);
         if (that.data.total <= 0 || that.data.num * (that.data.page-1) >= that.data.total) {
           that.setData({ hasmoreData: false, hiddenloading: true })
         }

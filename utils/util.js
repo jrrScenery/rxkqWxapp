@@ -17,8 +17,8 @@ const formatNumber = n => {
 
 //请求地址
 function requestService(serverMethod) {
-  var httpInfo = "https://wbm.dcits.com" + serverMethod;
-  // var httpInfo = "http://10.1.200.187:8808" + serverMethod;
+  // var httpInfo = "https://wbm.dcits.com" + serverMethod;
+  var httpInfo = "http://10.1.200.187:8808" + serverMethod;
   return httpInfo;
 }
 

@@ -22,20 +22,6 @@ Page({
     color: [{ month: 'current'}, { day: '2018-11-06' }, { color: '#ffffff'}, { background:"#436EEE"}]
   },
 
-  // next:function(e){
-  //   console.log(e);
-  // },
-
-  // prev:function(e){
-  //   console.log(e);
-  // },
-
-  // dayClick:function(e){
-  //   console.log(e);
-  //   this.setData({
-  //     color: ["#436EEE"]
-  //   })
-  // },
   mytouchstart:function(e){
     var that = this;
     this.setData({
@@ -56,6 +42,7 @@ Page({
         wx.showLoading({
           title: '加载中',
         })
+        console.log(newMonth)
         if (curPoint[1] >= startPoint[1]) {//下拉
           if (newMonth < 1) {
             newYear = newYear - 1;
@@ -63,6 +50,7 @@ Page({
           } else {
             newMonth = newMonth-1;
           }
+          console.log(newMonth)
           that.getrecords(newYear, newMonth + 1, that.data.currentnum);
           if (that.data.records.punchDateMonth == (newMonth+1)){
             that.setData({
@@ -82,6 +70,7 @@ Page({
           } else {
             newMonth = newMonth + 1
           }
+          console.log(newMonth)
           that.getrecords(newYear, newMonth+1, day);
           if (that.data.records.punchDateMonth == (newMonth + 1)){
             that.setData({

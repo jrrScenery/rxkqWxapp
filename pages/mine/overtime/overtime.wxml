@@ -24,10 +24,10 @@
 
       <view class="wx-cell wx-cell-bottom">
         <view class='required'>*</view>
-        <view class="wx-cell-text" style='width:30%'>项目地址:</view>
-        <picker name='prjCode' style='width:65%' value='{{selectedAddrIndex}}' range='{{prjCode}}' range-key="address" bindchange="addrChange">
+        <view class="wx-cell-text" style='width:30%'>项目编号:</view>
+        <picker name='prjCode' style='width:65%' value='{{selectedAddrIndex}}' range='{{prjCode}}' range-key="prjCode" bindchange="addrChange">
           <view class='picker'>
-            <view>{{prjCode[selectedAddrIndex].address}}</view>
+            <view>{{prjCode[selectedAddrIndex].prjCode}}</view>
           </view>
         </picker>    
         <image class="wx-cell-arrow" style='width:5%' src="../../../images/right.png"></image>

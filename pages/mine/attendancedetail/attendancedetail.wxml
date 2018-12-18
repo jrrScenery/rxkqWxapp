@@ -1,10 +1,8 @@
 <view style='height:5px;width:100%'></view>
   <view class='viewCard' wx:for="{{attendancedetail.attenDetailInfo}}" wx:key="index" wx:for-item="item">
-    <!-- <view class='perview'>提交人:{{attendancedetail.submitor}}</view> -->
     <view class='perview'>请假类型：{{leaveType[item.leaveType]}}</view>
     <view class='perview'>打卡日期：{{item.punchDate}}</view>
     <view class='perview'>打卡时间：{{item.beginTime}}-{{item.endTime}}</view>
     <view class='perview'>补提考勤：{{item.absBeginTime}}-{{item.absEndTime}}</view>
     <view class='perview'>请假原因：{{item.reason}}</view>
-    <!-- <view class='perview'>审批状态：{{processStatus[item.processStatus]}}</view> -->
   </view>

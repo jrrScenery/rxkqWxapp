@@ -4,9 +4,9 @@
       <view class='order'>  
         <view class='icon {{0==index?"in":"no_in"}}'></view>  
         <view class='logistics_centent page_clu'>  
-          <text wx:if="{{item.taskEndTime}}">【{{item.taskActorName}}】处理了【{{item.taskName}}】任务,<text wx:if='{{item.reason}}'>处理意见【{{item.reason}}】</text><text wx:else>处理意见【无】</text></text> 
-          <text wx:else>【{{item.taskActorName}}】正在处理【{{item.taskName}}】任务,<text wx:if='{{item.reason}}'>处理意见【{{item.reason}}】</text><text wx:else>处理意见【无】</text></text>  
-          <text>{{item.taskBeginTime}}</text>  
+          <text wx:if="{{item.taskEndTime}}">【{{item.taskActorName}}】处理了{{item.processName}}【{{item.taskName}}】任务,<text wx:if='{{item.reason}}'>处理意见【{{item.reason}}】</text><text wx:else>处理意见【无】</text></text> 
+          <text wx:else>【{{item.taskActorName}}】正在处理{{item.processName}}【{{item.taskName}}】任务,<text wx:if='{{item.reason}}'>处理意见【{{item.reason}}】</text><text wx:else>处理意见【无】</text></text>  
+          <text>{{item.taskEndTime}}</text>  
         </view>  
         <view class='on'></view>  
       </view>  

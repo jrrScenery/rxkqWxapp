@@ -55,6 +55,7 @@ Page({
       // console.log(postdata);
         //请求服务器成功将获取的打卡次数赋值给punchNum
         function success(res){
+          flag = true;
           wx.hideLoading();
           // console.log(res);
           setTimeout(function () {
@@ -84,6 +85,7 @@ Page({
         }
         util.getPostRequest(url, postdata,success);
     } else {
+      flag = true
       wx.showToast({
         title: '不在打卡范围，打卡失败',
         icon: "none",
@@ -227,6 +229,8 @@ Page({
                 var targetLongitude = addressMapList[j].longitude;
                 that.getDistance(latitude, longitude, targetLatitude, targetLongitude,i,j);
               }
+            }else{
+              util.redirect("没有对应的项目地址，请联系管理员！");
             }
           }
         }
@@ -273,6 +277,7 @@ Page({
  */
 
   getDistance:function (lat1, lng1, lat2, lng2,idi,idj){
+    console.log(lat1 + "," + lng1 + "," + lat2 + "," + idi + "," + idj)
     var that = this;
     var f = this.getRad((lat1 + lat2) / 2);     
     var g = this.getRad((lat1 - lat2) / 2);     

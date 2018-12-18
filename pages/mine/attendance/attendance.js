@@ -1,4 +1,5 @@
 // pages/mine/attendance.js
+var util = require('../../../utils/util.js');
 const app = getApp();
 Page({
 
@@ -6,7 +7,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userInfo: null
+    userInfo: null,
+    todoNum:0
   },
 
   navToPage(event) {
@@ -34,6 +36,29 @@ Page({
         })
       },
     })
+    var url = util.requestService("/api/hrkq/queryNum");
+
+    var postdata={
+      topEmpId: wx.getStorageSync("topEmpId"),
+      encryption: wx.getStorageSync("encryption")
+    }
+    function success(res){
+      console.log(res)
+      if(res.data.code == 200){
+        that.setData({
+          todoNum: res.data.todoNum
+        })
+      } else if (res.data.code == 99) {
+        util.mineRedirect(res.data.message);
+      } else {
+        wx.showToast({
+          title: res.data.message,
+          icon: "none",
+          duration: 2000
+        })
+      }
+    }
+    util.checkEncryption(url, postdata, success);
   },
 
   /**
@@ -47,7 +72,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    this.onLoad();
   },
 
   /**

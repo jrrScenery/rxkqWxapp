@@ -1,21 +1,23 @@
 // pages/mine/attendancehistory/attendancehistory.js
 var util = require('../../../utils/util.js');
-var start = new Date(new Date().getFullYear() + "-1-31");
-var beginDate = util.formatTime(start).substring(0, 7);
-var current = new Date(new Date().getFullYear() + "-" + new Date().getMonth()+"-"+ new Date().getDate());
-var curDate = current.getFullYear() +"-"+ (current.getMonth()+1);
+// var start = new Date(new Date().getFullYear() + "-1-31");
+// var beginDate = util.formatTime(start).substring(0, 7);
+// var current = new Date(new Date().getFullYear() + "-" + new Date().getMonth()+"-"+ new Date().getDate());
+// var curDate = current.getFullYear() + "-" + (current.getMonth() + 1);
+var beginDate = new Date().getFullYear()+"-1";
+var curDate = new Date().getFullYear() + "-" + new Date().getMonth();
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    selectDate: curDate,
-    isShow: true,
-    iswholeMonth: false,
-    wholeMonth:"1",
-    beginDate: beginDate,
-    endDate: curDate
+    // selectDate: curDate,
+    // isShow: true,
+    // iswholeMonth: false,
+    // wholeMonth:"1",
+    // beginDate: beginDate,
+    // endDate: curDate
   },
   
   navToPage: function (event) {
@@ -33,14 +35,25 @@ Page({
 
   dateChange:function(e){
     console.log(e)
-    var date = new Date(e.detail.value.replace(/\-/g, '/'));
-    var curdate = date.getFullYear()+"-"+(date.getMonth()+1);
+    var curdate = e.detail.value.split("-");
+    console.log(curdate)
+    var year = curdate[0];
+    var month = "";
+    console.log(curdate[1] < "1")
+    if (curdate[1]<"1"){
+      month = curdate[1].substring(1,2)
+    }else{
+      month = curdate[1]
+    }
+    // var date = new Date(e.detail.value.replace(/\-/g, '/'));
+    // var curdate = date.getFullYear()+"-"+(date.getMonth()+1);
     this.setData({
-      selectDate: curdate,
+      selectDate: year + "-" + month,
       wholeMonth:"1",
       iswholeMonth: false
     })
-    this.getQueryAttn(curdate, this.data.wholeMonth);
+
+    this.getQueryAttn((year + "-" + month), this.data.wholeMonth);
   },
 
   iswholeMonthBindtap:function(e){
@@ -89,7 +102,7 @@ Page({
     })
     var processStatus = util.getType().processStatus;
     var leaveType = util.getType().leaveType;
-    var postdate = {
+    var postdata = {
       attnMonth: date,
       wholeMonth: wholeMonth,//是否全月，0：是；1：不是
       topEmpId: wx.getStorageSync("topEmpId"),
@@ -97,7 +110,7 @@ Page({
       isHistory: "0", //0历史，1不是
       userName:that.data.userName
     }
-    console.log(postdate)
+    console.log(postdata)
     var url = util.requestService("/api/hrkq/queryAttn");
     function success(res){
       console.log(res);
@@ -133,7 +146,7 @@ Page({
         })
       }
     }
-    util.checkEncryption(url, postdate, success);
+    util.checkEncryption(url, postdata, success);
   },
 
   /**
@@ -150,6 +163,14 @@ Page({
           userName: res.data.topUser
         })
       },
+    })
+    that.setData({
+      selectDate: curDate,
+      isShow: true,
+      iswholeMonth: false,
+      wholeMonth: "1",
+      beginDate: beginDate,
+      endDate: curDate
     })
     //wholeMonth: "1",//是否全月，0：是；1：不是
     this.getQueryAttn(this.data.selectDate, this.data.wholeMonth);

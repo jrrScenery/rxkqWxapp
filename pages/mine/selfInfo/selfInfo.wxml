@@ -77,7 +77,7 @@
   <view class="wx-cells" bindtap='updateInfo'>
     <view class="wx-cell">
       <text class="wx-cell-text leftview">更新</text>
-      <text class="cell-text rightview">点击更新信息</text>
+      <text class="cell-text rightview" style='color:blue'>点击更新信息</text>
     </view>     
   </view>
  

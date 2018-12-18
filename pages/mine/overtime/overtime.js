@@ -1,7 +1,15 @@
 var util = require('../../../utils/util.js');
 var date = new Date();
 // var newDate = date.getFullYear() +"-" + date.getMonth() +"-"+date.getDate();
-var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
+
+var newYear = new Date().getFullYear();
+var newMonth = new Date().getMonth();
+if (newMonth < 1) {
+  newYear = new Date().getFullYear() - 1;
+  newMonth = 12;
+}
+// var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
+var start = new Date(newYear + "-" + newMonth + "-1");
 var beginDate = util.formatTime(date).substring(0, 10);
 var a = new Date((new Date().getFullYear()+1) + "-12-31");
 var oribeginDate = util.formatTime(start).substring(0, 10);
@@ -312,12 +320,11 @@ Page({
             m = k;
           }
         }
-        console.log(addressList[j].address)
         prjCodeObj.prjId = prjMapList[i].prjId;
         prjCodeObj.addrId = addressList[j].addrId;
         prjCodeObj.address = prjMapList[i].prjCode + "-" + addressList[j].address;
         prjCodeObj.prjType = prjMapList[i].prjType;
-        prjCodeObj.prjCode = prjMapList[i].prjCode;
+        prjCodeObj.prjCode = prjMapList[i].prjCode + "-" + prjMapList[i].prjName;
         prjCode[i] = prjCodeObj;
       }
     }

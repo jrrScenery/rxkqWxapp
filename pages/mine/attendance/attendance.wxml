@@ -73,6 +73,7 @@
   <view class="wx-cells-next">
     <view class="wx-cell wx-cell-bottom" data-route="../mybatchaudit/mybatchaudit" bindtap="navToPage">
       <text class="wx-cell-text">我的待办</text>
+      <span class="weui-badge" style="margin-left: 5px;">{{todoNum}}</span>
       <image class="wx-cell-arrow" src="../../../images/right.png"></image>
     </view> 
   </view>
