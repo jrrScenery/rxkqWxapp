@@ -26,6 +26,35 @@ Page({
       that.queryLeaveMonth();
     }
   },
+
+  modalinput: function (e) {
+    var idx = e.target.dataset.current;
+    if (this.data.askInfo[idx].processStatus == 1 || this.data.askInfo[idx].processStatus == 2) {
+      if (this.data.reason[idx] != "") {
+        this.data.hiddenmodalput[idx] = !this.data.hiddenmodalput[idx];
+        this.setData({
+          hiddenmodalput: this.data.hiddenmodalput
+        })
+      }
+    }
+    if (this.data.askInfo[idx].processStatus == 0 || this.data.askInfo[idx].processStatus == 3) {
+      this.data.hiddenmodalput[idx] = !this.data.hiddenmodalput[idx];
+      this.setData({
+        hiddenmodalput: this.data.hiddenmodalput
+      })
+    }
+  },
+
+  //确认  
+  confirm: function (e) {
+    console.log(e)
+    console.log(this.data)
+    var idx = e.target.dataset.current;
+    this.data.hiddenmodalput[idx] = !this.data.hiddenmodalput[idx];
+    this.setData({
+      hiddenmodalput: this.data.hiddenmodalput
+    });
+  },
   // getperextra:function(event){
   //   let route = event.currentTarget.dataset.route;
   //   let sortId = event.currentTarget.id;
@@ -150,13 +179,16 @@ Page({
       wx.hideLoading();
       if (res.data.code == 200) {
         var reason = [];  //定义请假原因下标数组
+        var hiddenmodalput = [];//原因弹框显示标识
         for (var i = 0; i < res.data.askInfoDetail.length; i++) {
           reason[i] = res.data.askInfoDetail[i].reason;
+          hiddenmodalput[i] = true;  //原因弹框显示标识
         }
         that.setData({
           processId: transdata.id,
           askInfo: res.data.askInfoDetail,
           reason: reason,
+          hiddenmodalput: hiddenmodalput,
           processStatus: processStatus,
           submitflag: false
         })
@@ -195,12 +227,15 @@ Page({
       wx.hideLoading();
       if (res.data.code == 200) {
         var reason = [];  //定义请假原因下标数组
+        var hiddenmodalput = [];//原因弹框显示标识
         for (var i = 0; i < res.data.askInfo.length; i++) {
           reason[i] = res.data.askInfo[i].reason;
+          hiddenmodalput[i] = true;  //原因弹框显示标识
         }
         that.setData({
           askInfo: res.data.askInfo,
           reason: reason,
+          hiddenmodalput: hiddenmodalput,
           processStatus: processStatus,
           submitflag: false
         })

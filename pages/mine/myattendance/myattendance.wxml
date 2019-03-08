@@ -1,8 +1,8 @@
 <view class='containter'>
   <view class='dateView'>
-    <!-- <view style='width:20px' data-route="../lsmyattendance/lsmyattendance" bindtap="navToPage">
+    <view style='width:20%;text-align:right' data-route="../lsmyattendance/lsmyattendance" bindtap="navToPage"> 
       <image class='leftImg' src='../../../images/left.png'></image>
-    </view>  -->
+    </view> 
     <view class='curtime'>{{curtime}}</view>
     <view class='wholeMonth' bindtap='iswholeMonthBindtap' wx:if="{{isShow}}">
       <view id='absMonth' wx:if='{{iswholeMonth}}'>查看缺勤</view>
@@ -59,23 +59,32 @@
                     <view>-</view>
                     <view name='absEndTime'>{{selectAbsEndTime[idx]}}</view>
                   </view>
-                </view>
+                </view> 
               </view>
               <view class="td" style='width:30%;padding-top:5px;' wx:else>
               </view>
               <!-- 事由 -->
               <view class="td" style='width:15%;' wx:if="{{!isBigDate[idx]}}">
-                <input class='textarea' style='height:35px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' bindtap="modalinput" value='{{leavereason[idx]}}' data-current="{{idx}}" disabled='true'></input>
-                <modal hidden="{{hiddenmodalput[idx]}}" title="请输入原因" confirm-text="确定" no-cancel='true' bindconfirm="confirm" data-current="{{idx}}">
-                <textarea class='textarea' fixed="true" style='width:100%' value='{{leavereason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea>
-</modal>
+                <view wx:if='{{leavetypeIndex[idx]==null}}'> 
+                  <input disabled='false'></input>
+                </view>
+                <view wx:else class='textarea'>
+                  <input style='height:35px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' bindtap="modalinput" value='{{leavereason[idx]}}' data-current="{{idx}}" disabled='true'></input>
+                  <modal hidden="{{hiddenmodalput[idx]}}" title="请输入原因" confirm-text="确定" no-cancel='true' bindconfirm="confirm" data-current="{{idx}}">
+                  <textarea class='textarea' fixed="true" style='width:100%' value='{{leavereason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea>
+  </modal>
+                </view>
               </view>
-               <view class="td" style='width:15%' wx:else>
+              <view class="td" style='width:15%' wx:else>
               </view>
               <!-- 状态 -->
               <view class="td" style='width:15%' wx:if="{{!isBigDate[idx]}}">
-                <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+                <view name='processStatus' wx:if='{{leavetypeIndex[idx]==null}}'></view>
+                <view name='processStatus' wx:else>{{processStatus[item.processStatus]}}</view>
               </view>
+              <!-- <view class="td" style='width:15%' wx:if="{{!isBigDate[idx]}}">
+                <view name='processStatus'>{{processStatus[item.processStatus]}}</view>
+              </view> -->
               <view class="td" style='width:15%' wx:else>
               </view>
               <!-- 操作 -->

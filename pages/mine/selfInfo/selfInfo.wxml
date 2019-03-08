@@ -7,11 +7,37 @@
     </view>     
   </view>
   <view class="wx-cells-next">
-    <view class="wx-cell">
+    <view class="wx-cell wx-cell-bottom">
       <text class="wx-cell-text leftview">交付宝帐号</text>
       <text class="cell-text rightview">{{topUser}}</text>
     </view>     
   </view>
+  <!-- <view class="wx-cells-next">
+    <view class="wx-cell wx-cell-bottom" data-route="../changePwd/changePwd" bindtap="navToPage">
+      <text class="wx-cell-text">修改密码</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view> -->
+  <view class="wx-cells-next">
+    <view class="wx-cell wx-cell-bottom">
+      <text class="wx-cell-text leftview">修改密码</text>
+      <text class="cell-text rightview" style='color:blue' bindtap="modalInput">修改</text>
+    </view> 
+  </view>
+  <modal hidden="{{hiddenmodalput}}" title="修改密码" confirm-text="确定" cancel-text="取消" bindcancel="cancel" bindconfirm="confirm">  
+    <view class='inputView'>
+      <view >输入旧密码：</view>
+      <input id='oldPwd' name='oldPwd' placeholder='请输入旧密码' password='true' class='inputText' value='{{oldPwd}}' bindblur='passwordInput'></input>
+    </view>
+    <view class='inputView'>
+      <view >输入新密码：</view>
+      <input id='newPwd' name='newPwd' placeholder='请输入新密码' password='true' class='inputText' value='{{newPwd}}' bindblur='passwordInput'></input>
+    </view>
+    <view class='inputView'> 
+      <view>确认新密码：</view>
+      <input id='newPwd1' name='newPwd1' placeholder='请输入新密码' password='true' class='inputText' value='{{newPwd1}}' bindblur='passwordInput'></input>
+    </view>
+  </modal>  
   <view wx-if='{{prjMapList.length!=0}}' wx:for="{{prjMapList}}" wx:key="idx" wx:for-item="items" wx:for-index="idx">
     <view class='selfviewTitle' wx:if="{{items.prjType==0}}">归属项目</view>
     <view class='selfviewTitle' wx:else>派遣项目</view>
@@ -60,19 +86,21 @@
     </view>
   </view>
 
-  <view class='selfviewTitle'>剩余假期</view>
-  <view class="wx-cells">
-    <view class="wx-cell  wx-cell-bottom">
-      <text class="wx-cell-text leftview">剩余年假</text>
-      <text class="cell-text rightview">{{residueDay}}天</text>
-    </view>     
+  <view wx:if="{{businessType!=2}}">
+    <view class='selfviewTitle'>剩余假期</view>
+    <view class="wx-cells">
+      <view class="wx-cell  wx-cell-bottom">
+        <text class="wx-cell-text leftview">剩余年假</text>
+        <text class="cell-text rightview">{{residueDay}}天</text>
+      </view>     
+    </view>
   </view>
-  <view class="wx-cells-next">
+  <!-- <view class="wx-cells-next">
     <view class="wx-cell">
       <text class="wx-cell-text leftview">剩余调休假</text>
       <text class="cell-text rightview">{{restDay}}天</text>
     </view>     
-  </view>
+  </view> -->
 
   <view class="wx-cells" bindtap='updateInfo'>
     <view class="wx-cell">
@@ -80,6 +108,13 @@
       <text class="cell-text rightview" style='color:blue'>点击更新信息</text>
     </view>     
   </view>
+
+  <!-- <view class="wx-cells">
+    <view class="wx-cell wx-cell-bottom" data-route="../changePwd/changePwd" bindtap="navToPage">
+      <text class="wx-cell-text">修改密码</text>
+      <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+    </view> 
+  </view> -->
  
   <button class='button1 removeButton' form-type="submit" bindtap='removeTap'>解除绑定</button>
 </view>

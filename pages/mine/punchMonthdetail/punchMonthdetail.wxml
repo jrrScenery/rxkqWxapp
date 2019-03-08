@@ -1,0 +1,24 @@
+<!--pages/mine/punchMonthdetail/punchMonthdetail.wxml-->
+<view class='njsearchView'>
+  <view class='njsearchInputView'>
+    <input name='search' style='height:30px;font-size:12px' placeholder='输入姓名' bindinput='searchBindInput'></input>
+  </view>
+  <button size='mini' bindtap='searchBindTap'>搜索</button>
+</view>
+<view wx:if="{{leavedata.length!=0}}">
+  <view wx:for="{{leavedata}}" wx:key="idx" wx:for-item="items" wx:for-index="index">
+    <view style='font-size:14px;margin:10px'>{{items.staffName}}</view>
+    <view class="table">
+      <view class="tr bg-w">
+        <view class="th" style='width:33%'>打卡日期</view>
+        <view class="th" style='width:33%'>首次打卡</view>
+        <view class="th" style='width:33%'>末次打卡</view>
+      </view>
+      <view class="tr" wx:for="{{items.punchdetail}}" wx:key='idx' wx:for-index="idx" wx:for-item="item">
+        <view class="td">{{item.punchDate}}</view>
+        <view class="td">{{item.begintime}}</view>
+        <view class="td">{{item.endtime}}</view>
+      </view>
+    </view>
+  </view>
+</view>

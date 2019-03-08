@@ -13,13 +13,27 @@
       </view> 
     </view>
     <view class="wx-cells" wx:if='{{sortId == "applyUser"}}'>
-      <view class="wx-cell wx-cell-bottom">
+      <view class="wx-cell wx-cell-bottom" wx:if="{{businessType!=2}}">
         <view class='required'>*</view>
         <text class="wx-cell-text">加班补偿:</text>
         <picker name='leaveType' value='{{selectedIndex}}' range='{{abstype}}' bindchange="change">
           <view class='picker'>{{abstype[selectedIndex]}}</view>
         </picker>    
         <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+      </view> 
+      <view wx:else>
+        <view wx:if="{{roleMapList.length!=0}}">
+          <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+            <view class="wx-cell wx-cell-bottom" wx:if="{{item.roleName=='pm'}}">
+              <view class='required'>*</view>
+              <text class="wx-cell-text">加班补偿:</text>
+              <picker name='leaveType' value='{{selectedIndex}}' range='{{abstype}}' bindchange="change">
+                <view class='picker'>{{abstype[selectedIndex]}}</view>
+              </picker>    
+              <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+            </view>
+          </view>
+        </view>
       </view> 
 
       <view class="wx-cell wx-cell-bottom">

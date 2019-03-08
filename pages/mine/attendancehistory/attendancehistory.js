@@ -1,11 +1,16 @@
 // pages/mine/attendancehistory/attendancehistory.js
-var util = require('../../../utils/util.js');
+var util = require('../../../utils/util.js'); 
 // var start = new Date(new Date().getFullYear() + "-1-31");
 // var beginDate = util.formatTime(start).substring(0, 7);
 // var current = new Date(new Date().getFullYear() + "-" + new Date().getMonth()+"-"+ new Date().getDate());
-// var curDate = current.getFullYear() + "-" + (current.getMonth() + 1);
-var beginDate = new Date().getFullYear()+"-1";
-var curDate = new Date().getFullYear() + "-" + new Date().getMonth();
+// var curDate = current.getFullYear() + "-" + (current.getMonth() + 1)
+if (new Date().getMonth()>0){
+  var beginDate = new Date().getFullYear()+"-1";
+  var curDate = new Date().getFullYear() + "-" + (new Date().getMonth()+1);
+}else{
+  var beginDate = (new Date().getFullYear()-1) + "-1";
+  var curDate = (new Date().getFullYear()-1) + "-12";
+}
 Page({
 
   /**

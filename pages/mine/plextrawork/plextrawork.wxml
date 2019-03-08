@@ -41,7 +41,11 @@
               </view>
               <!-- 事由 -->
               <view class="td" style='width:35%;'>
-                <textarea class='textarea' auto-height='true' value='{{reason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea>
+                <input class='textarea' style='height:35px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' bindtap="modalinput" value='{{reason[idx]}}' data-current="{{idx}}" disabled='true'></input>
+                <modal hidden="{{hiddenmodalput[idx]}}" title="请输入原因" confirm-text="确定" no-cancel='true' bindconfirm="confirm" data-current="{{idx}}">
+                <textarea class='textarea' fixed="true" style='width:100%' value='{{reason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea>
+</modal>
+                <!-- <textarea class='textarea' auto-height='true' value='{{reason[idx]}}' data-current="{{idx}}" bindblur='textareabindblur'></textarea> -->
               </view>
               <!-- 状态 -->
               <view class="td" style='width:15%'>
@@ -57,7 +61,7 @@
                 <input name='date' disabled='true' value='{{item.askLeaveDate}}'></input>
               </view>
               <!-- 时间 -->
-              <view class="td" style='width:25%;padding-top:5px;'>
+              <view class="td" style='width:25%;'>
                 <view style='display:flex;justify-content:center'>
                   <view name='beginTime'>{{item.beginTime}}</view>
                   <view>-</view>
@@ -66,7 +70,11 @@
               </view>
               <!-- 原因 -->
               <view class="td" style='width:35%'>
-                <view name='reason'>{{reason[idx]}}</view>
+                <input class='textarea' style='height:35px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;' bindtap="modalinput" value='{{reason[idx]}}' data-current="{{idx}}" disabled='true'></input>
+                <modal hidden="{{hiddenmodalput[idx]}}" title="原因" confirm-text="确定" no-cancel='true' bindconfirm="confirm" data-current="{{idx}}">
+                <textarea class='textarea' fixed="true" style='width:100%' value='{{reason[idx]}}' disabled='true'></textarea>
+</modal>
+                <!-- <view name='reason'>{{reason[idx]}}</view> -->
               </view>
               <!-- 状态 -->
               <view class="td" style='width:15%'>

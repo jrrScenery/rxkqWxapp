@@ -70,12 +70,16 @@ function mineRedirect(res) {
     }
   })
 }
-
+var postFlag = true;
 function checkEncryption(url, postdata, success) {
+  console.log(postFlag);
   if (wx.getStorageSync("encryption")) {
     wx.checkSession({
       success: function (res) {
-        getPostRequest(url, postdata, success);
+        if (postFlag){
+          postFlag = false
+          getPostRequest(url, postdata, success);
+        }
       },
       fail: function () {
         wx.hideLoading();
@@ -95,8 +99,12 @@ function getPostRequest(url, data, success) {
     data: data,
     header: { 'content-type': 'application/json' },
     success: success,
+    complete:function(res){
+      // console.log(res);
+      postFlag = true
+    },
     fail: function (res) {
-      console.log(res);
+      // console.log(res);
       wx.showToast({
         title: res.errMsg,
         icon:'none',
@@ -106,86 +114,86 @@ function getPostRequest(url, data, success) {
   });
 }
 
-function sendUniformMessage(data,success){
-  var accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxa8405bb1ac18d4b5&secret=99f4bc81bd325c4cc40215c8ece52adb";
-  wx.request({
-    url: accessTokenUrl,
-    success: function (res) {
-      console.log(res);       
-        var access_token = res.data.access_token;
-        var sendTemplateUrl = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=" + access_token;
-        getPostRequest(sendTemplateUrl, data, success);
-    }
-  })
-}
-//流程待办提醒
-function getSendTemplateData(touser, processId, template_id,leaveName,leaveType,staffName){
-  var sendTemplateData = {
-    touser: touser,
-    mp_template_msg: {
-      appid: 'wxb75346adcf2d7a64',
-      template_id: template_id,
-      url: "pages/mine/mybatchaudit/mybatchaudit",
-      miniprogram: {
-        appid: "wxa8405bb1ac18d4b5",
-        pagepath: "pages/mine/myaudit/myaudit" + "?id=" + processId
-      },
-      data: {
-        first: {
-          "value": leaveName+"审批提醒",
-          "color": "#173177"
-        },
-        keyword1: {
-          value: leaveType + "-" + staffName
-        },
-        keyword2: {
-          value: formatTime(new Date())
-        },
-      }
-    }
-  }
-  function success(res) {
-    console.log(res)
-  }
-  sendUniformMessage(sendTemplateData, success);
-}
+// function sendUniformMessage(data,success){
+//   var accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxa8405bb1ac18d4b5&secret=99f4bc81bd325c4cc40215c8ece52adb";
+//   wx.request({
+//     url: accessTokenUrl,
+//     success: function (res) {
+//       console.log(res);       
+//       var access_token = res.data.access_token;
+//       var sendTemplateUrl = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=" + access_token;
+//         getPostRequest(sendTemplateUrl, data, success);
+//     }
+//   })
+// }
+// //流程待办提醒
+// function getSendTemplateData(touser, processId, template_id,leaveName,leaveType,staffName){
+//   var sendTemplateData = {
+//     touser: touser,
+//     mp_template_msg: {
+//       appid: 'wxb75346adcf2d7a64',
+//       template_id: template_id,
+//       url: "pages/mine/mybatchaudit/mybatchaudit",
+//       miniprogram: {
+//         appid: "wxa8405bb1ac18d4b5",
+//         pagepath: "pages/mine/myaudit/myaudit" + "?id=" + processId
+//       },
+//       data: {
+//         first: {
+//           "value": leaveName+"审批提醒",
+//           "color": "#173177"
+//         },
+//         keyword1: {
+//           value: leaveType + "-" + staffName
+//         },
+//         keyword2: {
+//           value: formatTime(new Date())
+//         },
+//       }
+//     }
+//   }
+//   function success(res) {
+//     console.log(res)
+//   }
+//   sendUniformMessage(sendTemplateData, success);
+// }
 //流程审核提醒
-function getSendTemplateResult(touser, processId,template_id, leaveName, leaveType,auditType) {
-  var firstName='';
-  if (auditType=='ok'){
-    firstName = "您的" + leaveName + "流程已审核通过"
-  }else{
-    firstName = "您的" + leaveName + "流程已驳回"
-  }
-  var sendTemplateResult = {
-    touser: touser,
-    mp_template_msg: {
-      appid: 'wxb75346adcf2d7a64',
-      template_id: template_id,
-      url: "pages/mine/mybatchaudit/mybatchaudit",
-      miniprogram: {
-        appid: "wxa8405bb1ac18d4b5",
-        pagepath: "pages/mine/mybatchaudit/mybatchaudit" + "?id=" + processId
-      },
-      data: {
-        first: {
-          "value": firstName,
-          "color": "#173177"
-        },
-        keyword1: {
-          value: leaveType+"申请"
-        },
-        keyword2: {
-          value: formatTime(new Date())
-        },
-      }
-    }
-  }
-  function success(res) {
-    console.log(res)
-  }
-  sendUniformMessage(sendTemplateResult, success);
-}
+// function getSendTemplateResult(touser, processId,template_id, leaveName, leaveType,auditType) {
+//   var firstName='';
+//   if (auditType=='ok'){
+//     firstName = "您的" + leaveName + "流程已审核通过"
+//   }else{
+//     firstName = "您的" + leaveName + "流程已驳回"
+//   }
+//   var sendTemplateResult = {
+//     touser: touser,
+//     mp_template_msg: {
+//       appid: 'wxb75346adcf2d7a64',
+//       template_id: template_id,
+//       url: "pages/mine/mybatchaudit/mybatchaudit",
+//       miniprogram: {
+//         appid: "wxa8405bb1ac18d4b5",
+//         pagepath: "pages/mine/mybatchaudit/mybatchaudit" + "?id=" + processId
+//       },
+//       data: {
+//         first: {
+//           "value": firstName,
+//           "color": "#173177"
+//         },
+//         keyword1: {
+//           value: leaveType+"申请"
+//         },
+//         keyword2: {
+//           value: formatTime(new Date())
+//         },
+//       }
+//     }
+//   }
+//   function success(res) {
+//     console.log(res)
+//   }
+//   sendUniformMessage(sendTemplateResult, success);
+// }
 
 function upload(url,page, path,data,success) {
   wx.uploadFile({
@@ -230,7 +238,8 @@ function getType(){
       10: "迟到",
       11: "早退",
       12: "旷工",
-      13: "产检假"
+      13: "产检假",
+      14: "陪产假"
     },
     relaxation:{
       0:"调休",
@@ -254,6 +263,100 @@ function getType(){
   return data;
 }
 
+function prjInfo(){
+  var data = {
+    prjInfoList:[{
+      prjId:'1',
+      prjName: '神州信息大厦test1'
+    }, {
+      prjId: '2',
+      prjName: '神州信息大厦test2'
+    }, {
+      prjId: '3',
+      prjName: '神州信息大厦test3'
+    }, {
+      prjId: '4',
+      prjName: '神州信息大厦test4'
+    }, {
+      prjId: '5',
+      prjName: '神州信息大厦test5'
+    }]
+  }
+  return data;
+}
+function getpunchdetail(){
+  var data = {
+    daypunchdetail: [{
+        staffName: "胡夏阳",
+        prjName:"北京市海淀区西北旺东路10号院18号楼神州信息大厦",
+        begintime: "9:00",
+        endtime: "19:00",
+        status:"正常"
+      }, {
+        staffName: "景睿睿",
+        prjName: "北京市海淀区西北旺东路10号院18号楼神州信息大厦",
+        begintime: "8:40",
+        endtime: "18:20",
+        status: "正常"
+    }, {
+        staffName: "胡夏阳",
+        prjName: "神州信息大厦",
+        begintime: "8:30",
+        endtime: "20:30",
+        status: "正常"
+      }, {
+        staffName: "周晨",
+        prjName: "北京市海淀区西北旺东路10号院18号楼神州信息大厦",
+        begintime: "9:10",
+        endtime: "18:10",
+        status: "异常"
+    }, {
+        staffName: "胡夏阳",
+        prjName: "北京市海淀区西北旺东路10号院18号楼神州信息大厦",
+        begintime: "9:00",
+        endtime: "18:00",
+        status: "正常"
+    }]
+  }
+  return data;
+}
+
+function getpunchMonthdetail(){
+  var data = {
+    personDetail:[{
+      staffName:"周晨",
+      punchdetail:[{
+        punchDate:"2019-3-2",
+        begintime:"9:20",
+        endtime:"21:30"
+      },{
+        punchDate: "2019-3-5",
+        begintime: "9:10",
+        endtime: "21:30"
+      }, {
+        punchDate: "2019-3-6",
+        begintime: "9:10",
+        endtime: "21:30"
+      }]
+    },{
+      staffName:"胡夏阳",
+        punchdetail: [{
+          punchDate: "2019-3-2",
+          begintime: "9:20",
+          endtime: "21:30"
+        }]
+    }, {
+      staffName: "景睿睿",
+      punchdetail: [{
+        punchDate: "2019-3-2",
+        begintime: "9:20",
+        endtime: "21:30"
+      }]
+    }]
+  }
+  return data;
+}
+
 module.exports = {
   formatTime: formatTime,
   requestService: requestService,
@@ -264,8 +367,11 @@ module.exports = {
   getType: getType,
   navigateTo: navigateTo,
   upload:upload,
-  sendUniformMessage: sendUniformMessage,
-  getSendTemplateData: getSendTemplateData,
-  getSendTemplateResult: getSendTemplateResult
+  // sendUniformMessage: sendUniformMessage,
+  // getSendTemplateData: getSendTemplateData,
+  // getSendTemplateResult: getSendTemplateResult,
+  prjInfo: prjInfo,
+  getpunchdetail: getpunchdetail,
+  getpunchMonthdetail: getpunchMonthdetail
 }
 

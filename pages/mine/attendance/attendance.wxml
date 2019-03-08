@@ -45,23 +45,25 @@
     </view> 
   </view>
 
-  <view class="wx-cells-next">   
+  <!-- <view class="wx-cells-next" wx:if="{{businessType!='2'}}">   
     <view class="wx-cell wx-cell-bottom"  data-route="../plextrawork/plextrawork" bindtap="navToPage">
       <text class="wx-cell-text">补提加班</text>
       <image class="wx-cell-arrow" src="../../../images/right.png"></image>
     </view> 
-  </view>
+  </view> -->
 
-  <view wx:if="{{roleMapList.length!=0}}">
-    <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
-      <view class="wx-cells-next" wx:if="{{item.roleName=='pm'}}">   
-        <view id='bpg' class="wx-cell wx-cell-bottom"  data-route="../overtime/overtime" bindtap="navToPage">
-          <text class="wx-cell-text">报工申请</text>
-          <image class="wx-cell-arrow" src="../../../images/right.png"></image>
-        </view> 
+  <view wx:if="{{businessType!=2}}">
+    <view wx:if="{{roleMapList.length!=0}}">
+      <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+        <view class="wx-cells-next" wx:if="{{item.roleName=='pm'}}">   
+          <view id='bpg' class="wx-cell wx-cell-bottom"  data-route="../overtime/overtime" bindtap="navToPage">
+            <text class="wx-cell-text">报工申请</text>
+            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+          </view> 
+        </view>
       </view>
-    </view>
-  </view> 
+    </view> 
+  </view>
 
   <!-- <view class="wx-cells-next">
     <view class="wx-cell wx-cell-bottom"  data-route="../myaudit/myaudit" bindtap="navToPage">
@@ -86,10 +88,25 @@
   </view>
 
   <view class="wx-cells-next">
-    <view class="wx-cell"  data-route="../attendancehistory/attendancehistory" bindtap="navToPage">
+    <view class="wx-cell wx-cell-bottom" data-route="../attendancehistory/attendancehistory" bindtap="navToPage">
       <text class="wx-cell-text">考勤历史</text>
       <image class="wx-cell-arrow" src="../../../images/right.png"></image>
     </view> 
+  </view>
+
+  <view wx:if="{{roleMapList.length!=0}}">
+    <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+      <view class="wx-cells-next" wx:if="{{item.roleName=='pm'}}">
+        <view class="wx-cell wx-cell-bottom" data-route="../recorddetail/recorddetail" bindtap="navToPage">
+          <text class="wx-cell-text">查看项目员工打卡明细</text>
+          <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+        </view> 
+        <view class="wx-cell" data-route="../staffnj/staffnj" bindtap="navToPage">
+          <text class="wx-cell-text">查看年假/调休假</text>
+          <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+        </view> 
+      </view>
+    </view>
   </view>
 
   <!-- <view class="wx-cells">

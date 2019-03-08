@@ -12,7 +12,7 @@ App({
             topEmpId: wx.getStorageSync("topEmpId")
           }
           function success(res) {
-            console.log(res);
+            console.log("update",res);
             wx.hideLoading();
             if (res.data.code == 200) {
               wx.setStorage({

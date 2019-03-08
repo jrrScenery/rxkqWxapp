@@ -1,0 +1,23 @@
+<!-- <view class='swiper-tab'>
+  <view class="swiper-tab-list {{currentTab==0 ? 'active' : ''}}" data-current="0" 
+  bindtap='swichNav'>项目</view>
+  <view class="swiper-tab-list {{currentTab==1?'active':''}}" data-current="1"
+  bindtap='swichNav'>个人</view>
+</view> -->
+<!-- <swiper class='swiper' current="{{currentTab}}" duration='300' bindchange='bindChange' style='height:{{winHeight}}px;'>
+  <swiper-item style="margin-top:50px;overflow:auto"> -->
+    <scroll-view scroll-y='true' style='height:{{winHeight-50}}px;'>
+      <view wx:if="{{proInfo.length!=0}}" wx:for="{{proInfo}}" wx:key='idx' wx:for-index="idx" wx:for-item="item">
+        <view class="wx-cells">
+          <view id='{{item.prjId}}' class="wx-cell wx-cell-bottom" data-route="../punchdetail/punchdetail" bindtap="navToPage">
+            <text class="wx-cell-text">{{item.prjName}}</text>
+            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+          </view> 
+        </view>
+      </view>
+    </scroll-view>
+  <!-- </swiper-item>
+  <swiper-item  style="margin-top:50px">
+    <view>个人</view>
+  </swiper-item>
+</swiper> -->

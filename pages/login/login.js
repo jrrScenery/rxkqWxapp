@@ -8,8 +8,8 @@ Page({
    */
   data: {
     account:"",
-    password:""
-    // telephone:null,
+    password:"",
+    telephone:null,
     // accountDisabled:false
   },
 
@@ -41,6 +41,7 @@ Page({
   //           encryptedData: e.detail.encryptedData,
   //           iv: e.detail.iv
   //         }
+  //         console.log(getPhoneData);
   //         function success(res){
   //           console.log(res)
   //           if(res.data.code == 200){
@@ -100,25 +101,19 @@ Page({
         duration:2000
       })
     }  
-    // if (reg.test(this.data.account)){
-    //   if (this.data.telephone == null){
-    //     wx.showToast({
-    //       title: '请点击验证按钮获取手机号',
-    //       icon: 'none',
-    //       duration: 3000
-    //     })
-    //   }
-    //   else if (this.data.telephone != this.data.account){
-    //     console.log("1111111");
-    //     wx.showToast({
-    //       title: '输入手机号与验证获取绑定微信手机号不一致',
-    //       icon: 'none',
-    //       duration: 3000
-    //     })
-    //   } else if (this.data.telephone == this.data.account){
-    //     that.getLoginCheck();
-    //   }
-    // } 
+    // if (this.data.telephone == null) {
+    //   wx.showToast({
+    //     title: '请点击验证按钮获取手机号',
+    //     icon: 'none',
+    //     duration: 3000
+    //   })
+    // } else if (this.data.password.length == 0) {
+    //   wx.showToast({
+    //     title: '密码不能为空',
+    //     icon: 'none',
+    //     duration:2000
+    //   })
+    // }
     else {
       that.getLoginCheck();
     }

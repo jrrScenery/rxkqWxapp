@@ -33,3 +33,21 @@ page{
   font-size:15px;
   margin-bottom: 5px
 }
+
+
+.inputView { 
+ width:100%;
+ background-color: #fff; 
+ line-height: 44px; 
+ display: flex;
+ font-size: 13px;
+ padding: 0 5px;
+ border-bottom: 1px solid #cccccc;
+}
+
+.inputText { 
+ text-align: left; 
+ margin-top: 11px; 
+ color: #cccccc; 
+ font-size: 13px;
+}

@@ -9,11 +9,26 @@ if (newMonth < 1) {
 }
 
 // var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
-var start = new Date(newYear + "-" + newMonth + "-1");
+var start = new Date((newYear + "-" + newMonth + "-1").replace(/\-/g, '/'));
+var newStart = new Date((newYear + "-" + (newMonth + 1) + "-1").replace(/\-/g, '/'));
 var beginDate = util.formatTime(date).substring(0,10);
 var a = new Date((new Date().getFullYear()+1) + "-12-31");
-var oribeginDate = util.formatTime(start).substring(0, 10);
-var enddate = util.formatTime(a).substring(0, 10);
+var oribeginDate = null;
+if(new Date().getDate()=='1'){
+  oribeginDate = util.formatTime(start).substring(0, 10)
+}else{
+  oribeginDate = util.formatTime(newStart).substring(0, 10)
+}
+var enddate = null;
+// var businessType = wx.getStorageSync("loginData").businessType;
+// if (businessType == '2') {
+//   var nowDate = new Date().getDate();
+//   var now = new Date((newYear + "-" + (newMonth + 1) + "-" + nowDate).replace(/\-/g, '/'))
+//   enddate = util.formatTime(now).substring(0, 10);
+// }else{
+//   enddate = util.formatTime(a).substring(0, 10);
+// }
+console.log("enddate:" + enddate);
 var imgNum = 0;
 Page({
 
@@ -34,7 +49,8 @@ Page({
       "产假",
       "哺乳假",
       "丧假",
-      "产检假"
+      "产检假",
+      "陪产假"
     ],
     selectedIndex: 0
   },
@@ -100,8 +116,17 @@ Page({
     })
   },
   addrChange:function(e){
+    console.log(this.data);
     console.log(e)
+    var index = parseInt(e.detail.value);
+    var newbeginTime = this.data.address[index].ambegintime;
+    var newendTime = this.data.address[index].pmendtime
     this.setData({
+      beginTime: newbeginTime,
+      selectBeginTime: newbeginTime,
+      selectEndTime: newendTime,
+      endTime: newendTime,
+
       selectedAddrIndex: parseInt(e.detail.value)
     })
   },
@@ -165,13 +190,13 @@ Page({
             icon:"success",
             duration:2000
           })
-          var opMap = res.data.opMap;
-          var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI";
-          if (value.leaveType<=9){
-            util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "请假", that.data.abstype[value.leaveType - 1], that.data.staffName);
-          }else{
-            util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "请假", that.data.abstype[value.leaveType - 4], that.data.staffName);
-          }
+          // var opMap = res.data.opMap;
+          // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI";
+          // if (value.leaveType<=9){
+          //   util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "请假", that.data.abstype[value.leaveType - 1], that.data.staffName);
+          // }else{
+          //   util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "请假", that.data.abstype[value.leaveType - 4], that.data.staffName);
+          // }
           function success(res){
             console.log(imgNum);
             var res = JSON.parse(res.data);
@@ -344,6 +369,7 @@ Page({
     var k = 0;
     var n = 0;
     var prjMapList = wx.getStorageSync("loginData").prjMapList;
+    console.log(prjMapList);
     for (var i = 0; i < prjMapList.length; i++) {
       var addressList = prjMapList[i].addressMapList;
       for (var j = 0; j < addressList.length;j++){
@@ -357,10 +383,28 @@ Page({
         addrObj.prjId = addressList[j].prjId;
         addrObj.addrId = addressList[j].addrId;
         addrObj.address = prjMapList[i].prjCode+"-"+addressList[j].address;
+        addrObj.ambegintime = addressList[j].ambegintime;
+        addrObj.pmendtime = addressList[j].pmendtime;
         addrObj.prjType = prjMapList[i].prjType;
         address[k++] = addrObj
       }
     }
+    // var businessType = wx.getStorageSync("loginData").businessType;
+    // if (businessType == '2') {
+    //   wx.getSystemInfo({
+    //     success: function (res) {
+    //       if (res.platform == 'ios') {
+    //         var nowDate = new Date().getDate();
+    //         var now = new Date((newYear + "-" + (newMonth + 1) + "-" + nowDate).replace(/\-/g, '/'))
+    //         enddate = util.formatTime(now).substring(0, 10);
+    //       } else {
+    //         enddate = util.formatTime(new Date()).substring(0, 10);
+    //       }
+    //     }
+    //   })
+    // } else {
+    //   enddate = util.formatTime(a).substring(0, 10);
+    // }
     that.setData({
       address: address,
       selectedAddrIndex: n,

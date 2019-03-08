@@ -5,7 +5,7 @@
         <view class='perview'>
           <view style='margin-top:10px;width:80%'>待办类型：批量处理</view> 
           <view class='buttonview' style='width:20%;'>
-            <view name='detail' class='checkButton' data-route="../myaudit/myaudit" data-id="{{item.processIds}}" data-current="{{item.loaType}}" bindtap='checkaudit'>查看详情</view>
+            <view id='3' name='detail' class='checkButton' data-route="../myaudit/myaudit" data-id="{{item.processIds}}" data-current="{{item.loaType}}" bindtap='checkaudit'>查看详情</view>
           </view>
         </view>
         <view class='perview'>

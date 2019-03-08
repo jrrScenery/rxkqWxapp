@@ -162,7 +162,7 @@ Page({
       }
     }
   },
-  formSubmit:function(e){
+  formSubmit:function(e){ 
     console.log(e)
     var that = this;
     console.log(that.data)
@@ -198,26 +198,27 @@ Page({
           duration:2000
         })
         //待办通知提醒
-        var auditType = e.detail.target.id;
-        console.log(that.data.auditInfo[idx].loaType)
-        var loaType = util.getType().loaType[that.data.auditInfo[idx].loaType];
-        var opMapList = res.data.opMapList;
-        var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
-        if (auditType == 'ok') {
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        } else {
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        }
+        // var auditType = e.detail.target.id;
+        // console.log(that.data.auditInfo[idx].loaType)
+        // var loaType = util.getType().loaType[that.data.auditInfo[idx].loaType];
+        // var opMapList = res.data.opMapList;
+        // var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
+        // if (auditType == 'ok') {
+        //   for (var i = 0; i < opMapList.length; i++) {
+        //     util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
+        //   }
+        // } else {
+        //   for (var i = 0; i < opMapList.length; i++) {
+        //     util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
+        //   }
+        // }
 
         for (var i = 0; i < that.data.auditInfo.length; i++) {
           if (i != idx) {
             options.id += that.data.auditInfo[i].id + ","
           }
         }
+        console.log("221行",options.id);
         if (options.id==""){
           wx.navigateBack({
             url: "../mybatchaudit/mybatchaudit"
@@ -309,7 +310,7 @@ Page({
         }
         that.setData({
           // auditInfo: res.data.auditinfos,
-          total: res.data.totalNum,
+          // total: res.data.totalNum,
           loaType: loaType,
           leaveType: leaveType,
           relaxation: relaxation,

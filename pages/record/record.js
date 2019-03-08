@@ -64,6 +64,7 @@ Page({
           }
          
         } else {//上拉
+          console.log("newMonth:"+newMonth)
           if (newMonth > 10) {
             newYear = newYear + 1;
             newMonth = 0;

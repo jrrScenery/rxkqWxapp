@@ -1,0 +1,40 @@
+.njsearchView{
+  display:flex;
+  text-align:center;
+  margin:10px;
+}
+.njsearchInputView{
+  width:75%;
+  height:30px;
+  border-radius: 40px;
+  border:  2px solid whitesmoke;
+}
+.table{
+  border: 0px solid darkgray;
+}
+.th{
+  margin-top: 2px;
+  display: flex;
+  height: 1.5rem;
+  border-right: 1px solid #dadada;
+  align-items: center;
+  justify-content: center;
+  background-color: #dadada
+}
+.tr{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-size: 13px
+}
+.td{
+  display: flex;
+  flex-direction:column;
+  border-bottom: 1px solid #dadada;
+  border-right: 1px solid #dadada;
+  text-align: center;
+  width: 33%;
+  align-items: center;
+  justify-content: center;
+}

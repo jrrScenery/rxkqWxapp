@@ -1,6 +1,5 @@
 {
 	"description": "项目配置文件。",
-	"qcloudRoot": "./",
 	"setting": {
 		"urlCheck": false,
 		"es6": true,
@@ -9,7 +8,7 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.3.0",
+	"libVersion": "1.9.98",
 	"appid": "wxa8405bb1ac18d4b5",
 	"projectname": "rxkqWxapp",
 	"isGameTourist": false,

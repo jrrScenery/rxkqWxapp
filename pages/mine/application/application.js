@@ -3,7 +3,7 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {
+  data: { 
   },
 //监听搜索输入框值输入
   searchBindInput:function(e){

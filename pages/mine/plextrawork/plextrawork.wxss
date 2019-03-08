@@ -27,7 +27,7 @@
 }
 .textarea{
   background-color:#EBEBEB;
-  width:90%;
+  width:98%;
 }
 
 /* 表格样式 */

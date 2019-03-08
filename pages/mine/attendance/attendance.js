@@ -12,7 +12,7 @@ Page({
   },
 
   navToPage(event) {
-    console.log(event);
+    // console.log(event);
     let route = event.currentTarget.dataset.route;
     let sortId = event.currentTarget.id;
     wx.navigateTo({
@@ -28,11 +28,12 @@ Page({
     wx.getStorage({
       key: 'loginData',
       success: function(res) {
-        console.log(res);
+        // console.log(res);
         that.setData({
           staffName: res.data.staffName,
           topUser: res.data.topUser,
-          roleMapList: res.data.roleMapList
+          roleMapList: res.data.roleMapList,
+          businessType: res.data.businessType
         })
       },
     })
@@ -43,7 +44,6 @@ Page({
       encryption: wx.getStorageSync("encryption")
     }
     function success(res){
-      console.log(res)
       if(res.data.code == 200){
         that.setData({
           todoNum: res.data.todoNum

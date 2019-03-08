@@ -9,13 +9,22 @@ if (newMonth < 1) {
   newMonth = 12;
 }
 // var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
-var start = new Date(newYear + "-" + newMonth + "-1");
+var start = new Date((newYear + "-" + newMonth + "-1").replace(/\-/g, '/'));
+var newStart = new Date((newYear + "-" + (newMonth + 1) + "-1").replace(/\-/g, '/'));
 var beginDate = util.formatTime(date).substring(0, 10);
 var a = new Date((new Date().getFullYear()+1) + "-12-31");
-var oribeginDate = util.formatTime(start).substring(0, 10);
-var enddate = util.formatTime(a).substring(0, 10);
+// var oribeginDate = util.formatTime(start).substring(0, 10);
+var oribeginDate = null;
+if (new Date().getDate() == '1') {
+  oribeginDate = util.formatTime(start).substring(0, 10)
+} else {
+  oribeginDate = util.formatTime(newStart).substring(0, 10)
+}
+var enddate = null;
+// var enddate = util.formatTime(a).substring(0, 10);
 var bpgStart = new Date();
 var bpgBeginDate = util.formatTime(date).substring(0, 10);
+var bpgendDate = util.formatTime(a).substring(0, 10);
 Page({
 
   /**
@@ -191,7 +200,7 @@ Page({
 
     if (that.data.address.length == 0 && that.data.sortId=='bpg'){
       wx.showToast({
-        title: '没有领导项目，不能提交报工申请',
+        title: '没有管辖项目，不能提交报工申请',
         icon: "none",
         duration: 2000
       })
@@ -234,6 +243,9 @@ Page({
       if (that.data.id != null){
         postdata.id = that.data.id;
       }
+      if (value.leaveType==null) { 
+        postdata.leaveType = 0;
+      }
       console.log(postdata);
       function success(res) {
         console.log(res)
@@ -247,7 +259,7 @@ Page({
             that.setData({
               id: null,
               beginDate: bpgBeginDate,
-              endDate: enddate,
+              endDate: bpgendDate,
               selectBeginDate: bpgBeginDate,
               selectEndDate: bpgBeginDate,
               selectBeginTime: wx.getStorageSync('ambegintime'),
@@ -255,9 +267,9 @@ Page({
               reason: "",
               selectedIndex: 0
             })
-            var opMap = res.data.opMap;
-            var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
-            util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "报工", "报工", that.data.staffName);
+            // var opMap = res.data.opMap;
+            // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
+            // util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "报工", "报工", that.data.staffName);
           }else{                        
             that.setData({
               id: null,
@@ -270,9 +282,9 @@ Page({
               reason: "",
               selectedIndex: 0
             })
-            var opMap = res.data.opMap;
-            var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
-            util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "加班", that.data.abstype[e.detail.value.leaveType], that.data.staffName);
+            // var opMap = res.data.opMap;
+            // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
+            // util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "加班", that.data.abstype[e.detail.value.leaveType], that.data.staffName);
           }
         } else if (res.data.code == 99) {
           util.mineRedirect(res.data.message);
@@ -310,7 +322,6 @@ Page({
     var m = 0;
     var n=0;
     var prjMapList = wx.getStorageSync("loginData").prjMapList;
-    console.log(prjMapList);
     for (var i = 0; i < prjMapList.length; i++) {
       var addressList = prjMapList[i].addressMapList;
       for (var j = 0; j < addressList.length; j++) {
@@ -330,30 +341,49 @@ Page({
     }
     var leadPrjMapList = wx.getStorageSync("loginData").leadPrjMapList;
     for (var i = 0; i < leadPrjMapList.length; i++) {
-      var addressList = leadPrjMapList[i].addressMapList;
-      for (var j = 0; j < addressList.length; j++) {
-        if (options.transdata) {
-          if (JSON.parse(options.transdata).addrId == addressList[j].addrId) {
-            n = k;
+      if (leadPrjMapList[i].addressMapList!=null){
+        var addressList = leadPrjMapList[i].addressMapList;
+        for (var j = 0; j < addressList.length; j++) {
+          if (options.transdata) {
+            if (JSON.parse(options.transdata).addrId == addressList[j].addrId) {
+              n = k;
+            }
           }
+          var addrObj = {};
+          addrObj.prjId = addressList[j].prjId;
+          addrObj.addrId = addressList[j].addrId;
+          addrObj.address = leadPrjMapList[i].prjCode + "-" + addressList[j].address;
+          addrObj.prjType = leadPrjMapList[i].prjType;
+          addrObj.prjCode = leadPrjMapList[i].prjCode
+          address[k++] = addrObj
         }
-        var addrObj = {};
-        addrObj.prjId = addressList[j].prjId;
-        addrObj.addrId = addressList[j].addrId;
-        addrObj.address = leadPrjMapList[i].prjCode + "-" + addressList[j].address;
-        addrObj.prjType = leadPrjMapList[i].prjType;
-        addrObj.prjCode = leadPrjMapList[i].prjCode
-        address[k++] = addrObj
       }
     }
+    var businessType = wx.getStorageSync("loginData").businessType;
+    if (businessType == '2') {
+      wx.getSystemInfo({
+        success: function (res) {
+          if (res.platform == 'ios') {
+            var nowDate = new Date().getDate();
+            var now = new Date((newYear + "-" + (newMonth + 1) + "-" + nowDate).replace(/\-/g, '/'))
+            enddate = util.formatTime(now).substring(0, 10);
+          } else {
+            enddate = util.formatTime(new Date()).substring(0, 10);
+          }
+        }
+      })
+    } else {
+      enddate = util.formatTime(a).substring(0, 10);
+    } 
     that.setData({
       address: address,
       selectedAddrIndex: m,
       selectedCodeIndex:n,
       prjCode: prjCode,
-      staffName: wx.getStorageSync("loginData").staffName
+      staffName: wx.getStorageSync("loginData").staffName,
+      businessType: wx.getStorageSync("loginData").businessType,
+      roleMapList: wx.getStorageSync("loginData").roleMapList
     })
-    console.log(that.data.address);
     if (options.sortId == 'applyUser'){
       wx.setNavigationBarTitle({
         title: '加班申请',

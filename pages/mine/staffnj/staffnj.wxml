@@ -1,0 +1,24 @@
+<view class='njsearchView'>
+  <view class='njsearchInputView'>
+    <input name='search' style='height:30px;font-size:12px' placeholder='输入姓名/项目号/项目名称' bindinput='searchBindInput'></input>
+  </view>
+  <button size='mini' bindtap='searchBindTap'>搜索</button>
+</view>
+<view wx:if="{{leavedata.length!=0}}">
+  <view wx:for="{{leavedata}}" wx:key="idx" wx:for-item="items" wx:for-index="index">
+    <view style='font-size:15px;margin:10px'>{{items.prjName}}</view>
+    <view class="table">
+      <view class="tr bg-w">
+        <view class="th" style='width:33%'>员工姓名</view>
+        <view class="th" style='width:33%'>剩余年假</view>
+        <view class="th" style='width:33%'>剩余调休假</view>
+      </view>
+      <view class="tr" wx:for="{{items.applyInfo}}" wx:key='idx' wx:for-index="idx" wx:for-item="item">
+        <view class="td">{{item.staffName}}</view>
+        <view class="td">{{item.residueDay}}</view>
+        <view class="td">{{item.restDay}}</view>
+      </view>
+    </view>
+  </view>
+</view>
+<view wx:else style='font-size:13px;text-align:center'>暂无员工信息</view>

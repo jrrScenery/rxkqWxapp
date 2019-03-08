@@ -5,10 +5,13 @@ Page({
    */
   data: {
     curtime: new Date().getFullYear() + "年" + new Date().getMonth() + "月",
+    iswholeMonth: false,
+    isShow: true,
+    nowDate:new Date().getDate(),
+    dataInfo:null,
     leavetype: [
       "请选择",
       "因公",
-      "调休",
       "病假",
       "事假",
       "年假",
@@ -19,12 +22,13 @@ Page({
       "迟到",
       "早退",
       "旷工",
-      "产检假"
+      "产检假",
+      "陪产假"
     ],
+    leavetypeIndex: []
   },
 
   modalinput: function (e) {
-    console.log("1111111", e)
     var idx = e.target.dataset.current;
     if (this.data.dataInfo[idx].processStatus == 1 || this.data.dataInfo[idx].processStatus == 2) {
       if (this.data.leavereason[idx] != "") {
@@ -40,10 +44,6 @@ Page({
         hiddenmodalput: this.data.hiddenmodalput
       })
     }
-    // this.data.hiddenmodalput[idx] = !this.data.hiddenmodalput[idx];
-    // this.setData({
-    //   hiddenmodalput: this.data.hiddenmodalput
-    // })
   },
 
   //取消按钮  
@@ -60,7 +60,6 @@ Page({
 
   //确认  
   confirm: function (e) {
-    console.log(e)
     var idx = e.target.dataset.current;
     this.data.hiddenmodalput[idx] = !this.data.hiddenmodalput[idx];
     this.setData({
@@ -80,10 +79,22 @@ Page({
   //缺勤结束时间选择
   absEndTimechange: function (e) {
     var timeIndex = e.target.dataset.current;
-    this.data.selectAbsEndTime[timeIndex] = e.detail.value;
-    this.setData({
-      selectAbsEndTime: this.data.selectAbsEndTime
-    })
+    if (this.data.selectAbsBeginTime[timeIndex] == e.detail.value) {
+      wx.showToast({
+        title: '结束时间应大于开始时间',
+        icon: 'none',
+        duration: 2000
+      })
+    } else {
+      this.data.selectAbsEndTime[timeIndex] = e.detail.value;
+      this.setData({
+        selectAbsEndTime: this.data.selectAbsEndTime
+      })
+    }
+    // this.data.selectAbsEndTime[timeIndex] = e.detail.value;
+    // this.setData({
+    //   selectAbsEndTime: this.data.selectAbsEndTime
+    // })
   },
 
   //请假原因多行文本框事件
@@ -97,117 +108,151 @@ Page({
   //添加信息点击事件
   addInfotap: function (e) {
     var that = this;
-    var pmendtime = wx.getStorageSync("loginData").pmendtime;
     var currentIndex = e.target.dataset.current;
-    var currentleavetime = this.data.dataInfo[currentIndex].absBeginTime;
-    var currentleavetime1 = this.data.dataInfo[currentIndex].absEndTime;
-    if (this.data.leavetypeIndex[currentIndex] == 0) {
-      wx.showToast({
-        title: '请输入请假类型!',
-        icon:'none',
-        duration:2000
-      })
-    } else if (currentleavetime == currentleavetime1) {
-      wx.showToast({
-        title: '开始时间不能大于结束时间!',
-        icon: 'none',
-        duration:2000
-      })
-    } else if (that.data.selectAbsEndTime[currentIndex] == pmendtime) {
-      wx.showToast({
-        title: '当天考勤已补满！',
-        icon: 'none',
-        duration: 2000
-      })
-    } else { //将新添数据添加在数组最后
-      var attenInfo = {};
-      attenInfo.punchDate = that.data.dataInfo[currentIndex].punchDate;
-      attenInfo.beginTime = that.data.dataInfo[currentIndex].beginTime;
-      attenInfo.endTime = that.data.dataInfo[currentIndex].endTime;
-      attenInfo.processStatus = that.data.dataInfo[currentIndex].processStatus;
-      attenInfo.absBeginTime = that.data.selectAbsEndTime[currentIndex];
-      attenInfo.absEndTime = that.data.dataInfo[currentIndex].absEndTime;
-      attenInfo.addrId = that.data.dataInfo[currentIndex].addrId;
-      attenInfo.prjId = that.data.dataInfo[currentIndex].prjId;
-      attenInfo.isNew = 0;
-      that.data.selectAbsBeginTime[that.data.dataInfo.length] = that.data.selectAbsEndTime[currentIndex];
-      that.data.selectAbsEndTime[that.data.dataInfo.length] = that.data.dataInfo[currentIndex].absEndTime;
-      that.data.leavetypeIndex[that.data.dataInfo.length] = 0;
-      that.data.cancleFlag[that.data.dataInfo.length] = false;
-      that.data.addFlag[that.data.dataInfo.length] = true;
+    
+    // if (that.data.isBigDate[currentIndex]) {
+    //   that.data.isBigDate[currentIndex] = false;
+    //   that.data.isShowDelete[currentIndex] = true;
+    //   that.setData({
+    //     isBigDate: that.data.isBigDate,
+    //     isShowDelete: that.data.isShowDelete
+    //   })
+    // }else{
+      var pmendtime = wx.getStorageSync("pmendtime")
+      var currentleavetime = this.data.dataInfo[currentIndex].absBeginTime;
+      var currentleavetime1 = this.data.dataInfo[currentIndex].absEndTime;
+      if (this.data.leavetypeIndex[currentIndex] == 0) {
+        wx.showToast({
+          title: '请输入请假类型!',
+          icon: 'none',
+          duration: 2000
+        })
+      } else if (currentleavetime == currentleavetime1) {
+        wx.showToast({
+          title: '开始时间不能大于结束时间!',
+          icon: 'none',
+          duration: 2000
+        })
+      } else if (that.data.selectAbsEndTime[currentIndex] == pmendtime) {
+        wx.showToast({
+          title: '当天考勤已补满！',
+          icon: 'none',
+          duration: 2000
+        })
+      } else {//将新添数据添加在数组最后
+        var attenInfo = {};
+        attenInfo.punchDate = that.data.dataInfo[currentIndex].punchDate;
+        attenInfo.beginTime = that.data.dataInfo[currentIndex].beginTime;
+        attenInfo.endTime = that.data.dataInfo[currentIndex].endTime;
+        attenInfo.processStatus = that.data.dataInfo[currentIndex].processStatus;
+        attenInfo.absBeginTime = that.data.selectAbsEndTime[currentIndex];
+        attenInfo.absEndTime = that.data.dataInfo[currentIndex].absEndTime;
+        attenInfo.addrId = that.data.dataInfo[currentIndex].addrId;
+        attenInfo.prjId = that.data.dataInfo[currentIndex].prjId;
+        attenInfo.isNew = 0;
+        that.data.selectAbsBeginTime[that.data.dataInfo.length] = that.data.selectAbsEndTime[currentIndex];
+        that.data.selectAbsEndTime[that.data.dataInfo.length] = that.data.dataInfo[currentIndex].absEndTime;
+        that.data.leavetypeIndex[that.data.dataInfo.length] = 0;
+        that.data.cancleFlag[that.data.dataInfo.length] = false;
+        that.data.addFlag[that.data.dataInfo.length] = true;
 
-      that.data.hiddenmodalput[that.data.dataInfo.length] = true;//新加控制原因弹框
+        that.data.hiddenmodalput[that.data.dataInfo.length] = true;//新加控制原因弹框
+        that.data.dataInfo[that.data.dataInfo.length] = attenInfo;
 
-      that.data.dataInfo[that.data.dataInfo.length] = attenInfo;
-      that.setData({
-        dataInfo: that.data.dataInfo,
-        selectAbsBeginTime: that.data.selectAbsBeginTime,
-        selectAbsEndTime: that.data.selectAbsEndTime,
-        leavetypeIndex: that.data.leavetypeIndex,
-        cancleFlag: that.data.cancleFlag,
-        addFlag: that.data.addFlag,
-        hiddenmodalput: that.data.hiddenmodalput
-      })
-      //排序，将添加的数据放置到相应位置
-      //将最后插入的一条数据赋值给相应变量
-      var insert = that.data.dataInfo[that.data.dataInfo.length - 1];
-      var insertselectTime = that.data.selectAbsBeginTime[that.data.dataInfo.length - 1];
-      var insertselectTime1 = that.data.selectAbsEndTime[that.data.dataInfo.length - 1];
-      var insertleavetypeIndex = that.data.leavetypeIndex[that.data.dataInfo.length - 1];
-      for (var i = that.data.dataInfo.length - 1; i >= 0; i--) {
-        if (i > currentIndex + 1) {
-          var attenInfo1 = {};
-          attenInfo1 = that.data.dataInfo[i - 1];
-          that.data.selectAbsBeginTime[i] = that.data.dataInfo[i - 1].absBeginTime;
-          that.data.selectAbsEndTime[i] = that.data.dataInfo[i - 1].absEndTime;
-          that.data.leavetypeIndex[i] = that.data.leavetypeIndex[i - 1];
-          that.data.dataInfo[i] = attenInfo1;
-        } else if (i == currentIndex + 1) {
-          that.data.selectAbsBeginTime[i] = insertselectTime;
-          that.data.selectAbsEndTime[i] = insertselectTime1;
-          that.data.leavetypeIndex[i] = insertleavetypeIndex;
-          that.data.cancleFlag[i] = true;
-
-          that.data.hiddenmodalput[i] = true; //新加原因弹框标识
-
-          that.data.dataInfo[i] = insert;
-        } else {
-          if (i == currentIndex) {
-            that.data.dataInfo[i].absEndTime = insertselectTime;
-            that.data.selectAbsEndTime[i] = insertselectTime;
-            that.data.addFlag[i] = false;
-          }else{
+        //排序，将添加的数据放置到相应位置
+        //将最后插入的一条数据赋值给相应变量
+        var insert = that.data.dataInfo[that.data.dataInfo.length - 1]
+        var insertselectTime = that.data.selectAbsBeginTime[that.data.dataInfo.length - 1];
+        var insertselectTime1 = that.data.selectAbsEndTime[that.data.dataInfo.length - 1];
+        var insertleavetypeIndex = that.data.leavetypeIndex[that.data.dataInfo.length - 1];
+        for (var i = that.data.dataInfo.length - 1; i >= 0; i--) {
+          if (i > currentIndex + 1) {//插入位置之后
             var attenInfo1 = {};
-            attenInfo1 = that.data.dataInfo[i];
-            that.data.selectAbsBeginTime[i] = that.data.selectAbsBeginTime[i];
-            that.data.selectAbsEndTime[i] = that.data.selectAbsEndTime[i];
-            that.data.leavetypeIndex[i] = that.data.leavetypeIndex[i];
+            attenInfo1 = that.data.dataInfo[i - 1];
+            that.data.selectAbsBeginTime[i] = that.data.selectAbsBeginTime[i - 1];
+            that.data.selectAbsEndTime[i] = that.data.selectAbsEndTime[i - 1];
+            that.data.leavetypeIndex[i] = that.data.leavetypeIndex[i - 1];
+            that.data.addFlag[i] = that.data.addFlag[i - 1];
+            that.data.cancleFlag[i] = that.data.cancleFlag[i - 1];
+            that.data.hiddenmodalput[i] = that.data.hiddenmodalput[i - 1];
+            that.data.leavereason[i] = that.data.leavereason[i - 1];
             that.data.dataInfo[i] = attenInfo1;
+          } else if (i == currentIndex + 1) {//插入位置
+            that.data.selectAbsBeginTime[i] = insertselectTime;
+            that.data.selectAbsEndTime[i] = insertselectTime1;
+            that.data.leavetypeIndex[i] = insertleavetypeIndex;
+            that.data.addFlag[i] = true;
+            that.data.cancleFlag[i] = true;
+            that.data.hiddenmodalput[i] = true; //新加原因弹框标识
+            that.data.dataInfo[i] = insert;
+          } else {
+            if (i == currentIndex) {
+              that.data.dataInfo[i].absEndTime = insertselectTime;
+              that.data.selectAbsEndTime[i] = insertselectTime;
+              that.data.addFlag[i] = false;
+              var nextPunch = that.data.dataInfo[i].punchDate == that.data.dataInfo[i + 1].punchDate;
+              if (i != 0) {
+                var beforePunch = that.data.dataInfo[i].punchDate == that.data.dataInfo[i - 1].punchDate;
+                if (nextPunch && beforePunch) {
+                  that.data.cancleFlag[i] = true;
+                } else {
+                  that.data.cancleFlag[i] = false;
+                }
+              } else {
+                that.data.cancleFlag[i] = false;
+              }
+            } else {
+              var attenInfo1 = {};
+              attenInfo1 = that.data.dataInfo[i];
+              that.data.selectAbsBeginTime[i] = that.data.selectAbsBeginTime[i];
+              that.data.selectAbsEndTime[i] = that.data.selectAbsEndTime[i];
+              that.data.leavetypeIndex[i] = that.data.leavetypeIndex[i];
+              that.data.dataInfo[i] = attenInfo1;
+            }
           }
         }
+        that.setData({
+          dataInfo: that.data.dataInfo,
+          selectAbsBeginTime: that.data.selectAbsBeginTime,
+          selectAbsEndTime: that.data.selectAbsEndTime,
+          leavetypeIndex: that.data.leavetypeIndex,
+          cancleFlag: that.data.cancleFlag,
+          hiddenmodalput: that.data.hiddenmodalput,
+          addFlag: that.data.addFlag,
+        })
       }
-      that.setData({
-        dataInfo: that.data.dataInfo,
-        selectAbsBeginTime: that.data.selectAbsBeginTime,
-        selectAbsEndTime: that.data.selectAbsEndTime,
-        leavetypeIndex: that.data.leavetypeIndex,
-        cancleFlag: that.data.cancleFlag,
-        addFlag: that.data.addFlag,
-        hiddenmodalput: that.data.hiddenmodalput,
-      })
-    }
+    // }
   },
   //点击取消按钮事件
   cancleInfoTap:function(e){
     var that = this;
     var currentIndex = e.target.dataset.current;
     var selectAbsEndTime = that.data.selectAbsEndTime[currentIndex];
+    var punchDate = that.data.dataInfo[currentIndex].punchDate;
+
+    var year = new Date().getFullYear();
+    var month = new Date().getMonth();
+    var day = new Date().getDate();
+    var d1 = new Date((year + "/" + month + "/" + day).replace(/\-/g, "\/"));
+    var d2 = new Date(that.data.dataInfo[currentIndex].punchDate.replace(/\-/g, "\/"));
+
+    var k = 0;
+    for (var i = currentIndex + 1; i < that.data.dataInfo.length; i++) {
+      if (that.data.dataInfo[i].punchDate == punchDate) {
+        k++;
+      }
+    }
     //将当前条记录之后的记录依次前移
     for (var i = currentIndex; i < that.data.dataInfo.length; i++) {
       if (i == currentIndex){//将当前记录选中的缺勤结束时间赋值给前一条的缺勤结束时间
-        that.data.selectAbsEndTime[i - 1] = selectAbsEndTime;
-        that.data.dataInfo[i - 1].absEndTime = selectAbsEndTime;
-        that.data.addFlag[i - 1] = true;
+        if (k != 0) {
+          that.data.selectAbsEndTime[i - 1] = selectAbsEndTime;
+          that.data.dataInfo[i - 1].absEndTime = selectAbsEndTime;
+        } else {
+          that.data.selectAbsEndTime[i - 1] = that.data.dataInfo[i].absEndTime;
+          that.data.dataInfo[i - 1].absEndTime = that.data.dataInfo[i].absEndTime;
+          that.data.addFlag[i - 1] = true;
+        }
       } else { //将当前条记录之后的记录一次前移
         var attenInfo1 = {};
         attenInfo1 = that.data.dataInfo[i];
@@ -236,25 +281,110 @@ Page({
       leavetypeIndex: that.data.leavetypeIndex,
       cancleFlag: that.data.cancleFlag,
       addFlag: that.data.addFlag,
-      hiddenmodalput: that.data.hiddenmodalput
+      hiddenmodalput: that.data.hiddenmodalput,
     })
   },
 
+  // deleteInfoTap: function (e) {
+  //   var that = this;
+  //   var currentIndex = e.target.dataset.current;
+  //   var punchDate = that.data.dataInfo[currentIndex].punchDate;
+  //   var n = 0;
+  //   for (var i = currentIndex + 1; i < that.data.dataInfo.length; i++) {
+  //     if (that.data.dataInfo[i].punchDate == punchDate) {
+  //       n++;
+  //     }
+  //   }
+  //   if (that.data.addFlag[currentIndex] && that.data.isShowDelete[currentIndex]) {
+  //     that.data.isShowDelete[currentIndex] = false;
+  //     that.data.leavetypeIndex[currentIndex] = 0;
+  //     var selectAbsEndTime = that.data.selectAbsEndTime[currentIndex + n];
+  //     that.data.selectAbsEndTime[currentIndex] = selectAbsEndTime
+  //     that.setData({
+  //       leavetypeIndex: that.data.leavetypeIndex,
+  //       isShowDelete: that.data.isShowDelete,
+  //       selectAbsEndTime: that.data.selectAbsEndTime
+  //     })
+  //     if (n == 0) {
+  //       selectAbsEndTime = that.data.dataInfo[currentIndex].absEndTime;
+  //       that.data.selectAbsEndTime[currentIndex] = selectAbsEndTime;
+  //       that.setData({
+  //         selectAbsEndTime: that.data.selectAbsEndTime
+  //       })
+  //     } else {
+  //       for (var i = 0; i < n; i++) {
+  //         that.getDeleteResult(currentIndex, selectAbsEndTime);
+  //       }
+  //     }
+  //   } else {
+  //     that.data.leavetypeIndex[currentIndex] = 0;
+  //     that.data.isShowDelete[currentIndex] = false;
+  //     var selectAbsEndTime = that.data.selectAbsEndTime[currentIndex + n];
+  //     that.data.selectAbsEndTime[currentIndex] = selectAbsEndTime;
+  //     that.setData({
+  //       leavetypeIndex: that.data.leavetypeIndex,
+  //       isShowDelete: that.data.isShowDelete,
+  //       selectAbsEndTime: that.data.selectAbsEndTime
+  //     })
+  //     for (var i = 0; i < n; i++) {
+  //       that.getDeleteResult(currentIndex, selectAbsEndTime);
+  //     }
+  //   }
+  // },
+
+  // getDeleteResult(currentIndex, selectAbsEndTime) {
+  //   var that = this;
+  //   //将当前条记录之后的记录依次前移
+  //   for (var i = currentIndex + 1; i < that.data.dataInfo.length; i++) {
+  //     if (i == currentIndex + 1) {//将当前记录选中的缺勤结束时间赋值给前一条的缺勤结束时间
+  //       that.data.selectAbsEndTime[i - 1] = that.data.dataInfo[i].absEndTime;
+  //       that.data.dataInfo[i - 1].absEndTime = that.data.dataInfo[i].absEndTime;
+  //       that.data.addFlag[i - 1] = true;
+  //       that.data.isShowDelete[i - 1] = false;
+  //     } else { //将当前条记录之后的记录一次前移
+  //       var attenInfo1 = {};
+  //       attenInfo1 = that.data.dataInfo[i];
+  //       that.data.selectAbsBeginTime[i - 1] = that.data.selectAbsBeginTime[i];
+  //       that.data.selectAbsEndTime[i - 1] = that.data.selectAbsEndTime[i];
+  //       that.data.leavetypeIndex[i - 1] = that.data.leavetypeIndex[i];
+  //       that.data.cancleFlag[i - 1] = that.data.cancleFlag[i];
+  //       that.data.hiddenmodalput[i - 1] = that.data.hiddenmodalput[i];
+  //       that.data.addFlag[i - 1] = that.data.addFlag[i];
+  //       that.data.isShowDelete[i - 1] = that.data.isShowDelete[i];
+  //       that.data.dataInfo[i - 1] = attenInfo1;
+  //     }
+  //   }
+  //   //前移后将最后一条记录删除
+  //   that.data.dataInfo.pop();
+  //   that.data.selectAbsBeginTime.pop();
+  //   that.data.selectAbsEndTime.pop();
+  //   that.data.leavetypeIndex.pop();
+  //   that.data.cancleFlag.pop();
+  //   that.data.hiddenmodalput.pop();
+  //   that.data.addFlag.pop();
+  //   that.data.isShowDelete.pop();
+  //   //删除目标记录之后更新数据
+  //   that.setData({
+  //     dataInfo: that.data.dataInfo,
+  //     selectAbsBeginTime: that.data.selectAbsBeginTime,
+  //     selectAbsEndTime: that.data.selectAbsEndTime,
+  //     leavetypeIndex: that.data.leavetypeIndex,
+  //     cancleFlag: that.data.cancleFlag,
+  //     hiddenmodalput: that.data.hiddenmodalput,
+  //     addFlag: that.data.addFlag,
+  //     isShowDelete: that.data.isShowDelete
+  //   })
+  // },
+
   //点击提交按钮事件
   formSubmit: function (e) {
-    console.log(e);
+    var nowDate = new Date().getDate();
     var that = this;
     var n = 0;//记录请假类型是否全部空值
     var m = 0;//记录请假类型是否有空值
-
     //判断请假类型是全部是“请选择”选项，若有则提示输入请假类型
     for(var i = 0; i < that.data.leavetypeIndex.length; i++) {
       if (this.data.leavetypeIndex[i] != 0){
-        // wx.showToast({
-        //   title: '请输入请假类型',
-        //   icon:'none',
-        //   duration:2000
-        // })
         n++;
       }
       if (this.data.dataInfo[i].processStatus!=1 && this.data.dataInfo[i].processStatus !=2) {
@@ -273,9 +403,8 @@ Page({
     var postdata = {};
     var postdataInfo = [];
     var k = 0;
-    console.log(that.data)
     for(var i = 0; i < that.data.dataInfo.length; i++){
-      if (that.data.leavetypeIndex[i] != 0 && (that.data.dataInfo[i].processStatus == 0 || that.data.dataInfo[i].processStatus == 3)) {
+      if (that.data.leavetypeIndex[i] != null&&that.data.leavetypeIndex[i]!=0&& (that.data.dataInfo[i].processStatus == 0 || that.data.dataInfo[i].processStatus == 3)) {
         var dataInfo = {};
         dataInfo.addrId = that.data.dataInfo[i].addrId;
         dataInfo.prjId = that.data.dataInfo[i].prjId;
@@ -286,7 +415,11 @@ Page({
             dataInfo.id = that.data.dataInfo[i].id;
           } 
           dataInfo.punchDate = that.data.dataInfo[i].punchDate;
-          dataInfo.leaveType = that.data.leavetypeIndex[i];
+          if (parseInt(that.data.leavetypeIndex[i]) > 1) {
+            dataInfo.leaveType = parseInt(that.data.leavetypeIndex[i]) + 1;
+          } else {
+            dataInfo.leaveType = that.data.leavetypeIndex[i];
+          }
           dataInfo.absBeginTime = that.data.selectAbsBeginTime[i];
           dataInfo.absEndTime = that.data.selectAbsEndTime[i];
           // if (that.data.dataInfo[i].isNew == 0) {
@@ -314,22 +447,25 @@ Page({
           duration:2000
         })
         for (var i = 0; i < that.data.leavetypeIndex.length; i++) {
-          // that.data.dataInfo[i].absEndTime = that.data.selectAbsEndTime[i];
           if (that.data.leavetypeIndex[i] != 0 && (that.data.dataInfo[i].processStatus == 0 || that.data.dataInfo[i].processStatus == 3) ){
             that.data.dataInfo[i].processStatus = 1;
+            if (parseInt(that.data.leavetypeIndex[i]) > 1) {
+              that.data.leavetypeIndex[i] = String(parseInt(that.data.leavetypeIndex[i]) + 1)
+            }
           }
         }
         that.setData({
           dataInfo: that.data.dataInfo,
+          leavetypeIndex: that.data.leavetypeIndex,
           submitflag: true
         })
         //流程待办提醒
-        var opMapList = res.data.opMapList;
-        var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
-        //流程待办提醒
-        for (var i = 0; i < opMapList.length; i++) {
-          util.getSendTemplateData(opMapList[i].openId, opMapList[i].processId, templateId, "考勤", "考勤", that.data.staffName);
-        }
+        // var opMapList = res.data.opMapList;
+        // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
+        // //流程待办提醒
+        // for (var i = 0; i < opMapList.length; i++) {
+        //   util.getSendTemplateData(opMapList[i].openId, opMapList[i].processId, templateId, "考勤", "考勤", that.data.staffName);
+        // }
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       }else{
@@ -379,36 +515,140 @@ Page({
       url: route
     })
   },
+  iswholeMonthBindtap: function (e) {
+    var that = this;   
+    if (e.target.id == "wholeMonth") {
+      that.setData({
+        iswholeMonth: true,
+      })
+      that.getQueryAttn("0");
+    } else {
+      that.setData({
+        iswholeMonth: false,
+      })
+      that.getQueryAttn("1");
+    }
+  },
+
+  getQueryAttn: function (wholeMonth) {
+    var that = this;
+    wx.showLoading({
+      title: '加载中',
+    })
+    var processStatus = util.getType().processStatus;
+    var leaveType = util.getType().leaveType;
+    var year = new Date().getFullYear();
+    var month = new Date().getMonth();
+    var day = new Date().getDate();
+    var d1 = new Date((year + "/" + month + "/" + day).replace(/\-/g, "\/"));
+    var attnMonth = year + "-" + month;//请求服务器年月份
+    var curData = {
+      attnMonth: attnMonth,
+      wholeMonth: wholeMonth,//是否全月，0：是；1：不是
+      topEmpId: wx.getStorageSync("topEmpId"),
+      encryption: wx.getStorageSync("encryption"),
+      isHistory: "1"   //0历史，1不是
+    }
+    var url = util.requestService("/api/hrkq/queryAttn");
+    // 请求服务器成功
+    function success(res) {
+      console.log(res);
+      wx.hideLoading();
+      if (res.data.code == 200) {
+        var leavetypeIndex = [];  //定义请假类型下标数组          
+        var leavereason = [];  //定义请假原因下标数组
+        var selectAbsBeginTime = []; //定义picker选择器选择的缺勤开始时间数组
+        var selectAbsEndTime = [];  // 定义picker选择器选择的缺勤结束时间数组
+        var cancleFlag = [];  // 定义取消按钮是否显示的数组
+        var addFlag = [];   //增加按钮是否可用标识
+
+        var hiddenmodalput = [];//原因弹框显示标识
+        //根据考勤数据的条数定义数组的长度
+        for (var i = 0; i < res.data.attnInfo.length; i++) {
+          if (res.data.attnInfo[i].leaveType != null) {
+            if (res.data.attnInfo[i].processStatus == 3 || res.data.attnInfo[i].processStatus == 0) {
+              if (parseInt(res.data.attnInfo[i].leaveType) > 1) {
+                leavetypeIndex[i] = String(parseInt(res.data.attnInfo[i].leaveType) - 1);
+              } else {
+                leavetypeIndex[i] = res.data.attnInfo[i].leaveType;
+              }
+            } else {
+              leavetypeIndex[i] = res.data.attnInfo[i].leaveType;
+            }
+          } else {
+            leavetypeIndex[i] = null
+          }
+          if (res.data.attnInfo[i].reason != null) {
+            leavereason[i] = res.data.attnInfo[i].reason;
+          } else {
+            leavereason[i] = "";
+          }
+          selectAbsBeginTime[i] = res.data.attnInfo[i].absBeginTime;
+          selectAbsEndTime[i] = res.data.attnInfo[i].absEndTime;
+          cancleFlag[i] = false;
+          if (res.data.attnInfo[i].leaveType != null) {
+            addFlag[i] = true;
+          } else {
+            addFlag[i] = false;
+          }
+          hiddenmodalput[i] = true  //原因弹框显示标识
+
+          if (wholeMonth == "0") {
+            var d2 = new Date(res.data.attnInfo[i].punchDate.replace(/\-/g, "\/"));          
+          } else {
+          }
+        }
+        that.setData({
+          dataInfo: res.data.attnInfo,
+          leavetypeIndex: leavetypeIndex,
+          leavereason: leavereason,
+          submitflag: false,//提交按钮标识false:未提交成功，true:提交成功
+          processStatus: processStatus,
+          leaveType: leaveType,
+          selectAbsBeginTime: selectAbsBeginTime,  //picker选择器选择的缺勤开始时间
+          selectAbsEndTime: selectAbsEndTime, //picker选择器选择的缺勤结束时间
+          cancleFlag: cancleFlag, //控制取消按钮的显示与隐藏
+          addFlag: addFlag,
+          hiddenmodalput: hiddenmodalput
+        })
+        console.log(that.data);
+      } else if (res.data.code == 99) {
+        util.mineRedirect(res.data.message);
+      } else {
+        wx.showToast({
+          title: res.data.message,
+          icon: "none",
+          duration: 2000
+        })
+      }
+    }
+    util.checkEncryption(url, curData, success);
+  },
 
   /** 
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     var that = this;
-    wx.showLoading({
-      title: '加载中',
-    })
     that.setData({
       staffName: wx.getStorageSync("loginData").staffName
     })
     var processStatus = util.getType().processStatus;
     var leaveType = util.getType().leaveType;
-    var year = new Date().getFullYear();
-    var month = new Date().getMonth();
-    var attnMonth = year + "-" + month;//请求服务器年月份
-    var curData = {
-      attnMonth: attnMonth,
-      wholeMonth: "1",//是否全月，0：是；1：不是
-      topEmpId: wx.getStorageSync("topEmpId"),
-      encryption: wx.getStorageSync("encryption")
-    }
     if (options.id) {//处理考勤页面点击驳回修改按钮传递过来的驳回数据
+      that.setData({
+        isShow: false
+      })
+      wx.showLoading({
+        title: '加载中',
+      })
       var url = util.requestService("/api/hrkq/queryAttnDetail");
       var postdata = {
         id: options.id,
-        wholeMonth: "0",
+        wholeMonth: "1",
         topEmpId: wx.getStorageSync("topEmpId"),
-        encryption: wx.getStorageSync("encryption")
+        encryption: wx.getStorageSync("encryption"),
+        isHistory: "1"   //0历史，1不是
       }
       function success(res) {
         wx.hideLoading();
@@ -422,7 +662,12 @@ Page({
 
           var hiddenmodalput = [];//原因弹框显示标识
           for (var i = 0; i < res.data.attenDetailInfo.length; i++) {
-            leavetypeIndex[i] = res.data.attenDetailInfo[i].leaveType;
+            if (parseInt(res.data.attenDetailInfo[i].leaveType) > 1) {
+              leavetypeIndex[i] = String(parseInt(res.data.attenDetailInfo[i].leaveType) - 1);
+            } else {
+              leavetypeIndex[i] = res.data.attenDetailInfo[i].leaveType;
+            }
+            // leavetypeIndex[i] = res.data.attenDetailInfo[i].leaveType;
             leavereason[i] = res.data.attenDetailInfo[i].reason;
             selectAbsBeginTime[i] = res.data.attenDetailInfo[i].absBeginTime;
             selectAbsEndTime[i] = res.data.attenDetailInfo[i].absEndTime;
@@ -442,7 +687,7 @@ Page({
             selectAbsEndTime: selectAbsEndTime,
             cancleFlag: cancleFlag,
             addFlag: addFlag,
-            hiddenmodalput: hiddenmodalput
+            hiddenmodalput: hiddenmodalput,
           })
         } else if (res.data.code == 99) {
           util.mineRedirect(res.data.message);
@@ -456,59 +701,8 @@ Page({
       }
       util.checkEncryption(url, postdata, success);  
     } else {  
-      var url = util.requestService("/api/hrkq/queryAttn");
-      // 请求服务器成功
-      function success(res) {
-        console.log(res);
-        wx.hideLoading();
-        if (res.data.code == 200) {
-          var leavetypeIndex = [];  //定义请假类型下标数组          
-          var leavereason = [];  //定义请假原因下标数组
-          var selectAbsBeginTime = []; //定义picker选择器选择的缺勤开始时间数组
-          var selectAbsEndTime = [];  // 定义picker选择器选择的缺勤结束时间数组
-          var cancleFlag = [];  // 定义取消按钮是否显示的数组
-          var addFlag = [];   //增加按钮是否可用标识
-
-          var hiddenmodalput = [];//原因弹框显示标识
-
-          //根据考勤数据的条数定义数组的长度
-          for (var i = 0; i < res.data.attnInfo.length; i++) {
-            leavetypeIndex[i] = res.data.attnInfo[i].leaveType;
-            if (res.data.attnInfo[i].reason != null){
-              leavereason[i] = res.data.attnInfo[i].reason;
-            } else {
-              leavereason[i] = "";
-            }
-            selectAbsBeginTime[i] = res.data.attnInfo[i].absBeginTime;
-            selectAbsEndTime[i] = res.data.attnInfo[i].absEndTime;
-            cancleFlag[i] = false;
-            addFlag[i] = true;
-            hiddenmodalput[i] = true  //原因弹框显示标识
-          }
-          that.setData({
-            dataInfo: res.data.attnInfo,
-            leavetypeIndex: leavetypeIndex,
-            leavereason: leavereason,
-            submitflag: false,//提交按钮标识false:未提交成功，true:提交成功
-            processStatus: processStatus,
-            leaveType: leaveType,
-            selectAbsBeginTime: selectAbsBeginTime,  //picker选择器选择的缺勤开始时间
-            selectAbsEndTime: selectAbsEndTime, //picker选择器选择的缺勤结束时间
-            cancleFlag: cancleFlag, //控制取消按钮的显示与隐藏
-            addFlag: addFlag,
-            hiddenmodalput: hiddenmodalput
-          })
-        } else if (res.data.code == 99) {
-          util.mineRedirect(res.data.message);
-        }else{
-          wx.showToast({
-            title: res.data.message,
-            icon: "none",
-            duration: 2000
-          })
-        }
-      }
-      util.checkEncryption(url, curData, success);
+        that.getQueryAttn("1");
+      console.log(that.dataInfo);
     }
   },
 

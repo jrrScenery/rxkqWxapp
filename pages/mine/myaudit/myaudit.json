@@ -1,5 +1,5 @@
 {
   "navigationBarTitleText": "批量审批",
   "enablePullDownRefresh": true,
-  "onReachBottomDistance": "0px"
+  "onReachBottomDistance": 0
 }

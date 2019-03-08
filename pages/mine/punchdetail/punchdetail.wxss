@@ -1,0 +1,20 @@
+/* pages/mine/punchdetail/punchdetail.wxss */
+@import "../recorddetail/recorddetail.wxss";
+.curtime{
+  text-align: center;
+  width:40%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 30%;
+}
+.datepicker{
+  border: solid 1px #ddd;
+  background-color: #fafafa;
+  text-align: center;
+}
+.totalNum{
+  width:40%;
+  font-size:13px;
+  padding-left:10%;
+  padding-top:10px;
+}

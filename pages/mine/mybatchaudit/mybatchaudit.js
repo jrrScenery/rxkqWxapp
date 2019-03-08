@@ -9,8 +9,15 @@ Page({
   },
 
   checkaudit: function (event) {
-    console.log(event);
-    util.navigateTo(event);
+    console.log("event",event);
+    // util.navigateTo(event);
+    let route = event.currentTarget.dataset.route;
+    var id = event.currentTarget.dataset.id;
+    var loaType = event.currentTarget.dataset.current;
+    var prostatus = event.target.id;
+    wx.navigateTo({
+      url: route + "?id=" + id + "&loaType=" + loaType + "&prostatus=" + prostatus
+    })
   },
 
   modifyaudit: function (event) {
