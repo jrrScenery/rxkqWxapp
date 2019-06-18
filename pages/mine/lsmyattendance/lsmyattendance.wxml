@@ -135,7 +135,7 @@
             </view>         
           </view>
           <view wx:if="{{nowDate=='1'}}">
-            <button class='button1' style='margin-bottom:10px' form-type="submit">提交</button> 
+            <button class='button1' disabled='{{disable}}' style='margin-bottom:10px' form-type="submit">提交</button> 
           </view>
         </view>
         

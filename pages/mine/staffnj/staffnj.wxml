@@ -1,6 +1,6 @@
 <view class='njsearchView'>
   <view class='njsearchInputView'>
-    <input name='search' style='height:30px;font-size:12px' placeholder='输入姓名/项目号/项目名称' bindinput='searchBindInput'></input>
+    <input name='search' style='height:30px;font-size:12px' placeholder='输入项目号/项目名称' bindinput='searchBindInput'></input>
   </view>
   <button size='mini' bindtap='searchBindTap'>搜索</button>
 </view>

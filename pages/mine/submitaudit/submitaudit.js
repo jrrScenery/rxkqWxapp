@@ -5,9 +5,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    // submitaudit:""
     page: 1,
-    num: 10,
+    num: 100,
     total: 0,
     singleInfos: null,
     combineInfos: null,
@@ -20,16 +19,66 @@ Page({
     util.navigateTo(event);
   },
 
+  recallInfo:function(e){
+    let that = this;
+    console.log(e);
+    let loatypeId = e.currentTarget.dataset.loatype;
+    let processId = e.currentTarget.dataset.processid
+    console.log(loatypeId);
+    let url = util.requestService("/api/hrkq/withdrawProcess");
+    let postData={
+      topEmpId: wx.getStorageSync("topEmpId"),
+      encryption: wx.getStorageSync("encryption"),
+      loaType: loatypeId,
+      processId: processId
+    }
+    function success(res){
+      console.log(res);
+      if (res.data.code == 200) {
+        console.log("222222222");
+        wx.showToast({
+          title: '已撤回',
+          icon: 'success',
+          duration: 2000
+        })
+        console.log(that.data.options)
+        let options = that.data.options;
+        that.setData({
+          page: 1,
+          num: 10,
+          singleInfos: null,
+          combineInfos: null,
+          total: 0,
+          hasmoreData: true,//更多数据
+          hiddenloading: true,//加载中
+        })
+        that.todoAudit(options);
+      } else if (res.data.code == 99) {
+        console.log("333333333");
+        util.mineRedirect(res.data.message);
+      }else{
+        console.log("555555555");
+        wx.showToast({
+          title: res.data.message,
+          icon: "none",
+          duration: 2000
+        })
+      }
+    }
+    util.checkEncryption(url, postData, success);
+  },
+
   todoAudit: function (options) {
     var that = this;
     wx.showLoading({
       title: '加载中',
     })
+    console.log("111111111111111111");
     if (that.data.hasmoreData == false) {
       wx.hideLoading();
       that.setData({ hiddenloading: true })
       return;
-    　　}
+    }
     var url = util.requestService("/api/hrkq/todoAudit");
     var postdata = {
       topEmpId: wx.getStorageSync("topEmpId"),
@@ -38,6 +87,7 @@ Page({
       page: that.data.page,
       num: that.data.num
     }
+    console.log(postdata)
     var loaType = util.getType().loaType;
     var leaveType = util.getType().leaveType;
     var relaxation = util.getType().relaxation;
@@ -74,9 +124,12 @@ Page({
           relaxation: relaxation,
           processStatus: processStatus,
           page: that.data.page + 1,
-          // total: res.data.totalNum,
+          total: res.data.total,
         })
-        if (that.data.total <= 0 || that.data.num * (that.data.page - 1) >= that.data.total) {
+        console.log(that.data);
+        console.log(that.data.total <= 0);
+        console.log(that.data.num * (that.data.page - 1) >= that.data.total);
+        if (that.data.total <= 0 || that.data.num * (that.data.page - 1) > that.data.total) {
           that.setData({ hasmoreData: false, hiddenloading: true })
         }
       } else if (res.data.code == 99) {
@@ -99,44 +152,8 @@ Page({
     this.setData({
       options: options
     })
+    console.log(options);
     this.todoAudit(options);
-    // wx.showLoading({ 
-    //   title: '加载中',
-    // })
-    // var url = util.requestService("/api/hrkq/todoAudit");
-    // var postdata = {
-    //      topEmpId: wx.getStorageSync("topEmpId"),
-    //      encryption: wx.getStorageSync("encryption"),
-    //      processType:1
-    // }
-    // var loaType = util.getType().loaType;
-    // var leaveType = util.getType().leaveType;
-    // var relaxation = util.getType().relaxation;
-    // var processStatus = util.getType().processStatus
-    // function success(res) {
-    //   console.log(res);
-    //   wx.hideLoading();
-    //   if (res.data.code == 200) {
-    //     that.setData({
-    //       // submitaudit: res.data.auditInfo,
-    //       combineInfos: res.data.combineInfos,
-    //       singleInfos: res.data.singleInfos,
-    //       loaType: loaType,
-    //       leaveType: leaveType,
-    //       relaxation: relaxation,
-    //       processStatus: processStatus
-    //     })
-    //   } else if (res.data.code == 99) {
-    //     util.mineRedirect(res.data.message);
-    //   }else{
-    //     wx.showToast({
-    //       title: res.data.message,
-    //       icon: "none",
-    //       duration: 2000
-    //     })
-    //   }
-    // }
-    // util.checkEncryption(url, postdata, success);
   },
 
   /**

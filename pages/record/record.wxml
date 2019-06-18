@@ -1,24 +1,53 @@
-<scroll-view scroll-x='true'>
-  <view class='box1' style='width: {{ sysW * 7 }}px;' bindtouchstart="mytouchstart" bindtouchmove="mytouchmove" bindtouchend = "mytouchend">
-      <view class='dateBox' wx:if="{{year}}">{{ year }}年{{month}}月</view> 
-      <block wx:if="{{year}}" wx:for='{{ weekArr }}' wx:key="{{index}}"> 
-        <view style='width: {{ sysW}}px; height: {{ sysW*0.8 }}px; line-height: {{ sysW*0.8 }}px;'>{{ item }}</view>
-      </block>
+<view class='all'>
+    <view class="bar">
+      <!-- 上一个月 -->
+      <view class="previous" bindtap="handleCalendar" data-handle="prev">
+      <image src='../../images/left.png'></image>
+      </view>
+      <!-- 显示年月 -->
+      <view class="date"  wx:if="{{year}}">{{year}} 年 {{month}} 月</view>
+      <!-- 下一个月 -->
+      <view class="next" bindtap="handleCalendar" data-handle="next">
+        <image src='../../images/right.png'></image>
+      </view>
+    </view>
+    <!-- 显示星期 -->
+    <view class="week">
+      <view wx:for="{{weekArr}}" wx:key="{{index}}" data-idx="{{index}}">{{item}}</view>
+    </view>
 
-      <view wx:for='{{arr}}' wx:key="{{index}}" data-idx="{{index}}" style='{{ index == 0 ? "margin-left:" + sysW * marLet + "px;" : "" }}width: {{ sysW }}px; height: {{ sysW*0.8 }}px; line-height: {{ sysW*0.8 }}px;' class='{{ item ==  getDate ? "dateOn" : ""}}' bindtap='bindtap'>{{ item }}   
-        <view wx:if="{{records.records}}" style='width:5%;margin-left:45%;'>
-          <view wx:for="{{records.records}}" wx:key="{{recordsIndex}}" wx:for-index="recordsIndex" wx:for-item="item4" > 
-            <view wx:if="{{item4.punchDateNum==item}}">   
-              <view class='pot'>.</view>        
-            </view>  
+    <view class='days'>
+      <!-- 显示列 -->
+      <view class="columns" wx:for="{{arr.length/7}}" wx:for-index="i" wx:key="i">
+        <view wx:for="{{arr}}" wx:for-index="j" wx:key="j">
+          <!-- 行 -->
+          <view class="rows" wx:if="{{j/7 == i}}">
+            <view class="rows" wx:for="{{7}}" wx:for-index="k" wx:key="k">
+              <!-- 每个月份的空的单元格 -->
+              <view class='cell' wx:if="{{arr[j+k].date == null}}">
+                <text decode="{{true}}"></text>
+              </view>
+              <view class='cell' data-idx="{{arr[j+k].date}}" bindtap='bindtap' wx:else>
+              <!-- 当前日期已签到 -->
+                <view wx:if="{{arr[j+k].isSign == true}}">
+                  <text wx:if="{{arr[j+k].clickFlag&&arr[j+k].date==getDate}}" class='pot'>{{arr[j+k].date}}</text>
+                  <text wx:else class='potColor'>{{arr[j+k].date}}</text>
+                </view>
+              <!-- 当前日期未签到 -->
+                <view wx:else>
+                  <text wx:if="{{arr[j+k].clickFlag&&arr[j+k].date==getDate}}" class='pot'>{{arr[j+k].date}}</text>
+                  <text wx:else>{{arr[j+k].date}}</text>
+                </view>
+              </view>
+            </view>
           </view>
-        </view> 
-      </view> 
-  </view>
-</scroll-view>
+        </view>
+      </view>
+    </view>
+</view>
 <!-- 如果当天有打卡记录，则显示在日历下面的记录中，若当天无记录，则显示无打卡记录 -->
 <view wx:if="{{year}}">
-  <scroll-view wx:if="{{dayrecordInfo.recordInfo.length!=0}}" scroll-y="true" style='height: {{scHeight-sysW*0.8*10}}px;'>
+  <scroll-view wx:if="{{dayrecordInfo.recordInfo.length!=0}}" scroll-y="true">
     <view wx:if="{{dayrecordInfo.punchDateNum==getDate}}">
       <view wx:for="{{dayrecordInfo.recordInfo}}" wx:key="{{index}}" wx:for-index="{{index}}" wx:for-item="item">
         <view class='wx-view wx-lists'>
@@ -30,4 +59,10 @@
     <view wx:else class='norecord'>加载中...</view>
   </scroll-view>
   <view wx:else class='norecord'>{{norecord}}</view>
+</view>
+
+<view class='staffNameView' wx:if="{{roleMapList.length!=0}}">
+  <view wx:for='{{roleMapList}}' wx:key="idx" wx:for-item="item" wx:for-index="idx">
+    <view id='record' wx:if="{{item.roleName=='pm'}}" data-route="../mine/application/application"  bindtap="navToPage">{{applyUser}}</view>
+  </view>
 </view>

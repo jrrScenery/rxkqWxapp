@@ -9,129 +9,91 @@ Page({
    * 页面的初始数据
    */
   data: {
-    starPoint:[0,0],  //初始化touchstart坐标
     arr: [],  //定义日期数组
-    sysW: null,
-    lastDay: null,
-    firstDay: null,
     weekArr: ['日', '一', '二', '三', '四', '五', '六'],
+    year:"",
+    month:"",
     date: "",
     norecord:"",
     dayrecordInfo:"",
-    slidFlag:true,
-    color: [{ month: 'current'}, { day: '2018-11-06' }, { color: '#ffffff'}, { background:"#436EEE"}]
   },
 
-  mytouchstart:function(e){
+  navToPage: function (event) { 
+    console.log("event",event);
     var that = this;
-    this.setData({
-      starPoint:[e.touches[0].pageX,e.touches[0].pageY]
+    let route = event.currentTarget.dataset.route;
+    console.log(route)
+    var id = event.currentTarget.id;
+    var selectInfo = {};
+    selectInfo.sortId = id;
+    selectInfo.date = new Date();
+    selectInfo.year = that.data.year;
+    selectInfo.month = that.data.month;
+    wx.navigateTo({
+      url: route + "?selectInfo=" + JSON.stringify(selectInfo)
     })
   },
 
-  mytouchmove:function(e){
-    var that = this;
-    if (that.data.slidFlag){
-      that.data.slidFlag = false;
-      //当前触摸点坐标
-      var curPoint = [e.touches[0].pageX, e.touches[0].pageY];
-      var startPoint = [];
-      startPoint = this.data.starPoint;
-      //比较pageX的值
-      if (Math.abs(curPoint[0] - startPoint[0]) < Math.abs(curPoint[1] - startPoint[1])) {
-        wx.showLoading({
-          title: '加载中',
-        })
-        console.log(newMonth)
-        if (curPoint[1] >= startPoint[1]) {//下拉
-          if (newMonth < 1) {
-            newYear = newYear - 1;
-            newMonth = 11;
-          } else {
-            newMonth = newMonth-1;
-          }
-          console.log(newMonth)
-          that.getrecords(newYear, newMonth + 1, that.data.currentnum);
-          if (that.data.records.punchDateMonth == (newMonth+1)){
-            that.setData({
-              arr: []
-            })
-          }else{
-            that.setData({
-              arr: [],
-              records: ""
-            })
-          }
-         
-        } else {//上拉
-          console.log("newMonth:"+newMonth)
-          if (newMonth > 10) {
-            newYear = newYear + 1;
-            newMonth = 0;
-          } else {
-            newMonth = newMonth + 1
-          }
-          console.log(newMonth)
-          that.getrecords(newYear, newMonth+1, day);
-          if (that.data.records.punchDateMonth == (newMonth + 1)){
-            that.setData({
-              arr: []
-            })
-          }else{
-            that.setData({
-              arr: [],
-              records: ""
-            })
-          }
-        }
-        var date = new Date(newYear + "-" + newMonth + "-" + day);
-        var months = newMonth + 1;
-        that.dataTime(date, newYear, newMonth, months);
-        //根据得到今月的最后一天日期遍历 得到所有日期
-        for (var i = 1; i < this.data.lastDay + 1; i++) {
-          that.data.arr.push(i);
-        }
-        var res = wx.getSystemInfoSync();
-        var sysW = null;
-        if (res.system.substring(0, 3) == "iOS") {
-          sysW = res.windowHeight;
-        } else {
-          sysW = res.screenHeight;
-        }
-        that.setData({
-          sysW: sysW / 12,//根据屏幕宽度变化自动设置宽度
-          marLet: that.data.firstDay,
-          arr: that.data.arr,
-          year: that.data.year,
-          getDate: day,  //当天日期
-          month: that.data.month,
-          date: date
-        });
+  // 切换控制年月，上一个月，下一个月
+  handleCalendar: function (e) {
+    const handle = e.currentTarget.dataset.handle;
+    const cur_year = this.data.year;
+    const cur_month = this.data.month;
+    if (handle === 'prev') {
+      let newMonth = cur_month - 1;
+      let newYear = cur_year;
+      if (newMonth < 1) {
+        newYear = cur_year - 1;
+        newMonth = 12;
       }
-      setTimeout(function(){
-        that.data.slidFlag = true;
-      },500)
-    }    
-  },
-
-  mytouchend:function(e){
-    this.data.currentGesture = 0;
+      this.calculateEmptyGrids(newYear, newMonth);
+      this.calculateDays(newYear, newMonth);
+      this.getrecords(newYear, newMonth, day);
+      this.setData({
+        year: newYear,
+        month: newMonth,
+        getDate: day
+      })
+    } else {
+      let newMonth = cur_month + 1;
+      let newYear = cur_year;
+      if (newMonth > 12) {
+        newYear = cur_year + 1;
+        newMonth = 1;
+      }
+      this.calculateEmptyGrids(newYear, newMonth);
+      this.calculateDays(newYear, newMonth);
+      this.getrecords(newYear, newMonth, day);
+      this.setData({
+        year: newYear,
+        month: newMonth,
+        getDate: day
+      })
+    }
   },
 
   bindtap:function(e){
+    console.log(e);
     var that = this;
-    var idx = e.target.dataset.idx;
+    var idx = e.currentTarget.dataset.idx;
     if(idx!=null){
       var date = new Date();
       var year = that.data.year;
       var months = that.data.month;
-      var day = idx + 1;
+      var day = idx;
       var currentdate = year + "-" + months + "-" + day;
-      var currentnum = idx+1;
+      var currentnum = idx;
+      for(let i=0;i<that.data.arr.length;i++){
+        if (that.data.arr[i].date == idx){
+          that.data.arr[i].clickFlag = true;
+        }
+      }
       this.setData({
         getDate: currentnum,
-        date: currentdate
+        date: currentdate,
+        arr: that.data.arr
       })
+      console.log("arr",that.data);
       //获取点击日期的打卡记录
       that.getdayrecordInfo(year, months, currentnum);
       if (that.data.dayrecordInfo.punchDateNum == currentnum && that.data.month == months){
@@ -155,8 +117,10 @@ Page({
     var postdata = {
       punchDate: year+"-"+months+"-"+date,
       topEmpId: wx.getStorageSync("topEmpId"),
-      encryption: wx.getStorageSync("encryption")
+      encryption: wx.getStorageSync("encryption"),
+      userName: that.data.userName
     }
+    console.log("getdayrecordInfo",postdata);
     function success(res){
       console.log(res)
       if(res.data.code == 200){
@@ -177,19 +141,40 @@ Page({
   },
 
   getrecords: function (year, months,date){
+    console.log("getrecords",this.data);
     var that = this;
     var url = util.requestService("/api/hrkq/punchCardMonth");
+    var userName = that.data.userName;
     var postdata = {
       punchMonth: year +"-"+ months,
       topEmpId: wx.getStorageSync("topEmpId"),
-      encryption: wx.getStorageSync("encryption")
+      encryption: wx.getStorageSync("encryption"),
+      userName: userName
     }
+    
+    console.log("getrecords",postdata);
     function success(res){
       console.log(res)
       wx.hideLoading();
       if(res.data.code == 200){
+        let newArr = that.data.arr;
+        for(let i=0;i<that.data.arr.length;i++){
+          for(let j=0;j<res.data.records.length;j++){
+            if (that.data.arr[i].date == res.data.records[j].punchDateNum){
+              newArr[i].isSign = true;
+            }
+          }
+          if (that.data.arr[i].date == day){
+            newArr[i].clickFlag = true;
+          }else{
+            newArr[i].clickFlag = false;
+          }
+        }
         that.setData({
-          records: res.data
+          records: res.data,
+          arr: newArr,
+          getDate: day,
+          // userName: userName
         })
         that.getdayrecordInfo(year, months, day);
       } else if (res.data.code == 99) {
@@ -203,28 +188,73 @@ Page({
       }
     }
     util.checkEncryption(url, postdata, success);
-    // that.checkEncryption(url, postdata, success);
-    // util.getPostRequest(url, postdata,success);
   },
-  //获取日历相关参数
-  dataTime: function (date, year, month, months) {
-    //获取现今年份
-    this.data.year = year;
 
-    //获取现今月份
-    this.data.month = months;
+  getInfo: function (date, year, months){
+    var that = this;
+    // var date = new Date();
+    // var year = date.getFullYear();  //获取当前年份
+    // var month = date.getMonth();    //获取上个月份
+    // var months = date.getMonth() + 1;  // 获取当前月份
+    this.calculateEmptyGrids(year, months);
+    this.calculateDays(year, months);
 
-    //获取今日日期
-    this.data.getDate = date.getDate();
-
-    //最后一天是几号
-    var d = new Date(year, months, 0);
-    this.data.lastDay = d.getDate();
-
-    //第一天星期几
-    let firstDay = new Date(year, month, 1);
-    this.data.firstDay = firstDay.getDay();
+    //向服务器获取records信息和dayrecoapplyUserrdInfo信息
+    that.getrecords(year, months, day);
   },
+
+  // 获取当月共多少天
+  getThisMonthDays: function (year, month) {
+    return new Date(year, month, 0).getDate()
+  },
+
+  // 获取当月第一天星期几
+  getFirstDayOfWeek: function (year, month) {
+    return new Date(Date.UTC(year, month - 1, 1)).getDay();
+  },
+
+  // 计算当月1号前空了几个格子，把它填充在days数组的前面
+  calculateEmptyGrids: function (year, month) {
+    var that = this;
+    //计算每个月时要清零
+    that.setData({ arr: [] });
+    const firstDayOfWeek = this.getFirstDayOfWeek(year, month);
+    if (firstDayOfWeek > 0) {
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        var obj = {
+          date: null,
+          isSign: false
+        }
+        that.data.arr.push(obj);
+      }
+      this.setData({
+        arr: that.data.arr
+      });
+      console.log("data",this.data);
+      //清空
+    } else {
+      this.setData({
+        days: []
+      });
+    }
+  },
+
+  // 绘制当月天数占的格子，并把它放到days数组中
+  calculateDays: function (year, month) {
+    var that = this;
+    const thisMonthDays = this.getThisMonthDays(year, month);
+    for (let i = 1; i <= thisMonthDays; i++) {
+      var obj = {
+        date: i,
+        isSign: false
+      }
+      that.data.arr.push(obj);
+    }
+    this.setData({
+      arr: that.data.arr
+    });
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
@@ -233,39 +263,34 @@ Page({
     wx.showLoading({
       title: '正在加载',
     })
+
     var date = new Date();
     var year = date.getFullYear();  //获取当前年份
-    var month = date.getMonth();    //获取上个月份
+    // var month = date.getMonth();    //获取上个月份
     var months = date.getMonth() + 1;  // 获取当前月份
-    var day = date.getDate();
-    this.dataTime(date, year, month, months);
+    // this.calculateEmptyGrids(year, months);
+    // this.calculateDays(year, months);
    
-    //向服务器获取records信息和dayrecordInfo信息
-    that.getrecords(year, months, day);
-
-    //根据得到今月的最后一天日期遍历 得到所有日期
-    for (var i = 1; i < this.data.lastDay + 1; i++) {
-      this.data.arr.push(i);
-    }
-    var res = wx.getSystemInfoSync();   //获取系统信息同步接口
-    console.log(res);
-    var date = new Date();
-    var sysW = null;
-    //根据手机类型获取相应屏幕宽度
-    if (res.system.substring(0,3)=="iOS"){
-      sysW = res.windowHeight;
-    }else{
-      sysW = res.screenHeight;
-      // sysW = res.windowHeight
-    }
+    // //向服务器获取records信息和dayrecoapplyUserrdInfo信息
+    // that.getrecords(year, months, day);  
+    wx.getStorage({
+      key: 'loginData',
+      success: function (res) {
+        console.log("loginData",res);
+        that.setData({
+          applyUser: res.data.staffName,
+          userName: res.data.topUser,
+          roleMapList: res.data.roleMapList
+        })
+        that.getInfo(date,year,months);
+      },
+    })
     this.setData({
-      sysW: sysW / 12,  //根据屏幕宽度变化自动设置宽度
-      scHeight: res.screenHeight,
-      marLet: this.data.firstDay,
       arr: this.data.arr,
-      year: this.data.year,
-      getDate: this.data.getDate,
-      month: this.data.month,
+      weekArr: ['日', '一', '二', '三', '四', '五', '六'],
+      year: year,
+      getDate: date.getDate(),
+      month: months,
       date: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
       norecord:"无打卡记录"
     });
@@ -282,21 +307,34 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    this.setData({
-      starPoint: [0, 0],  //初始化touchstart坐标
-      arr: [],  //定义日期数组
-      sysW: null,
-      lastDay: null,
-      firstDay: null,
-      weekArr: ['日', '一', '二', '三', '四', '五', '六'],
-      year: "",
-      records: "",
-      date: "",
-      norecord: "",
-      dayrecordInfo: "",
-      slidFlag: true
-    })
-    this.onLoad();
+    
+    // var that = this
+    // var date = new Date();
+    // var year = date.getFullYear();  //获取当前年份
+    // var months = date.getMonth() + 1;  // 获取当前月份
+    // this.setData({
+    //   arr: this.data.arr,
+    //   weekArr: ['日', '一', '二', '三', '四', '五', '六'],
+    //   year: year,
+    //   getDate: date.getDate(),
+    //   month: months,
+    //   date: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
+    //   norecord: "无打卡记录"
+    // });
+    // console.log("onShow:", this.data)
+    // wx.getStorage({
+    //   key: 'loginData',
+    //   success: function (res) {
+    //     console.log("loginData", res);
+    //     that.setData({
+    //       applyUser: res.data.staffName,
+    //       userName: res.data.topUser,
+    //       roleMapList: res.data.roleMapList
+    //     })
+    //     that.getInfo(date, year, months);
+    //   },
+    // })
+    // this.getInfo(date, year, months);
   },
 
   /**

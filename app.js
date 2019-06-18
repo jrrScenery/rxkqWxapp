@@ -45,6 +45,9 @@ App({
       })
     } else {
       wx.hideLoading();
+      wx.showToast({
+        title: '登录失效，请重新登录',
+      })
       //跳转到登录页面
       wx.redirectTo({
         url: "/pages/login/login",

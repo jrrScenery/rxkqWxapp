@@ -23,6 +23,7 @@
     "pages/mine/recorddetail/recorddetail",
     "pages/mine/punchdetail/punchdetail",
     "pages/mine/punchMonthdetail/punchMonthdetail",
+    "pages/mine/exportAttendence/exportAttendence",
     "pages/login/login"
   ],
   "window": {
@@ -53,12 +54,13 @@
         "pagePath": "pages/mine/attendance/attendance",
         "text": "个人中心",
         "padding-top": "2px"
-      }],
+      }
+    ],
     "selectedColor": "#4876FF"
   },
   "networkTimeout": {
-    "request": 10000,
-    "connectSocket": 10000
+    "request": 20000,
+    "connectSocket": 20000
   },
   "debug": true,
   "plugins": {
@@ -67,9 +69,10 @@
       "provider": "wx92c68dae5a8bb046"
     }
   },
-  "permission":{
-    "scope.userLocation":{
-      "desc":"你的位置信息将用于小程序位置接口"
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口"
     }
-  }
+  },
+  "sitemapLocation": "sitemap.json"
 }

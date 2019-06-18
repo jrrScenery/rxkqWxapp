@@ -15,64 +15,41 @@
         </view>
       </view>
       <scroll-view scroll-y='true' style='height:{{winHeight-50}}px;'>
-        <view wx:if="{{getpunchdetail.length!=0}}" wx:for="{{getpunchdetail}}" wx:key='index' wx:for-index="index" wx:for-item="item">
-          <view class="wx-cells">
-            <view class="wx-cell wx-cell-bottom">
+        <view wx:if="{{getpunchdetail.length!=0}}">
+          <view class="wx-cells" wx:for="{{getpunchdetail}}" wx:key='index' wx:for-index="index" wx:for-item="items">
+            <view class='wx-cell wx-cell-bottom'>{{index}}</view>
+            <view class="wx-cell wx-cell-bottom" wx:for="{{getpunchdetail[index]}}" wx:key='idx' wx:for-index="idx" wx:for-item="item">
               <view style='width:80%;padding-left:10px'>
-                <view >{{item.staffName}} {{item.begintime}} {{item.endtime}}</view>
-                <view>{{item.prjName}}</view>
+                <view >{{item.staffName}} {{item.punchBeginTime}} {{item.punchendTime}}</view>
+                <view>{{item.punchAddress}}</view>
               </view>
               <view style="text-align:center;width:20%;color:{{item.status=='正常'?'green':'red'}}">{{item.status}}</view>
             </view> 
           </view>
         </view>
+        <view class='norecord' wx:else>暂无当天考勤数据</view>
       </scroll-view>
     </swiper-item>
-    <swiper-item  style="margin-top:50px;overflow:auto">
+    <swiper-item style="margin-top:50px;overflow:auto">
       <view class='wx-cell-bottom' style='display:flex'>
         <view class='curtime' style='margin-left:10%'>
           <picker value='selectMonth' mode='date' fields="month" start='{{beginMonth}}' end='{{curMonth}}' bindchange="monthChange">
             <view class='datepicker'>{{selectMonth}}</view>
           </picker>
         </view>
-        <view class='totalNum'>考勤人数：10人</view>
+        <!-- <view class='totalNum'>考勤人数：{{attenTotalNum}}</view> -->
       </view>
       <scroll-view scroll-y='true' style='height:{{winHeight-50}}px;'>
-        <view class="wx-cells">
-          <view id='1' class="wx-cell wx-cell-bottom" data-route="../punchMonthdetail/punchMonthdetail" bindtap="navToPage">
-            <text class="wx-cell-text">迟到</text>
-            <span class="weui-badge" style="margin-left: 5px;">3人</span>
-            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
-          </view> 
+        <view wx:if="{{getMonthData.length!=0}}">
+          <view class="wx-cells" wx:for="{{getMonthData}}" wx:key='index' wx:for-index="index" wx:for-item="item">
+            <view id='{{item.attnIds}}' class="wx-cell wx-cell-bottom" data-route="../punchMonthdetail/punchMonthdetail" bindtap="navToPage">
+              <text class="wx-cell-text">{{item.leaveType}}</text>
+              <span class="weui-badge" style="margin-left: 5px;">{{item.personNum}}</span>
+              <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+            </view> 
+          </view>
         </view>
-        <view class="wx-cells">
-          <view class="wx-cell wx-cell-bottom" data-route="../punchMonthdetail/punchMonthdetail" bindtap="navToPage">
-            <text class="wx-cell-text">早退</text>
-            <span class="weui-badge" style="margin-left: 5px;">2人</span>
-            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
-          </view> 
-        </view>
-        <view class="wx-cells">
-          <view class="wx-cell wx-cell-bottom" data-route="../punchMonthdetail/punchMonthdetail" bindtap="navToPage">
-            <text class="wx-cell-text">旷工</text>
-            <span class="weui-badge" style="margin-left: 5px;">1人</span>
-            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
-          </view> 
-        </view>
-        <view class="wx-cells">
-          <view class="wx-cell wx-cell-bottom" data-route="../punchMonthdetail/punchMonthdetail" bindtap="navToPage">
-            <text class="wx-cell-text">缺卡</text>
-            <span class="weui-badge" style="margin-left: 5px;">2人</span>
-            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
-          </view> 
-        </view>
-        <view class="wx-cells">
-          <view id='' class="wx-cell wx-cell-bottom" data-route="../punchMonthdetail/punchMonthdetail" bindtap="navToPage">
-            <text class="wx-cell-text">加班</text>
-            <span class="weui-badge" style="margin-left: 5px;">1人</span>
-            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
-          </view> 
-        </view>
+        <view wx:else class='norecord'>暂无当月考勤数据</view>
       </scroll-view>
     </swiper-item>
   </swiper>

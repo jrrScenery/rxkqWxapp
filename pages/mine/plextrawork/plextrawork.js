@@ -267,68 +267,8 @@ Page({
     })
     if (options.transdata) {//处理考勤页面点击驳回修改按钮传递过来的驳回数据
       that.modifyLeaveDetail(options.transdata);
-      // var url = util.requestService("/api/hrkq/queryLeaveDetail");
-      // var postdata = {
-      //   processId: options.id,
-      //   topEmpId: wx.getStorageSync("topEmpId"),
-      //   encryption: wx.getStorageSync("encryption")
-      // }
-      // console.log(postdata);
-      // function success(res){
-      //   console.log(res);
-      //   wx.hideLoading();
-      //   if(res.data.code == 200){
-      //     var reason = [];  //定义请假原因下标数组
-      //     for (var i = 0; i < res.data.askInfoDetail.length; i++) {
-      //       reason[i] = res.data.askInfoDetail[i].reason;
-      //     }
-      //     that.setData({
-      //       processId: options.id,
-      //       askInfo: res.data.askInfoDetail,
-      //       reason: reason,
-      //       processStatus: processStatus,
-      //       submitflag: false
-      //     })
-      //   } else if (res.data.code == 99) {
-      //     util.mineRedirect(res.data.message);
-      //   } else {
-      //     wx.showToast({
-      //       title: res.data.message,
-      //       icon: "none",
-      //       duration: 2000
-      //     })
-      //   }
-      // }
-      // util.checkEncryption(url, postdata, success);
     }else{
       that.queryLeaveMonth();
-      // var url = util.requestService("/api/hrkq/queryLeaveMonth");
-      // console.log(curData);
-      // function success(res) {
-      //   console.log(res);
-      //   wx.hideLoading();
-      //   if(res.data.code == 200){
-      //     var reason = [];  //定义请假原因下标数组
-      //     for (var i = 0; i < res.data.askInfo.length; i++) {
-      //       reason[i] = res.data.askInfo[i].reason;
-      //     }
-      //     that.setData({
-      //       askInfo: res.data.askInfo,
-      //       reason: reason,
-      //       processStatus: processStatus,
-      //       submitflag: false
-      //     })
-      //   } else if (res.data.code == 99) {
-      //     util.mineRedirect(res.data.message);
-      //   } else {
-      //     wx.showToast({
-      //       title: res.data.message,
-      //       icon: "none",
-      //       duration: 2000
-      //     })
-      //   }
-      // }
-      // util.checkEncryption(url, curData, success);
     }
 
   },

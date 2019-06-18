@@ -41,22 +41,26 @@
   <view wx-if='{{prjMapList.length!=0}}' wx:for="{{prjMapList}}" wx:key="idx" wx:for-item="items" wx:for-index="idx">
     <view class='selfviewTitle' wx:if="{{items.prjType==0}}">归属项目</view>
     <view class='selfviewTitle' wx:else>派遣项目</view>
-      <view class="wx-cell wx-cell-bottom">
-        <text class="wx-cell-text leftview">项目编号</text>
-        <text class="cell-text rightview">{{items.prjCode}}</text>
-      </view>
-      <view class="wx-cell wx-cell-bottom">
-        <text class="wx-cell-text leftview">项目名称</text>
-        <text class="cell-text rightview">{{items.prjName}}</text>
-      </view>
+    <view class="wx-cell wx-cell-bottom">
+      <text class="wx-cell-text leftview">项目编号</text>
+      <text class="cell-text rightview">{{items.prjCode}}</text>
+    </view>
+    <view class="wx-cell wx-cell-bottom">
+      <text class="wx-cell-text leftview">项目名称</text>
+      <text class="cell-text rightview">{{items.prjName}}</text>
+    </view>
+    <view class="wx-cell wx-cell-bottom">
+      <text class="wx-cell-text leftview">项目组名称</text>
+      <text class="cell-text rightview">{{items.groupName}}</text>
+    </view>
+    <view class="wx-cell wx-cell-bottom">
+      <text class="wx-cell-text rightview">上午:{{items.ambegintime}}-{{items.amendtime}}</text>
+      <text class="cell-text rightview">下午:{{items.pmbegintime}}-{{items.pmendtime}}</text>
+    </view>
     <view class="wx-cells-addr" wx:if='{{prjMapList[idx].addressMapList.length!=0}}' wx:for="{{prjMapList[idx].addressMapList}}" wx:key="index" wx:for-item="item" wx:for-index="index">      
       <view class="wx-cell wx-cell-bottom">
         <text class="wx-cell-text leftview">项目地址{{index+1}}</text>
         <text class="cell-text rightview">{{item.address}}</text>
-      </view>
-      <view class="wx-cell wx-cell-bottom">
-        <text class="wx-cell-text rightview">上午:{{item.ambegintime}}-{{item.amendtime}}</text>
-        <text class="cell-text rightview">下午:{{item.pmbegintime}}-{{item.pmendtime}}</text>
       </view>
     </view>     
   </view>
@@ -72,15 +76,18 @@
         <text class="wx-cell-text leftview">项目名称</text>
         <text class="cell-text rightview">{{items.prjName}}</text>
       </view>
-
+      <view class="wx-cell wx-cell-bottom">
+        <text class="wx-cell-text leftview">项目组名称</text>
+        <text class="cell-text rightview">{{items.groupName}}</text>
+      </view>
+      <view class="wx-cell wx-cell-bottom">
+        <text class="wx-cell-text rightview">上午:{{items.ambegintime}}-{{items.amendtime}}</text>
+        <text class="cell-text rightview">下午:{{items.pmbegintime}}-{{items.pmendtime}}</text>
+      </view>
       <view class="wx-cells-addr" wx:for="{{leadPrjMapList[idx].addressMapList}}" wx:key="index" wx:for-item="item" wx:for-index="index">      
         <view class="wx-cell wx-cell-bottom">
           <text class="wx-cell-text leftview">项目地址{{index+1}}</text>
           <text class="cell-text rightview">{{item.address}}</text>
-        </view>
-        <view class="wx-cell wx-cell-bottom">
-          <text class="wx-cell-text rightview">上午:{{item.ambegintime}}-{{item.amendtime}}</text>
-          <text class="cell-text rightview">下午:{{item.pmbegintime}}-{{item.pmendtime}}</text>
         </view>
       </view>  
     </view>

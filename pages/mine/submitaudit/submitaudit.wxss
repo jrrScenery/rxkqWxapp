@@ -1,5 +1,6 @@
  @import "../../../common/common.wxss";
-  @import "../../../common/todoAudit.wxss";
+@import "../../../common/todoAudit.wxss"; 
+@import "../../../common/loadmore.wxss"; 
 page{background-color: #efeff4;}  
 .viewCard{
   border: 2px solid #ffffff;
@@ -12,10 +13,13 @@ page{background-color: #efeff4;}
 } 
 .titleView{
   display: flex;
-  flex-direction: column;
+  flex-direction:row;
+  flex-wrap:nowrap;
   margin-top:10px;
   margin-bottom:10px;
 }
+/* .applyViewLeft{width:80%}
+.applyViewRight{font-size:15px;color:#09BB07;width:20%} */
 .perview{
   padding-top: 5px;
   display: flex;
@@ -27,118 +31,10 @@ page{background-color: #efeff4;}
 }
 .view-value{
   width:70%;
-  text-align:right
-}
-/* 
-.submitTime{
-  display: flex;
-  width:70%;
-}
-.submitday{
-  width:65%;
   text-align:right;
 }
-.submithour{
-  width:35%;
-  text-align:right;
-} */
-
 .notask{
   text-align: center;
   font-size: 15px;
   margin-top: 20px;
 }
-/* 查看流程样式 */
-/* .wx-cell-top{
-  margin-top: 5px;
-  border-top: 1rpx solid #DCDCDC;
-  color: blue
-} 
-.wx-cell-pro{
-  flex: 1;
-} */
-
-/* 查看流程或附件按钮样式 */
-/* .weui-form-preview__ft{
-  position:relative;
-  line-height:50px;
-  display:-webkit-box;
-  display:-webkit-flex;
-  display:flex;
-  margin-top: 10px
-}
-.weui-form-preview__ft:before{
-  content:" ";
-  position:absolute;
-  left:0;
-  top:0;
-  right:0;
-  height:1px;
-  border-top:1px solid #D5D5D6;
-  color:#D5D5D6;
-  -webkit-transform-origin:0 0;
-          transform-origin:0 0;
-  -webkit-transform:scaleY(0.5);
-          transform:scaleY(0.5);
-}
-.weui-form-preview__item{
-  overflow:hidden;
-}
-.weui-form-preview__label{
-  float:left;
-  margin-right:1em;
-  min-width:4em;
-  color:#808080;
-  text-align:justify;
-  text-align-last:justify;
-}
-.weui-form-preview__value{
-  display:block;
-  overflow:hidden;
-  word-break:normal;
-  word-wrap:break-word;
-}
-.weui-form-preview__btn{
-  position:relative;
-  display:block;
-  -webkit-box-flex:1;
-  -webkit-flex:1;
-          flex:1;
-  color:#09BB07;
-  text-align:center;
-  -webkit-tap-highlight-color:rgba(0, 0, 0, 0);
-}
-button.weui-form-preview__btn{
-  background-color:transparent;
-  border:0;
-  outline:0;
-  line-height:inherit;
-  font-size:inherit;
-}
-.weui-form-preview__btn:active{
-  background-color:#EEEEEE;
-}
-.weui-form-preview__btn:after{
-  content:" ";
-  position:absolute;
-  left:0;
-  top:0;
-  width:1px;
-  bottom:0;
-  border-left:1px solid #D5D5D6;
-  color:#D5D5D6;
-  -webkit-transform-origin:0 0;
-          transform-origin:0 0;
-  -webkit-transform:scaleX(0.5);
-          transform:scaleX(0.5);
-}
-.weui-form-preview__btn:first-child:after{
-  display:none;
-}
-.weui-form-preview__btn_default{
-  color:#09BB07;
-}
-.weui-form-preview__btn_primary{
-  color:#09BB07;
-} */
-

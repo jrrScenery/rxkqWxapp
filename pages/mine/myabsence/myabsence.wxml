@@ -1,12 +1,24 @@
 <view class="appcontainer">
   <form bindsubmit="formSubmit">
-    <view class="wx-cells">
+    <!-- <view class="wx-cells">
       <view class="wx-cell wx-cell-bottom">
         <view class='required'>*</view>
         <text class="wx-cell-text" style='width:30%'>项目地址:</text>
         <picker name='address' style='width:65%;' value='{{selectedAddrIndex}}' range='{{address}}' range-key="address" bindchange="addrChange">
           <view class='picker'>
             <view>{{address[selectedAddrIndex].address}}</view>
+          </view>
+        </picker>    
+        <image class="wx-cell-arrow" style='width:5%' src="../../../images/right.png"></image>
+      </view> 
+    </view> -->
+    <view class="wx-cells">
+      <view class="wx-cell wx-cell-bottom">
+        <view class='required'>*</view>
+        <text class="wx-cell-text" style='width:30%'>项目编号:</text>
+        <picker name='address' style='width:65%;' value='{{selectedAddrIndex}}' range='{{address}}' range-key="address" bindchange="addrChange">
+          <view class='picker'>
+            <view>{{address[selectedAddrIndex].prjCode}}</view> 
           </view>
         </picker>    
         <image class="wx-cell-arrow" style='width:5%' src="../../../images/right.png"></image>

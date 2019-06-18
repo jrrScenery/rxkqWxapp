@@ -125,13 +125,6 @@ Page({
       newPwd1: ''
     });
   },  
-  // navToPage(event) {
-  //   // console.log(event);
-  //   let route = event.currentTarget.dataset.route;
-  //   wx.navigateTo({
-  //     url: route
-  //   })
-  // },
 
   /**
    * 生命周期函数--监听页面加载

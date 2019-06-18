@@ -38,11 +38,14 @@ Page({
       transdata.selectEndDate = value.endDate;
       transdata.beginTime = value.beginTime;
       transdata.endTime = value.endTime;
+      console.log();
       if (value.loaType == 0) {
         transdata.addrId = value.addrId;
+        transdata.groupId = value.groupId;
       }
       if (value.loaType == 1) {
         transdata.addrId = value.addrId;
+        transdata.groupId = value.groupId;
         transdata.applyUser = value.applyUser;
         transdata.sortId = 'applyUser'
       }
@@ -50,6 +53,7 @@ Page({
         transdata.applyUser = value.applyUser;
         transdata.sortId = 'bpg';
         transdata.addrId = value.addrId;
+        transdata.groupId = value.groupId;
       }
       transdata.reason = value.reason;
       wx.navigateTo({
@@ -102,21 +106,6 @@ Page({
           duration: 2000
         })
         that.todoAuditInfo();
-        //通知提醒
-        var auditType = e.detail.target.id;
-        var loaType = util.getType().loaType[that.data.combineInfos[idx].loaType];
-        var opMapList = res.data.opMapList;
-        var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
-        if (auditType == 'ok') {//审核通过
-          //流程待办提醒
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        }else{
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        }
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       } else {

@@ -18,3 +18,8 @@
   padding-left:10%;
   padding-top:10px;
 }
+.norecord{
+  text-align:center;
+  margin-top:50px;
+  font-size: 13px
+}

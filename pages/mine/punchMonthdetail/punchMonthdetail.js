@@ -28,10 +28,43 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var leavedata = util.getpunchMonthdetail().personDetail;
-    this.setData({
-      leavedata: leavedata
+    // var leavedata = util.getpunchMonthdetail().personDetail;
+    var that = this;
+    wx.showLoading({
+      title: '加载中',
     })
+    var selectInfo = JSON.parse(options.selectInfo);
+    console.log(selectInfo);
+    var attnIds = selectInfo.sortId;
+    var url = util.requestService("/api/hrkq/queryMonthPunchDetail");
+    var postdata={
+      topEmpId: wx.getStorageSync("topEmpId"),
+      encryption: wx.getStorageSync("encryption"),
+      attnIds: attnIds
+    }
+    console.log(postdata);
+    function success(res){
+      wx.hideLoading();
+      console.log("333333");
+      console.log(res);
+      if (res.data.code == 200) {
+        that.setData({
+          leavedata: res.data.data
+        })
+      } else if (res.data.code == 99) {
+        util.mineRedirect(res.data.message);
+      } else {
+        wx.showToast({
+          title: res.data.message,
+          icon: "none",
+          duration: 2000
+        })
+      }   
+    }
+    util.checkEncryption(url, postdata, success);
+    // this.setData({
+    //   leavedata: leavedata
+    // })
   },
 
   /**

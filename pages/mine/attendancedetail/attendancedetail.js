@@ -8,45 +8,82 @@ Page({
     attendancedetail: ""
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
+  recallInfo:function(e){
+    console.log(e);
+    let that = this;
+    let loatype = e.currentTarget.dataset.loatype;
+    let id = e.currentTarget.dataset.id;
+    let processId = this.data.processId;
+    let url = util.requestService("/api/hrkq/withdrawProcess");
+    let postData={
+      topEmpId: wx.getStorageSync("topEmpId"),
+      encryption: wx.getStorageSync("encryption"),
+      attnId: id,
+      loaType: loatype,
+      processId: processId
+    }
+    console.log(postData);
+    function success(res){
+      console.log(res);
+      if(res.data.code==200){
+        wx.showToast({
+          title: '已撤回',
+          icon: 'success',
+          duration: 2000
+        })
+        that.getAttenDetail();
+      }
+    }
+    util.checkEncryption(url, postData, success);
+  },
+  getAttenDetail:function(){
     var that = this;
     wx.showLoading({
       title: '加载中',
     })
     var processStatus = util.getType().processStatus;
     var leaveType = util.getType().leaveType;
-    var id = options.id;
+    var id = this.data.processId;
     var url = util.requestService("/api/hrkq/queryAttnDetail");
     var postdata = {
       id: id,
       topEmpId: wx.getStorageSync("topEmpId"),
-      encryption: wx.getStorageSync("encryption"),     
+      encryption: wx.getStorageSync("encryption"),
     }
-    function success(res){
+    function success(res) {
+      console.log(res);
       wx.hideLoading();
-      if(res.data.code == 200){
+      if (res.data.code == 200) {
         wx.setNavigationBarTitle({
           title: '考勤详情-' + res.data.submitor,
         })
         that.setData({
           attendancedetail: res.data,
           processStatus: processStatus,
-          leaveType: leaveType
+          leaveType: leaveType        
         })
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
-      }else{
+      } else {
         wx.showToast({
           title: res.data.message,
-          icon:"none",
-          duration:2000
+          icon: "none",
+          duration: 2000
         })
       }
     }
     util.checkEncryption(url, postdata, success);
+  },
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    console.log("options:", options);
+    this.setData({
+      loaType: options.loaType,
+      processId:options.id
+    })
+    this.getAttenDetail();
   },
 
   /**

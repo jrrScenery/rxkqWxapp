@@ -1,28 +1,10 @@
 // pages/mine/attendancehistory/attendancehistory.js
 var util = require('../../../utils/util.js'); 
-// var start = new Date(new Date().getFullYear() + "-1-31");
-// var beginDate = util.formatTime(start).substring(0, 7);
-// var current = new Date(new Date().getFullYear() + "-" + new Date().getMonth()+"-"+ new Date().getDate());
-// var curDate = current.getFullYear() + "-" + (current.getMonth() + 1)
-if (new Date().getMonth()>0){
-  var beginDate = new Date().getFullYear()+"-1";
-  var curDate = new Date().getFullYear() + "-" + (new Date().getMonth()+1);
-}else{
-  var beginDate = (new Date().getFullYear()-1) + "-1";
-  var curDate = (new Date().getFullYear()-1) + "-12";
-}
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-    // selectDate: curDate,
-    // isShow: true,
-    // iswholeMonth: false,
-    // wholeMonth:"1",
-    // beginDate: beginDate,
-    // endDate: curDate
   },
   
   navToPage: function (event) {
@@ -44,14 +26,11 @@ Page({
     console.log(curdate)
     var year = curdate[0];
     var month = "";
-    console.log(curdate[1] < "1")
     if (curdate[1]<"1"){
       month = curdate[1].substring(1,2)
     }else{
       month = curdate[1]
     }
-    // var date = new Date(e.detail.value.replace(/\-/g, '/'));
-    // var curdate = date.getFullYear()+"-"+(date.getMonth()+1);
     this.setData({
       selectDate: year + "-" + month,
       wholeMonth:"1",
@@ -62,7 +41,6 @@ Page({
   },
 
   iswholeMonthBindtap:function(e){
-    console.log(e);
     var that = this;
     if (e.target.id == "wholeMonth") {
       that.setData({
@@ -91,8 +69,6 @@ Page({
 
   //确认  
   confirm: function (e) {
-    console.log(e)
-    console.log(this.data)
     var idx = e.target.dataset.current;
     this.data.hiddenmodalput[idx] = !this.data.hiddenmodalput[idx];
     this.setData({
@@ -115,10 +91,8 @@ Page({
       isHistory: "0", //0历史，1不是
       userName:that.data.userName
     }
-    console.log(postdata)
     var url = util.requestService("/api/hrkq/queryAttn");
     function success(res){
-      console.log(res);
       wx.hideLoading();
       if(res.data.code == 200){    
         var leavereason = [];  //定义请假原因下标数组
@@ -140,7 +114,6 @@ Page({
           leaveType: leaveType,
           processStatus: processStatus
         })
-        console.log(that.data)
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       } else {
@@ -162,20 +135,21 @@ Page({
     wx.getStorage({
       key: 'loginData',
       success: function (res) {
-        console.log(res);
         that.setData({
           applyUser: res.data.staffName,
           userName: res.data.topUser
         })
       },
     })
+    let beginDate = util.GetMonthStr1(-180);
+    let endDate = util.GetMonthStr1(0);
     that.setData({
-      selectDate: curDate,
+      selectDate: endDate,
       isShow: true,
       iswholeMonth: false,
       wholeMonth: "1",
       beginDate: beginDate,
-      endDate: curDate
+      endDate: endDate
     })
     //wholeMonth: "1",//是否全月，0：是；1：不是
     this.getQueryAttn(this.data.selectDate, this.data.wholeMonth);

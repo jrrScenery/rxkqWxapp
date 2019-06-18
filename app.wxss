@@ -22,3 +22,6 @@
   color:blue;
   text-align:right;
 }
+
+.applyViewLeft{width:80%}
+.applyViewRight{font-size:15px;color:#09BB07;width:20%}

@@ -5,11 +5,11 @@ Page({
    * 页面的初始数据
    */
   data: {
-    index:0,
-    page:1,
-    num:10,
-    auditInfo:null,
-    total:0,
+    index: 0,
+    page: 1,
+    num: 10,
+    auditInfo: null,
+    total: 0,
     hasmoreData: true,//更多数据
     hiddenloading: true,//加载中
     abstype: [
@@ -18,7 +18,7 @@ Page({
     ],
   },
 
-  change:function(e){
+  change: function (e) {
     console.log(e)
     var idx = e.target.dataset.current;
     this.data.auditInfo[idx].leaveType = e.detail.value
@@ -29,19 +29,19 @@ Page({
   checkaudit: function (event) {
     util.navigateTo(event);
   },
- 
-  allAudit:function(e){
+
+  allAudit: function (e) {
     console.log(e)
     console.log(this.data)
     var that = this;
     var url = util.requestService("/api/hrkq/auditCombine");
     var postdata = {};
-    postdata.ids="";
+    postdata.ids = "";
     // postdata.ids = that.data.options.id;
     postdata.loaType = that.data.options.loaType;
     var overType = [];
-    if (that.data.options.loaType=='1'){
-      for (var i = 0; i < that.data.auditInfo.length;i++){
+    if (that.data.options.loaType == '1') {
+      for (var i = 0; i < that.data.auditInfo.length; i++) {
         var overTypeObj = {};
         overTypeObj.id = that.data.auditInfo[i].id;
         overTypeObj.leaveType = that.data.auditInfo[i].leaveType;
@@ -49,8 +49,8 @@ Page({
       }
       postdata.overType = overType;
     }
-    for (var j = 0; j < that.data.auditInfo.length; j++){
-      postdata.ids += that.data.auditInfo[j].id+",";
+    for (var j = 0; j < that.data.auditInfo.length; j++) {
+      postdata.ids += that.data.auditInfo[j].id + ",";
     }
     postdata.topEmpId = wx.getStorageSync("topEmpId");
     postdata.encryption = wx.getStorageSync("encryption");
@@ -70,21 +70,6 @@ Page({
         wx.navigateBack({
           url: "../mybatchaudit/mybatchaudit"
         })
-        //通知提醒
-        var auditType = e.target.id;
-        var loaType = util.getType().loaType[that.data.options.loaType];
-        var opMapList = res.data.opMapList;
-        var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
-        if (auditType == 'ok') {//审核通过
-          //流程待办提醒
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        } else {
-          for (var i = 0; i < opMapList.length; i++) {
-            util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-          }
-        }
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       } else {
@@ -107,51 +92,55 @@ Page({
       }
     })
   },
-  modifyaudit:function(event){
+  modifyaudit: function (event) {
     console.log(event);
     let route = event.currentTarget.dataset.route;
     var idx = event.currentTarget.dataset.current;
+    console.log(this.data.auditInfo);
     var value = this.data.auditInfo[idx];
     var attnMonth = value.attnMonth;
     var year = new Date().getFullYear();
-    var month = new Date().getMonth()+1;
+    var month = new Date().getMonth() + 1;
     var date = year + "-" + month;
-    if (value.loaType != 2 && value.loaType != 4){
+    if (value.loaType != 2 && value.loaType != 4) {
       var transdata = {};
-        transdata.id = value.id;
-        transdata.selectedIndex = value.leaveType;
-        transdata.selectBeginDate = value.beginDate;
-        transdata.selectEndDate = value.endDate;
-        transdata.beginTime = value.beginTime;
-        transdata.endTime = value.endTime;
-        if (value.loaType == 0){
-          transdata.addrId = value.addrId;
-        }
-        if (value.loaType == 1){
-          transdata.applyUser = value.applyUser;
-          transdata.sortId = 'applyUser'
-        }
-        if (value.loaType == 3){
-          transdata.applyUser = value.applyUser;
-          transdata.sortId = 'bpg';
-          transdata.addrId = value.addrId;
-        }
-        transdata.reason = value.reason;
-        wx.navigateTo({
-          url: route + "?transdata=" + JSON.stringify(transdata)
-        })
-    }else{
-      if (value.loaType == 2){
-        if (value.attnMonth == date){
+      transdata.id = value.id;
+      transdata.selectedIndex = value.leaveType;
+      transdata.selectBeginDate = value.beginDate;
+      transdata.selectEndDate = value.endDate;
+      transdata.beginTime = value.beginTime;
+      transdata.endTime = value.endTime;
+      if (value.loaType == 0) {
+        transdata.addrId = value.addrId;
+        transdata.groupId = value.groupId;
+      }
+      if (value.loaType == 1) {
+        transdata.applyUser = value.applyUser;
+        transdata.sortId = 'applyUser';
+        transdata.groupId = value.groupId;
+      }
+      if (value.loaType == 3) {
+        transdata.applyUser = value.applyUser;
+        transdata.sortId = 'bpg';
+        transdata.addrId = value.addrId;
+        transdata.groupId = value.groupId;
+      }
+      transdata.reason = value.reason;
+      wx.navigateTo({
+        url: route + "?transdata=" + JSON.stringify(transdata)
+      })
+    } else {
+      if (value.loaType == 2) {
+        if (value.attnMonth == date) {
           wx.navigateTo({
             url: "../myattendance/myattendance?id=" + value.id
           })
-        }else{
+        } else {
           wx.navigateTo({
             url: "../lsmyattendance/lsmyattendance?id=" + value.id
           })
         }
-      }else{
+      } else {
         var transdata = {};
         transdata.id = value.id;
         transdata.attnMonth = value.attnMonth;  //(需加月份)
@@ -162,7 +151,7 @@ Page({
       }
     }
   },
-  formSubmit:function(e){ 
+  formSubmit: function (e) {
     console.log(e)
     var that = this;
     console.log(that.data)
@@ -170,60 +159,45 @@ Page({
     var url = util.requestService("/api/hrkq/auditProcess");
     var postdata = {};
     postdata.id = this.data.auditInfo[idx].id;
+    postdata.groupId = this.data.auditInfo[idx].groupId;
     postdata.topEmpId = wx.getStorageSync("topEmpId");
     postdata.encryption = wx.getStorageSync("encryption");
-    if (this.data.auditInfo[idx].loaType=='1'){
+    if (this.data.auditInfo[idx].loaType == '1') {
       postdata.leaveType = this.data.auditInfo[idx].leaveType
     }
-    if (e.detail.target.id=='ok'){
+    if (e.detail.target.id == 'ok') {
       postdata.auditType = 0;
-    }else{
+    } else {
       postdata.auditType = 1;
     }
     postdata.loaType = that.data.auditInfo[idx].loaType;
     console.log(postdata);
     var options = {
-      id:'',
-      loaType:''
+      id: '',
+      loaType: ''
     };
     options.loaType = that.data.auditInfo[0].loaType;
-    
+
     console.log(options)
-    function success(res){
+    function success(res) {
       console.log(res)
-      if (res.data.code == 200){
+      if (res.data.code == 200) {
         wx.showToast({
           title: '审批完成',
-          icon:'success',
-          duration:2000
+          icon: 'success',
+          duration: 2000
         })
-        //待办通知提醒
-        // var auditType = e.detail.target.id;
-        // console.log(that.data.auditInfo[idx].loaType)
-        // var loaType = util.getType().loaType[that.data.auditInfo[idx].loaType];
-        // var opMapList = res.data.opMapList;
-        // var templateId = "m9nESjCzUE9wfiQLcYyST7omnVG05nMRs-qR_rPsfNs"
-        // if (auditType == 'ok') {
-        //   for (var i = 0; i < opMapList.length; i++) {
-        //     util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-        //   }
-        // } else {
-        //   for (var i = 0; i < opMapList.length; i++) {
-        //     util.getSendTemplateResult(opMapList[i].openId, opMapList[i].processId, templateId, loaType, loaType, auditType);
-        //   }
-        // }
-
         for (var i = 0; i < that.data.auditInfo.length; i++) {
           if (i != idx) {
             options.id += that.data.auditInfo[i].id + ","
           }
         }
-        console.log("221行",options.id);
-        if (options.id==""){
+        console.log("221行", options.id);
+        if (options.id == "") {
           wx.navigateBack({
             url: "../mybatchaudit/mybatchaudit"
           })
-        }else{
+        } else {
           that.setData({
             index: 0,
             page: 1,
@@ -238,18 +212,18 @@ Page({
           // that.todoAuditInfo(options);
         }
 
-        
+
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
-      }else{
+      } else {
         wx.showToast({
           title: res.data.message,
           icon: "none",
-          duration:2000
+          duration: 2000
         })
       }
     }
-    if (this.data.auditInfo[idx].processStatus == 1 || this.data.auditInfo[idx].processStatus != 3){//审批状态不为修改
+    if (this.data.auditInfo[idx].processStatus == 1 || this.data.auditInfo[idx].processStatus != 3) {//审批状态不为修改
       wx.showModal({
         title: '提示',
         content: '确认提交吗？',
@@ -264,7 +238,7 @@ Page({
     }
   },
 
-  todoAuditInfo: function (options){
+  todoAuditInfo: function (options) {
     console.log(options)
     wx.showLoading({
       title: '加载中',
@@ -272,9 +246,9 @@ Page({
     var that = this;
     if (that.data.hasmoreData == false) {
         wx.hideLoading();
-　　　  that.setData({ hiddenloading: true })
-　　　　return;
-　　}
+        that.setData({ hiddenloading: true })
+        　　　　return;
+    　　}
     var loaType = util.getType().loaType;
     var leaveType = util.getType().leaveType;
     var relaxation = util.getType().relaxation;
@@ -288,36 +262,37 @@ Page({
       page: that.data.page,
       num: that.data.num
     }
-    console.log(postdata)
+    console.log("postdata", postdata)
     function success(res) {
       console.log(res)
       wx.hideLoading();
       if (res.data.code == 200) {
-        if (res.data.auditinfos.length != 0){
+        if (res.data.auditinfos.length != 0) {
           wx.setNavigationBarTitle({
-            title: loaType[res.data.auditinfos[0].loaType]+"批量审批",
+            title: loaType[res.data.auditinfos[0].loaType] + "批量审批",
           })
         }
-        var c = new Array(); 
-        if (that.data.auditInfo==null){
+        var c = new Array();
+        if (that.data.auditInfo == null) {
           that.setData({
             auditInfo: res.data.auditinfos
           })
-        }else{
+        } else {
           that.setData({
             auditInfo: c.concat(that.data.auditInfo, res.data.auditinfos)
           })
         }
         that.setData({
           // auditInfo: res.data.auditinfos,
-          // total: res.data.totalNum,
+          total: res.data.totalNum,
           loaType: loaType,
           leaveType: leaveType,
           relaxation: relaxation,
           processStatus: processStatus,
-          page:that.data.page+1
+          page: that.data.page + 1
         })
-        if (that.data.total <= 0 || that.data.num * (that.data.page-1) >= that.data.total) {
+        console.log(that.data);
+        if (that.data.total <= 0 || that.data.num * (that.data.page - 1) >= that.data.total) {
           that.setData({ hasmoreData: false, hiddenloading: true })
         }
         console.log(that.data);
@@ -341,7 +316,7 @@ Page({
     this.setData({
       options: options
     })
-   
+
     this.todoAuditInfo(options);
   },
 
@@ -349,7 +324,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-  
+
   },
 
   /**
@@ -363,14 +338,14 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-  
+
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-  
+
   },
 
   /**
@@ -380,7 +355,7 @@ Page({
     wx.showNavigationBarLoading();
     this.setData({
       page: 1,
-      auditInfo:null,
+      auditInfo: null,
       total: 0,
       hasmoreData: true,//更多数据
       hiddenloading: true//加载中
@@ -406,6 +381,6 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function () {
-  
+
   }
 })

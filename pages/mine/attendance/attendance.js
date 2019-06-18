@@ -12,7 +12,7 @@ Page({
   },
 
   navToPage(event) {
-    // console.log(event);
+    console.log(event);
     let route = event.currentTarget.dataset.route;
     let sortId = event.currentTarget.id;
     wx.navigateTo({

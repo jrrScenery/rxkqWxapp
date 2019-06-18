@@ -6,7 +6,8 @@ Page({
   data: {
     curtime: new Date().getFullYear() + "年" + (new Date().getMonth() + 1) + "月",
     iswholeMonth: false,
-    isShow: true,
+    isShow: true, 
+    disable:false,
     leavetype: [
       "请选择",
       "因公",
@@ -17,11 +18,13 @@ Page({
       "产假",
       "哺乳假",
       "丧假",
-      "迟到",
-      "早退",
-      "旷工",
+      // "迟到",
+      // "早退",
+      // "旷工",
       "产检假",
-      "陪产假"
+      "陪产假", 
+      "分包替岗",
+      "漏打卡"
     ],
     leavetypeIndex: []
   },
@@ -64,11 +67,7 @@ Page({
 
   //缺勤结束时间选择
   absEndTimechange: function (e) {
-    // console.log(e);
     var timeIndex = e.target.dataset.current;
-    // console.log("aaaaaaaaaa");
-    // console.log(this.data.selectAbsBeginTime[timeIndex]);
-    // console.log(this.data.selectAbsBeginTime[timeIndex] == e.detail.value);
     if (this.data.selectAbsBeginTime[timeIndex] == e.detail.value){
       wx.showToast({
         title: '结束时间应大于开始时间',
@@ -134,6 +133,7 @@ Page({
         attenInfo.absBeginTime = that.data.selectAbsEndTime[currentIndex];
         attenInfo.absEndTime = that.data.dataInfo[currentIndex].absEndTime;
         attenInfo.addrId = that.data.dataInfo[currentIndex].addrId;
+        attenInfo.groupId = that.data.dataInfo[currentIndex].groupId;
         attenInfo.prjId = that.data.dataInfo[currentIndex].prjId;
         attenInfo.isNew = 0;
         that.data.selectAbsBeginTime[that.data.dataInfo.length] = that.data.selectAbsEndTime[currentIndex];
@@ -254,15 +254,6 @@ Page({
         if (d2 < d1){
           that.data.isShowDelete[i - 1] = false;
         }
-        // if (d2 > d1) {
-        //   that.data.addFlag[currentIndex - 1] = true;
-        //   that.setData({
-        //     addFlag: that.data.addFlag,
-        //     // isShowDelete: that.data.isShowDelete
-        //   })
-        // } else {
-        //   that.data.isShowDelete[i - 1] = false;
-        // }
       } else { //将当前条记录之后的记录依次前移
         var attenInfo1 = {};
         attenInfo1 = that.data.dataInfo[i];
@@ -401,8 +392,11 @@ Page({
   //点击提交按钮事件
   formSubmit: function (e) {
     var that = this;
+    that.setData({
+      disable: true
+    })
     var n = 0;//记录请假类型是否全部空值
-    var m = 0;//记录请假类型是否有空值
+    var m = 0;//记录是否全部提交
     //判断请假类型是全部是“请选择”选项，若有则提示输入请假类型
     for (var i = 0; i < that.data.leavetypeIndex.length; i++) {
       if (this.data.leavetypeIndex[i] != 0) {
@@ -418,59 +412,98 @@ Page({
         icon: 'none',
         duration: 2000
       })
+      setTimeout(function () {
+        that.setData({
+          disable: false
+        })
+      }, 1000);
+      return
     }
     var url = util.requestService("/api/hrkq/submitAttn");
     var postdata = {};
     var postdataInfo = [];
     var k = 0;
     for (var i = 0; i < that.data.dataInfo.length; i++) {
+      if ((that.data.dataInfo[i].processStatus == 0 || that.data.dataInfo[i].processStatus == 3)){
+          if (that.data.selectAbsEndTime[i] != that.data.dataInfo[i].absEndTime && that.data.addFlag[i]){
+            wx.showToast({
+              title: '未补满当天考勤',
+              icon: 'none',
+              duration: 2000
+            })
+            setTimeout(function () {
+              that.setData({
+                disable: false
+              })
+            }, 1000);
+            return
+          }
+          if(!that.data.addFlag[i]){
+            if (that.data.leavetypeIndex[i+1]==0){
+              wx.showToast({
+                title: '请选择新增考勤时段考勤请假类型',
+                icon: 'none',
+                duration: 2000
+              })
+              setTimeout(function () {
+                that.setData({
+                  disable: false
+                })
+              }, 1000);
+              return
+            }
+          }
+      }
       if (that.data.leavetypeIndex[i]!=null&&that.data.leavetypeIndex[i] != 0 && (that.data.dataInfo[i].processStatus == 0 || that.data.dataInfo[i].processStatus == 3)) {
-        var dataInfo = {};
-        dataInfo.addrId = that.data.dataInfo[i].addrId;
-        dataInfo.prjId = that.data.dataInfo[i].prjId;
+        var dataInfoJson = {};
+        dataInfoJson.addrId = that.data.dataInfo[i].addrId;
+        dataInfoJson.groupId = that.data.dataInfo[i].groupId;
+        dataInfoJson.prjId = that.data.dataInfo[i].prjId;
         var processStatus = that.data.dataInfo[i].processStatus;
-            dataInfo.processStatus = processStatus;
+        dataInfoJson.processStatus = processStatus;
         if (processStatus == 0 || processStatus == 3) {
           if (that.data.dataInfo[i].id != null) {
-            dataInfo.id = that.data.dataInfo[i].id;
+            dataInfoJson.id = that.data.dataInfo[i].id;
           }
-          dataInfo.punchDate = that.data.dataInfo[i].punchDate;
-          if (parseInt(that.data.leavetypeIndex[i])>1){
-            dataInfo.leaveType = parseInt(that.data.leavetypeIndex[i])+1;
-          }else{
-            dataInfo.leaveType = that.data.leavetypeIndex[i];
-          }
-          dataInfo.absBeginTime = that.data.selectAbsBeginTime[i];
-          dataInfo.absEndTime = that.data.selectAbsEndTime[i];
-          // if (that.data.dataInfo[i].isNew == 0){
-          dataInfo.isNew = that.data.dataInfo[i].isNew;
-          // }
+          dataInfoJson.punchDate = that.data.dataInfo[i].punchDate;
+          let myattence = util.getType().myattence[that.data.leavetypeIndex[i]];
+          dataInfoJson.leaveType = parseInt(myattence);
+          dataInfoJson.absBeginTime = that.data.selectAbsBeginTime[i];
+          dataInfoJson.absEndTime = that.data.selectAbsEndTime[i];
+          dataInfoJson.isNew = that.data.dataInfo[i].isNew;
           if (!that.data.leavereason[i]) {
-            dataInfo.reason = "";
+            dataInfoJson.reason = "";
           } else {
-            dataInfo.reason = that.data.leavereason[i];
+            dataInfoJson.reason = that.data.leavereason[i];
           }
-          postdataInfo[k++] = dataInfo;
+          postdataInfo[k++] = dataInfoJson;
         }
       }
     }
     postdata.topEmpId = wx.getStorageSync("topEmpId");
     postdata.encryption = wx.getStorageSync("encryption");
     postdata.dataInfo = postdataInfo;
-    console.log(postdata);
+    console.log("postdata",postdata);
     function success(res) {
-      console.log("445行",res);
+      console.log(res);
       if (res.data.code == 200) {
         wx.showToast({
           title: '提交成功',
           icon: "success",
           duration: 2000
         })
+        setTimeout(function () {
+          that.setData({
+            disable: false
+          })
+        }, 1000);
+        
         for (var i = 0; i < that.data.leavetypeIndex.length; i++) {
           if (that.data.leavetypeIndex[i] != 0 && (that.data.dataInfo[i].processStatus == 0 || that.data.dataInfo[i].processStatus == 3)) {
+            let myattence = util.getType().myattence[that.data.leavetypeIndex[i]];
             that.data.dataInfo[i].processStatus = 1;
             if (parseInt(that.data.leavetypeIndex[i])>1){
-              that.data.leavetypeIndex[i] = String(parseInt(that.data.leavetypeIndex[i]) + 1)
+              that.data.leavetypeIndex[i] = String(parseInt(myattence))
             }
           }
         }
@@ -479,13 +512,6 @@ Page({
           leavetypeIndex: that.data.leavetypeIndex,
           submitflag: true
         })
-        // console.log(that.data);
-        // var opMapList = res.data.opMapList;
-        // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
-        // //流程待办提醒
-        // for (var i = 0; i < opMapList.length; i++) {
-        //   util.getSendTemplateData(opMapList[i].openId, opMapList[i].processId, templateId, "考勤", "考勤", that.data.staffName);
-        // }
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       } else {
@@ -494,6 +520,11 @@ Page({
           icon: "none",
           duration: 2000
         })
+        setTimeout(function () {
+          that.setData({
+            disable: false
+          })
+        }, 2000);
       }
     }
     if (n != 0) {
@@ -505,9 +536,14 @@ Page({
             if (res.confirm) {
               util.checkEncryption(url, postdata, success);
             } else if (res.cancel) {
-              for (var i = 0; i < that.data.dataInfo.length; i++) {
-                that.data.dataInfo[i].absEndTime = that.data.selectAbsEndTime[i];
-              }
+              setTimeout(function () {
+                that.setData({
+                  disable: false
+                })
+              }, 1000);
+              // for (var i = 0; i < that.data.dataInfo.length; i++) {
+              //   that.data.dataInfo[i].absEndTime = that.data.selectAbsEndTime[i];
+              // }
             }
           }
         })
@@ -517,6 +553,11 @@ Page({
           icon: "none",
           duration: 2000
         })
+        setTimeout(function () {
+          that.setData({
+            disable: false
+          })
+        }, 1000);
       }
     }
     if (m == 0) {
@@ -569,6 +610,7 @@ Page({
       encryption: wx.getStorageSync("encryption"),
       isHistory: "1"   //0历史，1不是
     }
+    console.log("curData:" + JSON.stringify(curData));
     var url = util.requestService("/api/hrkq/queryAttn");
     // 请求服务器成功
     function success(res) {
@@ -588,18 +630,20 @@ Page({
         //根据考勤数据的条数定义数组的长度
         for (var i = 0; i < res.data.attnInfo.length; i++) {
           if (res.data.attnInfo[i].leaveType!=null){
+            let myabsencereserve = util.getType().myabsencereserve[res.data.attnInfo[i].leaveType];
             if (res.data.attnInfo[i].processStatus == 3 || res.data.attnInfo[i].processStatus == 0){
-              if (parseInt(res.data.attnInfo[i].leaveType)>1){
-                leavetypeIndex[i] = String(parseInt(res.data.attnInfo[i].leaveType) - 1);
-              }else{
-                leavetypeIndex[i] = res.data.attnInfo[i].leaveType;
-              }
+              // if (parseInt(res.data.attnInfo[i].leaveType)>1){
+              //   leavetypeIndex[i] = String(parseInt(res.data.attnInfo[i].leaveType) - 1);
+              // }else{
+                  leavetypeIndex[i] = myabsencereserve;
+              // }
             }else{
               leavetypeIndex[i] = res.data.attnInfo[i].leaveType;
             }
           }else{
             leavetypeIndex[i] = null
           }
+          // console.log("leavetypeIndex", leavetypeIndex);
           if (res.data.attnInfo[i].reason != null) {
             leavereason[i] = res.data.attnInfo[i].reason;
           } else {
@@ -642,7 +686,6 @@ Page({
           isBigDate: isBigDate,
           isShowDelete: isShowDelete
         })
-        console.log(that.data);
       } else if (res.data.code == 99) {
         util.mineRedirect(res.data.message);
       } else {
@@ -695,12 +738,14 @@ Page({
           var isBigDate = [];//是否大于当前日期
           var isShowDelete = []; //是否显示删除按钮你
           for (var i = 0; i < res.data.attenDetailInfo.length; i++) {
-            if (parseInt(res.data.attenDetailInfo[i].leaveType) > 1) {
-              leavetypeIndex[i] = String(parseInt(res.data.attenDetailInfo[i].leaveType) - 1);
-            } else {
-              leavetypeIndex[i] = res.data.attenDetailInfo[i].leaveType;
-            }
-            // leavetypeIndex[i] = res.data.attenDetailInfo[i].leaveType;
+            let myabsencereserve = util.getType().myabsencereserve[res.data.attenDetailInfo[i].leaveType];
+            // if (parseInt(res.data.attenDetailInfo[i].leaveType) > 1) {
+            //   leavetypeIndex[i] = String(parseInt(res.data.attenDetailInfo[i].leaveType) - 1);
+            // } else {
+            //   leavetypeIndex[i] = res.data.attenDetailInfo[i].leaveType;
+            // }
+            leavetypeIndex[i] = myabsencereserve;
+
             leavereason[i] = res.data.attenDetailInfo[i].reason;
             selectAbsBeginTime[i] = res.data.attenDetailInfo[i].absBeginTime;
             selectAbsEndTime[i] = res.data.attenDetailInfo[i].absEndTime;

@@ -9,8 +9,7 @@ Page({
   data: {
     account:"",
     password:"",
-    telephone:null,
-    // accountDisabled:false
+    telephone:null
   },
 
   // 获取输入手机账号 
@@ -86,7 +85,7 @@ Page({
   
   // 登录 
   login: function () {
-    var that = this;
+    var that = this; 
     // var reg = new RegExp('^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$');
     if (this.data.account.length == 0) {
       wx.showToast({
@@ -119,6 +118,59 @@ Page({
     }
   },
 
+  getLoginInfo: function (url) { 
+    return new Promise((resolve,reject)=>{
+      let postdata = {
+        js_code: res.code,
+        appid: "wxa8405bb1ac18d4b5",
+        secret: "99f4bc81bd325c4cc40215c8ece52adb",
+        account: that.data.account,
+        password: that.data.password
+      }
+      console.log("postdata", postdata);
+      function success(res){
+        console.log("getLoginInfo",res);
+        if(res.data.code==200){
+          wx.setStorage({
+            key: 'encryption',
+            data: res.data.encryption,
+          })
+          wx.setStorage({
+            key: 'topEmpId',
+            data: res.data.topEmpId,
+          })
+          resolve();
+        }else{
+          reject('获取login接口失败:',+res.data.message)
+        }
+      }
+      util.getPostRequest(url, postdata, success);
+    })
+  },
+  getUpdateInfo:function(){
+    return new Promise((resolve,reject)=>{
+      let updateUrl = util.requestService("/api/hrkq/update");
+      let update = {
+        encryption: res.data.encryption,
+        topEmpId: res.data.topEmpId
+      }
+      function success(res){
+        if(res.data.code==200){
+          resolve();
+          wx.setStorage({
+            key: 'loginData',
+            data: res.data,
+          })
+          wx.switchTab({
+            url: "../punch/punch",
+          })
+        }else{
+          reject('获取update接口失败：'+res.data.message)
+        }
+      }
+      util.getPostRequest(updateUrl, update, success);
+    })
+  },
   getLoginCheck:function(){
     var that = this;
     wx.showLoading({
@@ -126,10 +178,23 @@ Page({
     })
     wx.login({
       success: function (res) {
-        console.log(res)
+        console.log("微信login接口success函数",res)
         if (res.code) {
           app.globalData.isLogin = true
           var url = util.requestService("/api/hrkq/login");
+          // that.getLoginInfo(url).then(()=>{
+          //   that.getUpdateInfo()
+          // }).then(()=>{
+          //   wx.hideLoading();
+          //   wx.showToast({
+          //     title: '登录成功',
+          //     icon: "success",
+          //     duration: 2000
+          //   })
+          //   that.updateUserCatch()
+          // }).catch((err)=>{
+            
+          // })
           var updateUrl = util.requestService("/api/hrkq/update");
           var postdata = {
             js_code: res.code,
@@ -140,7 +205,7 @@ Page({
           }
 
           function success(res) {
-            console.log(res)
+            console.log("服务器login接口",res)
             if (res.data.code == 200) {
               wx.setStorage({
                 key: 'encryption',
@@ -155,7 +220,7 @@ Page({
                 topEmpId: res.data.topEmpId
               }
               function success(res) {
-                console.log(res);
+                console.log("服务器update接口",res);
                 wx.hideLoading();
                 if (res.data.code == 200) {
                   wx.showToast({
@@ -171,6 +236,8 @@ Page({
                   wx.switchTab({
                     url: "../punch/punch",
                   })
+                } else if (res.data.code == 99){
+                  util.mineRedirect(res.data.message);
                 } else {
                   wx.showToast({
                     title: res.data.message,
@@ -225,7 +292,6 @@ Page({
       imageurl:"../../images/logo.png"
     })    
   },
-
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

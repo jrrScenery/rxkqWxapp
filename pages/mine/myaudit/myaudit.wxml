@@ -84,12 +84,12 @@
 
         <view class='perview' wx:if="{{item.loaType==0}}">
           <view class='titleView'>请假事由：</view> 
-          <input class='inputView' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></input>
+          <textarea class='inputView' auto-height='true' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></textarea>
         </view> 
 
         <view class='perview' wx:elif="{{item.loaType==1}}">
           <view class='titleView'>加班事由：</view> 
-          <input class='inputView' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></input>
+          <textarea class='inputView' auto-height='true' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></textarea>
         </view> 
         <view class='perview' wx:if="{{item.loaType==3}}">
           <view class='titleView'>派工事由：</view> 

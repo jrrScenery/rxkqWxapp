@@ -1,7 +1,7 @@
 var util = require('../../utils/util.js');
+var QQMapWX = require('../../common/sdk/qqmap-wx-jssdk.js');
+var qqmapsdk;
 const app = getApp();
-// var flag=true;
-//40.046870,116.282030神州信息大厦经纬度(腾讯)
 Page({
   /**
    * 页面的初始数据
@@ -21,15 +21,23 @@ Page({
       success: function (res) {
         var latitude = res.latitude;
         var longitude = res.longitude; 
-        that.getSpecificLocation(latitude, longitude);
-        var targetLatitude = that.data.targetLatitude;
-        var targetLongitude = that.data.targetLongitude;
-        that.refreshDistance(latitude, longitude, targetLatitude, targetLongitude);
+        if (latitude && longitude){
+          that.getSpecificLocation(latitude, longitude);
+          var targetLatitude = that.data.targetLatitude;
+          var targetLongitude = that.data.targetLongitude;
+          that.refreshDistance(latitude, longitude, targetLatitude, targetLongitude);
+        }else{
+          wx.showToast({
+            title: "位置信息获取经纬度为空",
+            icon: 'none',
+            duration: 2000
+          })
+        }
       },
       fail:function(res){
         console.log(res);
         wx.showToast({
-          title: '位置信息接口调用失败',
+          title: '位置信息接口调用失败，请确认位置权限是否打开',
           icon: 'none',
           duration: 2000
         })
@@ -89,8 +97,10 @@ Page({
         latitude: that.data.location.latitude,
         longitude: that.data.location.longitude,
         prjId: that.data.prjId,
+        groupId: that.data.groupId,
         addrId: that.data.addrId
       };
+      console.log(postdata);
       //请求服务器成功将获取的打卡次数赋值给punchNum
       function success(res) {
         wx.hideLoading();
@@ -127,7 +137,6 @@ Page({
         duration: 2000
       })
     }
-    console.log("refreshDistance:",that.data);
   },
   getPunchInfo(){
     var that = this;
@@ -144,13 +153,14 @@ Page({
             topEmpId: wx.getStorageSync("topEmpId")
           }
           function success(res) {
+            console.log("update",res);
             if (res.data.code == 200) {
               wx.setStorage({
                 key: 'loginData',
                 data: res.data,
               })
               if (res.data.leadPrjMapList.length != 0) {
-                for (var i = 0; i < res.data.leadPrjMapList.length; i++) {
+                for (let i = 0; i < res.data.leadPrjMapList.length; i++) {
                   if (res.data.leadPrjMapList[i].addressMapList != null) {
                     res.data.prjMapList[res.data.prjMapList.length] = res.data.leadPrjMapList[i];
                   }
@@ -158,7 +168,7 @@ Page({
               }
               that.setData({
                 prjMapList: res.data.prjMapList,
-              })
+              })             
               var date = new Date();
               var url = util.requestService("/api/hrkq/queryPunchNum");
               var postdata = {
@@ -167,6 +177,7 @@ Page({
                 punchDate: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
               }
               function success(res) {
+                console.log("queryPunchNum", res);
                 wx.hideLoading();
                 if (res.data.code == 200) {
                   that.getLocationInfo();
@@ -198,50 +209,7 @@ Page({
               })
             }
           }
-          util.getPostRequest(updateUrl, update, success);
-          //获取本地保存的上下班时间
-          // wx.getStorage({
-          //   key: 'loginData',
-          //   success: function (res) {
-              // if (res.data.leadPrjMapList.length!=0){
-              //   for (var i = 0; i < res.data.leadPrjMapList.length;i++){
-              //     if (res.data.leadPrjMapList[i].addressMapList!=null){
-              //       res.data.prjMapList[res.data.prjMapList.length] = res.data.leadPrjMapList[i];
-              //     }
-              //   }
-              // }
-              // that.setData({
-              //   prjMapList: res.data.prjMapList,
-              // })
-          //   },
-          // })
-          // var date = new Date();
-          // var url = util.requestService("/api/hrkq/queryPunchNum");
-          // var postdata = {
-          //   encryption: wx.getStorageSync("encryption"),
-          //   topEmpId: wx.getStorageSync("topEmpId"),
-          //   punchDate: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
-          // }
-          // function success(res) {
-          //   wx.hideLoading();
-          //   if (res.data.code == 200) {
-          //     that.getLocationInfo();
-          //     that.getTime();  
-          //     that.setData({
-          //       punchNum: res.data.punchNum,
-          //       isLogin:true
-          //     })
-          //   } else if (res.data.code == 99) {
-          //     util.redirect(res.data.message);
-          //   } else {
-          //     wx.showToast({
-          //       title: res.data.message,
-          //       icon: "none",
-          //       duration: 2000
-          //     })
-          //   }
-          // }
-          // util.getPostRequest(url, postdata, success);
+          util.getPostRequest(updateUrl, update, success);          
         },
         fail: function (res) {
           wx.hideLoading();
@@ -261,6 +229,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    qqmapsdk = new QQMapWX({
+      key: 'EDYBZ-VE664-LM7UY-XC7KU-KBRGK-G2BRI'
+    });   
     this.setData({
       punch: "",
       location: {
@@ -295,27 +266,38 @@ Page({
       success: function (res) {
         var latitude = res.latitude;
         var longitude = res.longitude; 
-        if (that.data.prjMapList){
-          for (var i = 0; i < that.data.prjMapList.length; i++) {
-            if (that.data.prjMapList[i].addressMapList!=null){
-              var addressMapList = that.data.prjMapList[i].addressMapList;
-              for (var j = 0; j < addressMapList.length;j++){
-                var targetLatitude = addressMapList[j].latitude;
-                var targetLongitude = addressMapList[j].longitude;
-                that.getDistance(latitude, longitude, targetLatitude, targetLongitude, i, j);
+        that.getSpecificLocation(latitude, longitude);
+        console.log("latitude:" + latitude, "longitude:" + longitude);
+        if (latitude && longitude){
+          if (that.data.prjMapList) {
+            for (var i = 0; i < that.data.prjMapList.length; i++) {
+              if (that.data.prjMapList[i].addressMapList != null) {
+                var addressMapList = that.data.prjMapList[i].addressMapList;
+                for (var j = 0; j < addressMapList.length; j++) {
+                  var targetLatitude = addressMapList[j].latitude;
+                  var targetLongitude = addressMapList[j].longitude;
+                  that.getDistance(latitude, longitude, targetLatitude, targetLongitude, i, j);
+                }
+              } else {
+                util.redirect("没有对应的项目地址，请联系管理员！");
               }
-            }else{
-              util.redirect("没有对应的项目地址，请联系管理员！");
             }
+            console.log("data", that.data);
+          } else {
+            util.redirect("没有对应的项目，请联系管理员！");
           }
         }else{
-          util.redirect("没有对应的项目，请联系管理员！");
-        }
-        that.getSpecificLocation(latitude, longitude);
+          wx.showToast({
+            title: "经纬度获取为空",
+            icon: 'none',
+            duration: 2000
+          })
+        }        
+        // that.getSpecificLocation(latitude, longitude);
       },
       fail:function(res){
         wx.showToast({
-          title: '位置信息接口调用失败',
+          title: '位置信息接口调用失败，请确认位置权限是否打开',
           icon: 'none',
           duration: 2000
         })
@@ -325,20 +307,82 @@ Page({
 
 //获取具体的位置信息
   getSpecificLocation: function (latitude, longitude) {
-    var that = this;
-    var apiURL = "https://apis.map.qq.com/ws/geocoder/v1/?output=json&location=" + latitude + "," + longitude + "&key=EDYBZ-VE664-LM7UY-XC7KU-KBRGK-G2BRI";
-    wx.request({//根据经纬度获取具体位置信息
-      url: apiURL,
-      success: function (res) {
-        var location = {};
+    let that = this;
+    qqmapsdk.reverseGeocoder({
+      location: {
+        latitude: latitude,
+        longitude: longitude
+      },
+      success: function (addressRes) { //成功后的回调
+        var addressRes = addressRes.result;
+        console.log("getSpecificLocation:",addressRes)
+        let location = {};
         location = that.data.location;
-        location.address = res.data.result.address;
-        location.addressName = res.data.result.formatted_addresses.recommend;
+        location.address = addressRes.address;
+        location.addressName = addressRes.formatted_addresses.recommend;
+        console.log("location.address:" + location.address);
+        console.log("location.addressName:" + location.addressName);
         that.setData({
           location: location,
         })
+      },
+      fail: function (error) {
+        wx.showToast({
+          title: "获取具体的位置信息失败"
+        })
+        console.error(error);
+      },
+      complete: function (addressRes) {
+        console.log(addressRes);
       }
     })
+    // var that = this;
+    // var apiURL = "https://apis.map.qq.com/ws/geocoder/v1/?location=" + latitude + "," + longitude + "&key=EDYBZ-VE664-LM7UY-XC7KU-KBRGK-G2BRI";
+    // wx.request({//根据经纬度获取具体位置信息
+    //   url: apiURL,
+    //   success: function (res) {
+    //     console.log("getSpecificLocation",res);
+    //     if (res.data.status == 0){
+    //       var location = {};
+    //       location = that.data.location;
+    //       location.address = res.data.result.address;
+    //       location.addressName = res.data.result.formatted_addresses.recommend;
+    //       that.setData({
+    //         location: location,
+    //       })
+    //     } else if (res.data.status == 310){
+    //       wx.showToast({
+    //         title: '请求参数信息有误',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //     } else if (res.data.status == 311) {
+    //       wx.showToast({
+    //         title: 'key格式错误',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //     } else if (res.data.status == 306) {
+    //       wx.showToast({
+    //         title: '请求有护持信息请检查字符串',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //     } else if (res.data.status == 110) {
+    //       wx.showToast({
+    //         title: '请求来源未被授权',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //     }else{
+    //       wx.showToast({
+    //         title: '获取具体位置信息失败',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //     }
+    //   }
+    // })
   },
 
   getRad:function(d){   
@@ -383,7 +427,6 @@ Page({
     location.longitude = lng1;
     var addressMapList = that.data.prjMapList[idi].addressMapList;
     if (that.data.distantMeter == null) {
-      // console.log("111111111");
       that.setData({
         targetLatitude: lat2,
         targetLongitude: lng2,
@@ -391,14 +434,18 @@ Page({
         location: location,
         prjDistance: that.data.prjMapList[idi].prjDistance / 1000,
         prjId: that.data.prjMapList[idi].prjId,
-        amworktime: addressMapList[idj].ambegintime + "-" + addressMapList[idj].amendtime,
-        pmworktime: addressMapList[idj].pmbegintime + "-" + addressMapList[idj].pmendtime,
+        prjAddress: addressMapList[idj].address,
+        amworktime: that.data.prjMapList[idi].ambegintime + "-" + that.data.prjMapList[idi].amendtime,
+        pmworktime: that.data.prjMapList[idi].pmbegintime + "-" + that.data.prjMapList[idi].pmendtime,
+        // amworktime: addressMapList[idj].ambegintime + "-" + addressMapList[idj].amendtime,
+        // pmworktime: addressMapList[idj].pmbegintime + "-" + addressMapList[idj].pmendtime,
+        groupId: that.data.prjMapList[idi].groupId,
         addrId: addressMapList[idj].addrId
       })
-      wx.setStorageSync("ambegintime", addressMapList[idj].ambegintime);
-      wx.setStorageSync("amendtime", addressMapList[idj].amendtime);
-      wx.setStorageSync("pmbegintime", addressMapList[idj].pmbegintime);
-      wx.setStorageSync("pmendtime", addressMapList[idj].pmendtime);
+      wx.setStorageSync("ambegintime", that.data.prjMapList[idi].ambegintime);
+      wx.setStorageSync("amendtime", that.data.prjMapList[idi].amendtime);
+      wx.setStorageSync("pmbegintime", that.data.prjMapList[idi].pmbegintime);
+      wx.setStorageSync("pmendtime", that.data.prjMapList[idi].pmendtime);
       // console.log("370行：", that.data);
     } else if (parseFloat(that.data.distantMeter) > parseFloat(s)) {
       that.getNewData(lat1, lng1, lat2, lng2, s, idi, idj);
@@ -420,15 +467,18 @@ Page({
         location: location,   
         prjDistance: that.data.prjMapList[idi].prjDistance / 1000,
         prjId: that.data.prjMapList[idi].prjId,
-        amworktime: addressMapList[idj].ambegintime + "-" + addressMapList[idj].amendtime,
-        pmworktime: addressMapList[idj].pmbegintime + "-" + addressMapList[idj].pmendtime,
+        prjAddress: addressMapList[idj].address,
+        amworktime: that.data.prjMapList[idi].ambegintime + "-" + that.data.prjMapList[idi].amendtime,
+        pmworktime: that.data.prjMapList[idi].pmbegintime + "-" + that.data.prjMapList[idi].pmendtime,
+        // amworktime: addressMapList[idj].ambegintime + "-" + addressMapList[idj].amendtime,
+        // pmworktime: addressMapList[idj].pmbegintime + "-" + addressMapList[idj].pmendtime,
+        groupId: that.data.prjMapList[idi].groupId,
         addrId: addressMapList[idj].addrId
       })
-      wx.setStorageSync("ambegintime", addressMapList[idj].ambegintime);
-      wx.setStorageSync("amendtime", addressMapList[idj].amendtime);
-      wx.setStorageSync("pmbegintime", addressMapList[idj].pmbegintime);
-      wx.setStorageSync("pmendtime", addressMapList[idj].pmendtime);
-    console.log("getDistance:",that.data);
+    wx.setStorageSync("ambegintime", that.data.prjMapList[idi].ambegintime);
+    wx.setStorageSync("amendtime", that.data.prjMapList[idi].amendtime);
+    wx.setStorageSync("pmbegintime", that.data.prjMapList[idi].pmbegintime);
+    wx.setStorageSync("pmendtime", that.data.prjMapList[idi].pmendtime);
   },
 
   /**

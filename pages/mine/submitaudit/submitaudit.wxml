@@ -3,8 +3,8 @@
   <view class='viewCard' wx:for="{{singleInfos}}" wx:key="idx" wx:for-item="item">
     <view wx:if="{{item.loaType==2}}"> 
       <view class='titleView'>
-        <view>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
-        <view style='font-size:13px;color:grey;padding-top:5px'>{{item.attnMonth}}</view>
+        <view class='applyViewLeft'>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
+        <view class='applyViewRight'>{{item.attnMonth}}</view>
       </view>
 
       <view class='perview'>
@@ -38,8 +38,8 @@
 
     <view wx:else>
       <view class='titleView'>
-        <view>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
-        <view style='font-size:13px;color:grey;padding-top:5px'>{{item.leaveMonth}}</view>
+        <view class='applyViewLeft'>{{item.submitor}}的{{loaType[item.loaType]}}申请</view>
+        <view wx:if="{{item.processStatus==2}}" class='applyViewRight' data-loatype="{{item.loaType}}" data-processid="{{item.id}}" bindtap='recallInfo'>撤回</view>
       </view>
 
       <view class='perview'>
@@ -107,5 +107,8 @@
   </view>
 </view>
 <view class='notask' wx:else>暂无审批记录</view>
+<view class="weui-loadmore weui-loadmore_line" hidden='{{hasmoreData}}'>
+　　 <view class="weui-loadmore__tips weui-loadmore__tips_in-line">暂无更多数据</view>
+</view>
 
   

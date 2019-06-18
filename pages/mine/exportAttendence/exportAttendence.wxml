@@ -1,0 +1,36 @@
+<!--pages/mine/exportAttendence/exportAttendence.wxml-->
+<!-- <text>pages/mine/exportAttendence/exportAttendence.wxml</text> -->
+<view>
+  <form>
+    <view class='weui-grids' bindtap="modalInput">
+      <a href="javascript:;" class="weui-grid">
+        <view class="weui-grid__icon">
+            <image src="../../../images/attendance.png" alt=""></image> 
+        </view>
+        <p class="weui-grid__label">导出考勤报表</p>
+      </a>
+    </view>
+    <!-- <button bindtap="modalInput">导出报表</button> -->
+    <modal hidden="{{hiddenmodalput}}" title="导出考勤" confirm-text="确定" cancel-text="取消" bindcancel="cancel" bindconfirm="confirm">  
+      <view class='inputView'>
+        <view >输入邮箱：</view>
+        <input id='email' name='email' placeholder='请输入邮箱' class='inputText' value='{{email}}' bindblur='emailInput'></input>
+      </view>
+      <view class='inputView'>
+        <view >项目：</view>
+        <picker name='prjCode'  value='{{selectedPrjCodeIndex}}' range='{{prjCodeArr}}' range-key="prjCode" bindchange="prjCodeChange">
+          <view class='picker'>
+            <view>{{prjCodeArr[selectedPrjCodeIndex].prjCode}}</view>
+          </view>
+        </picker>    
+        <!-- <image class="wx-cell-arrow" src="../../../images/right.png"></image> -->
+      </view>
+      <view class='inputView'>
+        <view >月份：</view>
+        <picker value='selectMonth' mode='date' fields="month" start='{{beginMonth}}' end='{{curMonth}}' bindchange="monthChange">
+          <view class='datepicker'>{{selectMonth}}</view>
+        </picker>
+      </view>
+    </modal> 
+  </form>
+</view>

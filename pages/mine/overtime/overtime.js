@@ -1,6 +1,5 @@
 var util = require('../../../utils/util.js');
 var date = new Date();
-// var newDate = date.getFullYear() +"-" + date.getMonth() +"-"+date.getDate();
 
 var newYear = new Date().getFullYear();
 var newMonth = new Date().getMonth();
@@ -8,12 +7,10 @@ if (newMonth < 1) {
   newYear = new Date().getFullYear() - 1;
   newMonth = 12;
 }
-// var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
 var start = new Date((newYear + "-" + newMonth + "-1").replace(/\-/g, '/'));
 var newStart = new Date((newYear + "-" + (newMonth + 1) + "-1").replace(/\-/g, '/'));
 var beginDate = util.formatTime(date).substring(0, 10);
 var a = new Date((new Date().getFullYear()+1) + "-12-31");
-// var oribeginDate = util.formatTime(start).substring(0, 10);
 var oribeginDate = null;
 if (new Date().getDate() == '1') {
   oribeginDate = util.formatTime(start).substring(0, 10)
@@ -21,7 +18,6 @@ if (new Date().getDate() == '1') {
   oribeginDate = util.formatTime(newStart).substring(0, 10)
 }
 var enddate = null;
-// var enddate = util.formatTime(a).substring(0, 10);
 var bpgStart = new Date();
 var bpgBeginDate = util.formatTime(date).substring(0, 10);
 var bpgendDate = util.formatTime(a).substring(0, 10);
@@ -39,8 +35,9 @@ Page({
     beginTime: "00:00",
     endTime: "23:59",
     selectBeginTime: "09:00",
-    selectEndTime: "23:59",
+    selectEndTime: "18:00",
     reason: "",
+    disable: false,
     abstype:[
       "调休",
       "有偿"
@@ -223,6 +220,9 @@ Page({
         duration:2000
       })
     } else {
+      that.setData({
+        disable: true
+      })
       var url = util.requestService("/api/hrkq/askLeave");
       var postdata = value;
       postdata.topEmpId = wx.getStorageSync("topEmpId");
@@ -230,9 +230,11 @@ Page({
       if (value.address!=null){
         postdata.prjId = that.data.address[value.address].prjId;
         postdata.addrId = that.data.address[value.address].addrId; 
+        postdata.groupId = that.data.address[value.address].groupId; 
       }
       if (value.prjCode!=null){
         postdata.prjId = that.data.prjCode[value.prjCode].prjId;
+        postdata.groupId = that.data.prjCode[value.prjCode].groupId;
       }
       if (that.data.sortId == 'applyUser'){
         postdata.loaType = 1;
@@ -255,6 +257,11 @@ Page({
             icon:"success",
             duration:2000
           })
+          setTimeout(function () {
+            that.setData({
+              disable: false
+            })
+          }, 2000);
           if (that.data.sortId == 'bpg') {
             that.setData({
               id: null,
@@ -267,9 +274,6 @@ Page({
               reason: "",
               selectedIndex: 0
             })
-            // var opMap = res.data.opMap;
-            // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
-            // util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "报工", "报工", that.data.staffName);
           }else{                        
             that.setData({
               id: null,
@@ -282,9 +286,6 @@ Page({
               reason: "",
               selectedIndex: 0
             })
-            // var opMap = res.data.opMap;
-            // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI"
-            // util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "加班", that.data.abstype[e.detail.value.leaveType], that.data.staffName);
           }
         } else if (res.data.code == 99) {
           util.mineRedirect(res.data.message);
@@ -294,6 +295,11 @@ Page({
             icon: "none",
             duration: 2000
           })
+          setTimeout(function () {
+            that.setData({
+              disable: false
+            })
+          }, 2000);
         }
       }
       wx.showModal({
@@ -304,6 +310,11 @@ Page({
             util.checkEncryption(url, postdata, success);
           } else if (res.cancel) {
             console.log('用户点击取消')
+            setTimeout(function () {
+              that.setData({
+                disable: false
+              })
+            }, 2000);
           }
         }
       })
@@ -327,12 +338,13 @@ Page({
       for (var j = 0; j < addressList.length; j++) {
         var prjCodeObj = {};
         if (options.transdata && options.transdata.sortId=='bpg'){
-          if (JSON.parse(options.transdata).addrId == addressList[j].addrId){
+          if (JSON.parse(options.transdata).addrId == addressList[j].addrId && JSON.parse(options.transdata).groupId == prjMapList[i].groupId){
             m = k;
           }
         }
         prjCodeObj.prjId = prjMapList[i].prjId;
         prjCodeObj.addrId = addressList[j].addrId;
+        prjCodeObj.groupId = prjMapList[i].groupId;
         prjCodeObj.address = prjMapList[i].prjCode + "-" + addressList[j].address;
         prjCodeObj.prjType = prjMapList[i].prjType;
         prjCodeObj.prjCode = prjMapList[i].prjCode + "-" + prjMapList[i].prjName;
@@ -345,13 +357,14 @@ Page({
         var addressList = leadPrjMapList[i].addressMapList;
         for (var j = 0; j < addressList.length; j++) {
           if (options.transdata) {
-            if (JSON.parse(options.transdata).addrId == addressList[j].addrId) {
+            if (JSON.parse(options.transdata).addrId == addressList[j].addrId && JSON.parse(options.transdata).groupId == leadPrjMapList[i].groupId) {
               n = k;
             }
           }
           var addrObj = {};
           addrObj.prjId = addressList[j].prjId;
           addrObj.addrId = addressList[j].addrId;
+          addrObj.groupId = leadPrjMapList[i].groupId;
           addrObj.address = leadPrjMapList[i].prjCode + "-" + addressList[j].address;
           addrObj.prjType = leadPrjMapList[i].prjType;
           addrObj.prjCode = leadPrjMapList[i].prjCode
@@ -372,6 +385,7 @@ Page({
           }
         }
       })
+      oribeginDate = util.formatTime(start).substring(0, 10)
     } else {
       enddate = util.formatTime(a).substring(0, 10);
     } 

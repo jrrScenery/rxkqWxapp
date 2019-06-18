@@ -9,7 +9,6 @@ Page({
     currentTab: 0,
   },
   navToPage: function (event){
-    console.log(event);
     var that = this;
     let route = event.currentTarget.dataset.route;
     var id = event.currentTarget.id;
@@ -37,11 +36,38 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
-    var proInfo = util.prjInfo().prjInfoList;
-    console.log(proInfo);
-    this.setData({
-      proInfo:proInfo
+    wx.showLoading({
+      title: '加载中',
     })
+    // var proInfo = util.prjInfo().prjInfoList;
+    var postdata={
+      topEmpId: wx.getStorageSync("topEmpId"),
+      encryption: wx.getStorageSync("encryption")
+    };
+    var url = util.requestService("/api/hrkq/queryLeadPrjList");
+    function success(res){
+      wx.hideLoading();
+      console.log(res);
+      if (res.data.code == 200) {
+        that.setData({
+          proInfo:res.data.data
+        })
+        console.log(that.data);
+      } else if (res.data.code == 99) {
+        util.redirect(res.data.message);
+      } else {
+        wx.showToast({
+          title: res.data.message,
+          icon: "none",
+          duration: 2000
+        })
+      }
+    }
+    util.checkEncryption(url, postdata, success);
+    // console.log(proInfo);
+    // this.setData({
+    //   proInfo:proInfo
+    // })
     wx.getSystemInfo({
       success: function (res) {
         that.setData({

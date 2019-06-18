@@ -7,8 +7,6 @@ if (newMonth < 1) {
   newYear = new Date().getFullYear() - 1;
   newMonth = 12;
 }
-
-// var start = new Date(new Date().getFullYear() + "-" + new Date().getMonth() + "-1");
 var start = new Date((newYear + "-" + newMonth + "-1").replace(/\-/g, '/'));
 var newStart = new Date((newYear + "-" + (newMonth + 1) + "-1").replace(/\-/g, '/'));
 var beginDate = util.formatTime(date).substring(0,10);
@@ -20,15 +18,6 @@ if(new Date().getDate()=='1'){
   oribeginDate = util.formatTime(newStart).substring(0, 10)
 }
 var enddate = null;
-// var businessType = wx.getStorageSync("loginData").businessType;
-// if (businessType == '2') {
-//   var nowDate = new Date().getDate();
-//   var now = new Date((newYear + "-" + (newMonth + 1) + "-" + nowDate).replace(/\-/g, '/'))
-//   enddate = util.formatTime(now).substring(0, 10);
-// }else{
-//   enddate = util.formatTime(a).substring(0, 10);
-// }
-console.log("enddate:" + enddate);
 var imgNum = 0;
 Page({
 
@@ -39,7 +28,7 @@ Page({
     src: [],
     id:null,
     reason:"",
-    abstype: [
+    abstype: [ 
       "请选择",
       "调休",
       "病假",
@@ -160,10 +149,11 @@ Page({
         duration:2000
       })
     } else{
-      value.leaveType += 1;
-      if (value.leaveType>9){
-        value.leaveType+=3
-      }
+      value.leaveType = util.getType().myabsence[value.leaveType];
+      // value.leaveType += 1;
+      // if (value.leaveType>9){
+      //   value.leaveType+=3
+      // }
       var url = util.requestService("/api/hrkq/askLeave");
       var uploadUrl = util.requestService("/api/hrkq/askLeavePhoto");
       var postdata = value;
@@ -175,7 +165,9 @@ Page({
       if (that.data.id != null) {
         postdata.id = that.data.id;
       }
+      console.log(that.data.address);
       postdata.addrId = that.data.address[value.address].addrId;  
+      postdata.groupId = that.data.address[value.address].groupId;
       var uploadData = {
         topEmpId: wx.getStorageSync("topEmpId"),
         encryption: wx.getStorageSync("encryption")
@@ -190,15 +182,7 @@ Page({
             icon:"success",
             duration:2000
           })
-          // var opMap = res.data.opMap;
-          // var templateId = "jM80gLFgx0ux1dbmopkRMwmejshNR4Dwf89IFDgZfQI";
-          // if (value.leaveType<=9){
-          //   util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "请假", that.data.abstype[value.leaveType - 1], that.data.staffName);
-          // }else{
-          //   util.getSendTemplateData(opMap.openId, opMap.processId, templateId, "请假", that.data.abstype[value.leaveType - 4], that.data.staffName);
-          // }
           function success(res){
-            console.log(imgNum);
             var res = JSON.parse(res.data);
             if (res.code == 200){
               if (imgNum == that.data.src.length){
@@ -273,12 +257,9 @@ Page({
         sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
         success: function (res) {
-          console.log(res)
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
           var tempFilePaths = res.tempFilePaths;
           var srcArray = that.data.src;
-          console.log(tempFilePaths);
-          console.log(srcArray);
           for (var i = 0; i < tempFilePaths.length;i++){
             if (srcArray.length>=3){
               that.setData({
@@ -289,7 +270,6 @@ Page({
               srcArray.push(tempFilePaths[i]);
             }
           }
-          console.log(srcArray);
           that.setData({
             src: srcArray,
             tempFilePaths: tempFilePaths
@@ -369,42 +349,33 @@ Page({
     var k = 0;
     var n = 0;
     var prjMapList = wx.getStorageSync("loginData").prjMapList;
-    console.log(prjMapList);
     for (var i = 0; i < prjMapList.length; i++) {
       var addressList = prjMapList[i].addressMapList;
       for (var j = 0; j < addressList.length;j++){
         if (options.transdata) {
-          if (JSON.parse(options.transdata).addrId == addressList[j].addrId) {
+          if (JSON.parse(options.transdata).addrId == addressList[j].addrId && JSON.parse(options.transdata).groupId == prjMapList[i].groupId) {
             n = k;
           }
         }
         var addrObj = {};
         
-        addrObj.prjId = addressList[j].prjId;
+        addrObj.prjId = prjMapList[i].prjId;
         addrObj.addrId = addressList[j].addrId;
         addrObj.address = prjMapList[i].prjCode+"-"+addressList[j].address;
-        addrObj.ambegintime = addressList[j].ambegintime;
-        addrObj.pmendtime = addressList[j].pmendtime;
+        addrObj.prjCode = prjMapList[i].prjCode + "-" + prjMapList[i].prjName + "-" + addressList[j].address;
+        addrObj.ambegintime = prjMapList[i].ambegintime;
+        addrObj.pmendtime = prjMapList[i].pmendtime;
         addrObj.prjType = prjMapList[i].prjType;
+        addrObj.groupId = prjMapList[i].groupId;
         address[k++] = addrObj
       }
     }
-    // var businessType = wx.getStorageSync("loginData").businessType;
-    // if (businessType == '2') {
-    //   wx.getSystemInfo({
-    //     success: function (res) {
-    //       if (res.platform == 'ios') {
-    //         var nowDate = new Date().getDate();
-    //         var now = new Date((newYear + "-" + (newMonth + 1) + "-" + nowDate).replace(/\-/g, '/'))
-    //         enddate = util.formatTime(now).substring(0, 10);
-    //       } else {
-    //         enddate = util.formatTime(new Date()).substring(0, 10);
-    //       }
-    //     }
-    //   })
-    // } else {
-    //   enddate = util.formatTime(a).substring(0, 10);
-    // }
+    var businessType = wx.getStorageSync("loginData").businessType;
+    console.log("businessType:" + businessType);
+    if (businessType == '2') {
+      oribeginDate = util.formatTime(start).substring(0, 10)
+      console.log("oribeginDate", oribeginDate);
+    }
     that.setData({
       address: address,
       selectedAddrIndex: n,
@@ -418,12 +389,14 @@ Page({
       }
       var id = transdata.id;
       var addrId = transdata.addrId;
+      var groupId = transdata.groupId;   //新加
       //ios手机日期兼容转换
       var optionsBeginDate = new Date(transdata.selectBeginDate.replace(/\-/g, '/'));
       var optionsEndDate = new Date(transdata.selectEndDate.replace(/\-/g, '/'));
       that.setData({
         id: id,
         addrId: addrId,
+        groupId: groupId,
         selectBeginDate: util.formatTime(optionsBeginDate).substring(0, 10),
         selectEndDate: util.formatTime(optionsEndDate).substring(0,10),
         selectBeginTime: transdata.beginTime,

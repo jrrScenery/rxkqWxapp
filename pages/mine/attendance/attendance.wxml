@@ -101,13 +101,26 @@
           <text class="wx-cell-text">查看项目员工打卡明细</text>
           <image class="wx-cell-arrow" src="../../../images/right.png"></image>
         </view> 
-        <view class="wx-cell" data-route="../staffnj/staffnj" bindtap="navToPage">
+        <view class="wx-cell wx-cell-bottom" data-route="../staffnj/staffnj" bindtap="navToPage">
           <text class="wx-cell-text">查看年假/调休假</text>
           <image class="wx-cell-arrow" src="../../../images/right.png"></image>
         </view> 
       </view>
     </view>
   </view>
+
+  <!-- <view wx:if="{{businessType==2}}"> -->
+    <view wx:if="{{roleMapList.length!=0}}">
+      <view wx:for="{{roleMapList}}" wx:key="idx" wx:for-item="item" wx:for-index="idx">
+        <view class="wx-cells-next" wx:if="{{item.roleName=='pm'}}">   
+          <view class="wx-cell wx-cell-bottom" data-route="../exportAttendence/exportAttendence" bindtap="navToPage">
+            <text class="wx-cell-text">导出报表</text>
+            <image class="wx-cell-arrow" src="../../../images/right.png"></image>
+          </view> 
+        </view>
+      </view>
+    </view> 
+  <!-- </view> -->
 
   <!-- <view class="wx-cells">
     <view class="wx-cell">

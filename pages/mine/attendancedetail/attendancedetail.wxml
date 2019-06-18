@@ -1,6 +1,9 @@
 <view style='height:5px;width:100%'></view>
   <view class='viewCard' wx:for="{{attendancedetail.attenDetailInfo}}" wx:key="index" wx:for-item="item">
-    <view class='perview'>请假类型：{{leaveType[item.leaveType]}}</view>
+    <view class='perview'>
+      <view class='applyViewLeft'>请假类型：{{leaveType[item.leaveType]}}</view>
+      <view class='applyViewRight' data-id='{{item.id}}' data-loatype='{{loaType}}' bindtap='recallInfo'>撤回</view>
+    </view>
     <view class='perview'>打卡日期：{{item.punchDate}}</view>
     <view class='perview'>打卡时间：{{item.beginTime}}-{{item.endTime}}</view>
     <view class='perview'>补提考勤：{{item.absBeginTime}}-{{item.absEndTime}}</view>

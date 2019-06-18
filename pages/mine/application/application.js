@@ -16,7 +16,6 @@ Page({
       this.setData({
         searchInfo: ''
       })
-      // this.application(this.data.selectInfo);
     }
   },
 //监听搜索按钮点击事件
@@ -99,6 +98,30 @@ Page({
           prevPage.getQueryAttn(prevPage.data.selectDate, prevPage.data.wholeMonth); // 执行前一个页面的getQueryAttn方法
         }
       });
+    } else if (that.data.sortId == 'record'){
+      var date = new Date();
+      var year = date.getFullYear();  //获取当前年份
+      var months = date.getMonth() + 1;  // 获取当前月份
+      console.log(that.data.applyInfos)
+      for (let i = 0; i < that.data.applyInfos.length; i++) {
+        var applyInfo = that.data.applyInfos[i].applyInfo;
+        for (let j = 0; j < applyInfo.length; j++) {
+          if (applyInfo[j].userName == selectInfo.applyUser) {
+            prevPage.setData({
+              applyUser: applyInfo[j].staffName,
+              userName: selectInfo.applyUser
+            })
+          }
+        }
+      }
+      // var date = new Date();
+      // var year = date.getFullYear();  //获取当前年份
+      // var months = date.getMonth() + 1;  // 获取当前月份
+      wx.navigateBack({
+        success: function () {
+          prevPage.getInfo(selectInfo.date, selectInfo.year, selectInfo.month); // 执行前一个页面的getInfo方法
+        }
+      });
     }else{
       prevPage.setData({
           selectedAddrIndex: parseInt(selectInfo.selectedAddrIndex),
@@ -126,19 +149,12 @@ Page({
       encryption: wx.getStorageSync("encryption"),           
     }
     var conditions = {};
-    // conditions.page = that.data.page;
     if (options.sortId =='applyUser'){
       postdata.applyType = 0;
       postdata.applyPrjId = options.prjId;
-      // if (that.data.searchInfo) {
-      //   conditions.name = that.data.searchInfo;
-      // }   
     } else if (options.sortId == 'bpg'){
       postdata.applyType = 1;
       postdata.applyPrjId = options.prjId;
-      // if (that.data.searchInfo){
-      //   conditions.name = that.data.searchInfo;
-      // }     
     }else{
       postdata.applyType = 0;
     }
@@ -146,9 +162,9 @@ Page({
       conditions.name = that.data.searchInfo;
     }   
     postdata.conditions = conditions;
-    console.log(postdata)
+    console.log("application",postdata)
     function success(res) {
-      console.log(res);
+      console.log("application",res);
       wx.hideLoading();
       if (res.data.code == 200) {
         that.setData({
@@ -172,12 +188,12 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
+    console.log(options);
     var selectInfo = JSON.parse(options.selectInfo);
     console.log(selectInfo)
     that.setData({
       selectInfo: selectInfo,
-      sortId: selectInfo.sortId,
-      // page: 1
+      sortId: selectInfo.sortId
     })
     that.application(selectInfo);
     if (selectInfo.sortId == 'applyUser'){
