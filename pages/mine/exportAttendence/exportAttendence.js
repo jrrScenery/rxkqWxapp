@@ -58,6 +58,11 @@ Page({
       let email = that.data.email;
       let businessType = wx.getStorageSync("loginData").businessType;
       let idx = that.data.selectedPrjCodeIndex;
+      let roleMapList = wx.getStorageSync("loginData").roleMapList;
+      let roleType = '';
+      for (let i = 0; i < roleMapList.length;i++){
+        roleType += roleMapList[i].roleName+','
+      }
       var postdata = {
         topEmpId: wx.getStorageSync("topEmpId"),
         encryption: wx.getStorageSync("encryption"),
@@ -65,7 +70,7 @@ Page({
         attnMonth: attnMonth,
         email: email,
         businessType:businessType,
-        roleType:"pm"
+        roleType: roleType
       }
       console.log("postdata", postdata);
       that.setData({
@@ -110,11 +115,16 @@ Page({
   onLoad: function (options) {
     let leadPrjMapList = wx.getStorageSync("loginData").leadPrjMapList;
     let prjCodeArr = [];
+    let prjCode = {
+      prjId:'',
+      prjCode:'全部'
+    }
+    prjCodeArr.push(prjCode);
     for (let i = 0; i < leadPrjMapList.length;i++){
       let prjCodeObj = {};
       prjCodeObj.prjId = leadPrjMapList[i].prjId;
       prjCodeObj.prjCode = leadPrjMapList[i].prjCode;
-      prjCodeArr[i]=prjCodeObj
+      prjCodeArr[i+1]=prjCodeObj
     }
     var beginMonth = util.GetMonthStr(-180);   
     this.setData({
@@ -124,7 +134,7 @@ Page({
       prjCodeArr: prjCodeArr,
       selectedPrjCodeIndex:0,
     })
-    console.log(this.data);
+    console.log("data",this.data);
   },
 
   /**

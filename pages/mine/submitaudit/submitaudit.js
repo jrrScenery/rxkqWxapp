@@ -14,6 +14,31 @@ Page({
     hiddenloading: true,//加载中
   },
 
+  //监听搜索输入框值输入
+  searchBindInput: function (e) {
+    console.log(e);
+    var searchInfo = e.detail.value;//input框中的查询值
+    if (searchInfo) {
+      this.setData({
+        searchInfo: searchInfo,
+        page:1
+      })
+    } else {
+      this.setData({
+        searchInfo: '',
+        page: 1
+      })
+    }
+  },
+  //监听搜索按钮点击事件
+  searchBindTap: function (e) {
+    this.setData({
+      singleInfos: null,
+      hasmoreData:true
+    })
+    this.todoAudit(this.options);
+  },
+
   checkaudit: function (event) {
     console.log(event);
     util.navigateTo(event);
@@ -65,7 +90,18 @@ Page({
         })
       }
     }
-    util.checkEncryption(url, postData, success);
+    wx.showModal({
+      title: '提示',
+      content: '确认撤回吗？',
+      success: function (res) {
+        if (res.confirm) {
+          util.checkEncryption(url, postData, success);
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      }
+    })
+    // util.checkEncryption(url, postData, success);
   },
 
   todoAudit: function (options) {
@@ -87,6 +123,7 @@ Page({
       page: that.data.page,
       num: that.data.num
     }
+    postdata.userName = that.data.searchInfo;
     console.log(postdata)
     var loaType = util.getType().loaType;
     var leaveType = util.getType().leaveType;

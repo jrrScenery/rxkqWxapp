@@ -79,8 +79,12 @@ Page({
    */
   onLoad: function (options) {
     console.log("options:", options);
+    if (options.loaType){
+      this.setData({
+        loaType: options.loaType
+      })
+    }
     this.setData({
-      loaType: options.loaType,
       processId:options.id
     })
     this.getAttenDetail();

@@ -16,16 +16,16 @@ const formatNumber = n => {
 
 //请求地址
 function requestService(serverMethod) {
-  // var httpInfo = "https://wbm.dcits.com" + serverMethod;
-  // var httpInfo = "http://192.168.2.104:8808" + serverMethod;
-  var httpInfo = "http://10.1.200.187:8808" + serverMethod;
-  
+  var httpInfo = "https://wbm.dcits.com" + serverMethod;
+  // var httpInfo = "http://192.168.1.148:8808" + serverMethod;
+  // var httpInfo = "http://10.1.200.187:8808" + serverMethod;10.1.204.187
+  // var httpInfo = "http://10.1.204.187:8808" + serverMethod;
   return httpInfo;
 }
 
 //页面跳转
 function navigateTo(event){
-  console.log(event);
+  // console.log(event);
   let route = event.currentTarget.dataset.route;
   var id = event.currentTarget.dataset.id;
   if (event.currentTarget.dataset.current!=null){
@@ -73,7 +73,7 @@ function mineRedirect(res) {
 }
 var postFlag = true;
 function checkEncryption(url, postdata, success) {
-  console.log(postFlag);
+  // console.log(postFlag);
   if (wx.getStorageSync("encryption")) {
     wx.checkSession({
       success: function (res) {
@@ -84,7 +84,12 @@ function checkEncryption(url, postdata, success) {
       },
       fail: function () {
         wx.hideLoading();
-        mineRedirect("登录失效，请重新登录");
+        wx.removeStorage({
+          key: 'encryption',
+          success: function(res) {
+            mineRedirect("登录失效，请重新登录");
+          },
+        })
       }
     })
   } else {
@@ -105,7 +110,7 @@ function getPostRequest(url, data, success) {
       postFlag = true
     },
     fail: function (res) {
-      console.log(res);
+      // console.log("服务器请求失败！",res);
       // wx.showToast({
       //   title: res.errMsg,
       //   icon:'none',

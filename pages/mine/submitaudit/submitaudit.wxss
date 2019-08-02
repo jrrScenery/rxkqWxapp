@@ -2,6 +2,17 @@
 @import "../../../common/todoAudit.wxss"; 
 @import "../../../common/loadmore.wxss"; 
 page{background-color: #efeff4;}  
+.recordSearchView{
+  display:flex;
+  text-align:center;
+  margin:10px;
+}
+.recordSearchInputView{
+  width:75%;
+  height:30px;
+  border-radius: 40px;
+  background: #ffffff
+}
 .viewCard{
   border: 2px solid #ffffff;
   border-radius: 5px; 

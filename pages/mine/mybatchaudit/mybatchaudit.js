@@ -144,6 +144,7 @@ Page({
       encryption: wx.getStorageSync("encryption"),
       processType: 0
     }
+    console.log("postdata:", postdata);
     function success(res) {
       console.log(res);
       wx.hideLoading();

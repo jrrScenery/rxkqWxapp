@@ -1,4 +1,10 @@
-<view style='height:5px;width:100%'></view>
+<!-- <view style='height:5px;width:100%'></view> -->
+<view class='recordSearchView'>
+  <view class='recordSearchInputView'>
+    <input name='search' style='height:30px;font-size:12px' placeholder='输入员工姓名' bindinput='searchBindInput'></input>
+  </view>
+  <button size='mini' bindtap='searchBindTap'>搜索</button>
+</view>
 <view wx:if="{{singleInfos.length!=0}}">
   <view class='viewCard' wx:for="{{singleInfos}}" wx:key="idx" wx:for-item="item">
     <view wx:if="{{item.loaType==2}}"> 
@@ -106,7 +112,7 @@
     </view>   
   </view>
 </view>
-<view class='notask' wx:else>暂无审批记录</view>
+<!-- <view class='notask' wx:else>暂无审批记录</view> -->
 <view class="weui-loadmore weui-loadmore_line" hidden='{{hasmoreData}}'>
 　　 <view class="weui-loadmore__tips weui-loadmore__tips_in-line">暂无更多数据</view>
 </view>

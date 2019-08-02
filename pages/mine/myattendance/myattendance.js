@@ -147,6 +147,7 @@ Page({
         that.data.isShowDelete[that.data.dataInfo.length] = false;//新加删除按钮显示标识
         that.data.dataInfo[that.data.dataInfo.length] = attenInfo;
 
+        
         //排序，将添加的数据放置到相应位置
         //将最后插入的一条数据赋值给相应变量
         var insert = that.data.dataInfo[that.data.dataInfo.length - 1]

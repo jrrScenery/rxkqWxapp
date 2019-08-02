@@ -35,7 +35,7 @@ Page({
         }
       },
       fail:function(res){
-        console.log(res);
+        // console.log(res);
         wx.showToast({
           title: '位置信息接口调用失败，请确认位置权限是否打开',
           icon: 'none',
@@ -45,7 +45,7 @@ Page({
     })
   },
   refreshDistance: function (lat1, lng1, lat2, lng2){
-    console.log("lat2:" + lat2, ",lng2:"+lng2);
+    // console.log("lat2:" + lat2, ",lng2:"+lng2);
     var that = this;
     var f = this.getRad((lat1 + lat2) / 2);
     var g = this.getRad((lat1 - lat2) / 2);
@@ -159,6 +159,8 @@ Page({
                 key: 'loginData',
                 data: res.data,
               })
+              // console.log(res.data.businessType != '3' && res.data.leadPrjMapList.length != 0);
+              // if (res.data.businessType != '3'&&res.data.leadPrjMapList.length != 0) {
               if (res.data.leadPrjMapList.length != 0) {
                 for (let i = 0; i < res.data.leadPrjMapList.length; i++) {
                   if (res.data.leadPrjMapList[i].addressMapList != null) {
@@ -168,7 +170,8 @@ Page({
               }
               that.setData({
                 prjMapList: res.data.prjMapList,
-              })             
+              })       
+              console.log(that.data);      
               var date = new Date();
               var url = util.requestService("/api/hrkq/queryPunchNum");
               var postdata = {
@@ -177,7 +180,7 @@ Page({
                 punchDate: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
               }
               function success(res) {
-                console.log("queryPunchNum", res);
+                // console.log("queryPunchNum", res);
                 wx.hideLoading();
                 if (res.data.code == 200) {
                   that.getLocationInfo();
@@ -214,10 +217,16 @@ Page({
         fail: function (res) {
           wx.hideLoading();
           //跳转到登录页面
-          util.redirect("登录失效，请重新登录");
+          wx.removeStorage({
+            key: 'encryption',
+            success: function (res) {
+              util.redirect("登录失效，请重新登录");
+            },
+          })
         }
       })
     } else {
+      console.log("encryption失败")
       wx.hideLoading();
       wx.redirectTo({
         url: '../login/login',
@@ -267,7 +276,8 @@ Page({
         var latitude = res.latitude;
         var longitude = res.longitude; 
         that.getSpecificLocation(latitude, longitude);
-        console.log("latitude:" + latitude, "longitude:" + longitude);
+        // console.log("getLocationSuccess:" + res);
+        // console.log("latitude:" + latitude, "longitude:" + longitude);
         if (latitude && longitude){
           if (that.data.prjMapList) {
             for (var i = 0; i < that.data.prjMapList.length; i++) {
@@ -282,7 +292,7 @@ Page({
                 util.redirect("没有对应的项目地址，请联系管理员！");
               }
             }
-            console.log("data", that.data);
+            // console.log("data", that.data);
           } else {
             util.redirect("没有对应的项目，请联系管理员！");
           }
@@ -296,6 +306,7 @@ Page({
         // that.getSpecificLocation(latitude, longitude);
       },
       fail:function(res){
+        // console.log("fail:",res);
         wx.showToast({
           title: '位置信息接口调用失败，请确认位置权限是否打开',
           icon: 'none',
@@ -315,13 +326,13 @@ Page({
       },
       success: function (addressRes) { //成功后的回调
         var addressRes = addressRes.result;
-        console.log("getSpecificLocation:",addressRes)
+        // console.log("getSpecificLocation:",addressRes)
         let location = {};
         location = that.data.location;
         location.address = addressRes.address;
         location.addressName = addressRes.formatted_addresses.recommend;
-        console.log("location.address:" + location.address);
-        console.log("location.addressName:" + location.addressName);
+        // console.log("location.address:" + location.address);
+        // console.log("location.addressName:" + location.addressName);
         that.setData({
           location: location,
         })
@@ -330,7 +341,7 @@ Page({
         wx.showToast({
           title: "获取具体的位置信息失败"
         })
-        console.error(error);
+        // console.error(error);
       },
       complete: function (addressRes) {
         console.log(addressRes);

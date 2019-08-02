@@ -180,6 +180,7 @@ Page({
       success: function (res) {
         console.log("微信login接口success函数",res)
         if (res.code) {
+          console.log("/api/hrkq/login");
           app.globalData.isLogin = true
           var url = util.requestService("/api/hrkq/login");
           // that.getLoginInfo(url).then(()=>{
@@ -290,7 +291,7 @@ Page({
   onLoad: function (options) {
     this.setData({
       imageurl:"../../images/logo.png"
-    })    
+    })
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

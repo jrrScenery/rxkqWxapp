@@ -84,12 +84,14 @@
 
         <view class='perview' wx:if="{{item.loaType==0}}">
           <view class='titleView'>请假事由：</view> 
-          <textarea class='inputView' auto-height='true' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></textarea>
+          <view class='inputView' name='reason' data-current="{{idx}}">{{item.reason}}</view>
+          <!-- <textarea class='inputView' auto-height='true' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></textarea> -->
         </view> 
 
         <view class='perview' wx:elif="{{item.loaType==1}}">
           <view class='titleView'>加班事由：</view> 
-          <textarea class='inputView' auto-height='true' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></textarea>
+          <view class='inputView' name='reason' data-current="{{idx}}">{{item.reason}}</view>
+          <!-- <textarea class='inputView' auto-height='true' name='reason' data-current="{{idx}}" disabled='true' value='{{item.reason}}'></textarea> -->
         </view> 
         <view class='perview' wx:if="{{item.loaType==3}}">
           <view class='titleView'>派工事由：</view> 
@@ -102,7 +104,21 @@
 
         <view class="weui-form-preview__ft" wx:if="{{item.processStatus==1}}">
           <button id='ok' class="weui-form-preview__btn weui-form-preview__btn_default" form-type='submit' data-current="{{idx}}">同意</button>
-          <button id='refuse' class="weui-form-preview__btn weui-form-preview__btn_primary" form-type='submit' data-current="{{idx}}">拒绝</button>
+          <button id='refuse' class="weui-form-preview__btn weui-form-preview__btn_primary" bindtap='showDialogBtn' data-current="{{idx}}">拒绝</button>
+          <!--弹窗-->
+          <view class="modal-mask" catchtouchmove="preventTouchMove" wx:if="{{showModal[idx]}}"></view>
+          <view class="modal-dialog" wx:if="{{showModal[idx]}}">
+            <view class="modal-title">驳回原因</view>
+            <view class="modal-content">
+              <view class="modal-input">
+                <input placeholder-class="input-holder" type="text" maxlength='100'   bindinput="inputChange" class="input" placeholder="请输入驳回原因（80字以内）" data-current="{{idx}}"></input>
+              </view>
+            </view>
+            <view class="modal-footer">
+              <view class="btn-cancel" bindtap="hideModal" data-current="{{idx}}">取消</view>
+              <view id='refuse' class="btn-confirm" bindtap='onConfirm' data-current="{{idx}}">确定</view>
+            </view>
+          </view>
         </view>
 
         <view class="weui-form-preview__ft" wx:else>

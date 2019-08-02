@@ -18,6 +18,53 @@ Page({
     ],
   },
 
+  /**
+    * 弹窗
+    */
+  showDialogBtn: function (e) {
+    let idx = e.target.dataset.current;
+    this.data.showModal[idx] = !this.data.showModal[idx];
+    this.setData({
+      showModal: this.data.showModal
+    })
+  },
+  /**
+     * 弹出框蒙层截断touchmove事件
+     */
+  preventTouchMove: function () {
+  },
+  /**
+     * 隐藏模态对话框
+     */
+  hideModal: function (e) {
+    console.log("hideModal", e);
+    let idx = e.target.dataset.current;
+    this.data.showModal[idx] = false;
+    this.setData({
+      showModal: this.data.showModal
+    })
+  },
+  /**
+  * 对话框取消按钮点击事件
+  */
+  onCancel: function () {
+    this.hideModal();
+  },
+
+  /**
+     * 对话框确认按钮点击事件
+     */
+  onConfirm: function (e) {
+    console.log(e)
+    this.formSubmit(e);
+  },
+  inputChange: function (e) {
+    var current = e.target.dataset.current;
+    this.data.refuseReason[current] = e.detail.value;
+    this.setData({
+      refuseReason: this.data.refuseReason
+    })
+  },
   change: function (e) {
     console.log(e)
     var idx = e.target.dataset.current;
@@ -155,7 +202,17 @@ Page({
     console.log(e)
     var that = this;
     console.log(that.data)
-    var idx = e.detail.target.dataset.current;
+    let idx = 0;
+    let typeId = null;
+    if (e.type == 'submit') {
+      idx = e.detail.target.dataset.current;
+      typeId = e.detail.target.id
+    } else {
+      idx = e.target.dataset.current;
+      typeId = e.target.id
+    }
+    // console.log(that.data)
+    // var idx = e.detail.target.dataset.current;
     var url = util.requestService("/api/hrkq/auditProcess");
     var postdata = {};
     postdata.id = this.data.auditInfo[idx].id;
@@ -165,10 +222,11 @@ Page({
     if (this.data.auditInfo[idx].loaType == '1') {
       postdata.leaveType = this.data.auditInfo[idx].leaveType
     }
-    if (e.detail.target.id == 'ok') {
+    if (typeId == 'ok') {
       postdata.auditType = 0;
     } else {
       postdata.auditType = 1;
+      postdata.reason = that.data.refuseReason[idx]
     }
     postdata.loaType = that.data.auditInfo[idx].loaType;
     console.log(postdata);
@@ -224,17 +282,25 @@ Page({
       }
     }
     if (this.data.auditInfo[idx].processStatus == 1 || this.data.auditInfo[idx].processStatus != 3) {//审批状态不为修改
-      wx.showModal({
-        title: '提示',
-        content: '确认提交吗？',
-        success: function (res) {
-          if (res.confirm) {
-            util.checkEncryption(url, postdata, success);
-          } else if (res.cancel) {
-            console.log('用户点击取消')
+      if (typeId == "refuse") {
+        that.data.showModal[idx] = false;
+        that.setData({
+          showModal: that.data.showModal
+        })
+        util.checkEncryption(url, postdata, success);
+      }else{
+        wx.showModal({
+          title: '提示',
+          content: '确认提交吗？',
+          success: function (res) {
+            if (res.confirm) {
+              util.checkEncryption(url, postdata, success);
+            } else if (res.cancel) {
+              console.log('用户点击取消')
+            }
           }
-        }
-      })
+        })
+      }
     }
   },
 
@@ -282,7 +348,15 @@ Page({
             auditInfo: c.concat(that.data.auditInfo, res.data.auditinfos)
           })
         }
+        let showModal = [];
+        let refuseReason = [];
+        for (let i = 0; i < that.data.auditInfo.length; i++) {
+          showModal[i] = false;
+          refuseReason[i] = "";
+        }
         that.setData({
+          showModal: showModal,
+          refuseReason: refuseReason,
           // auditInfo: res.data.auditinfos,
           total: res.data.totalNum,
           loaType: loaType,
